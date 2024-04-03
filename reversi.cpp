@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <bit>
+#include <immintrin.h>
 
 int Reversi::heuristics_map[64] = {100,-15, 10,  5,  5, 10,-15,100,
                                    -15,-30, -2, -2, -2, -2,-30,-15,
@@ -12,48 +13,94 @@ int Reversi::heuristics_map[64] = {100,-15, 10,  5,  5, 10,-15,100,
                                    -15,-30, -2, -2, -2, -2,-30,-15,
                                    100,-15, 10,  5,  5, 10,-15,100};
 
-int Reversi::heuristics(Board *state, int moves_delta, bool end_board) {
+[[gnu::noinline]]
+int Reversi::heuristics(Board *state, int moves_delta) {
     int score = 0;
     heuristic_count++;
-    if (end_board) {
-        for (uint64_t bitmask = static_cast<uint64_t>(1) << 63; bitmask != 0; bitmask >>= 1) {
-            if (state->white_bitmap & bitmask) {
-                score++;
-            }
-            else if (state->black_bitmap & bitmask) {
-                score--;
-            }
-        }
-        if (score > 0) {
-            score = 999;
-        }
-        else if (score < 0) {
-            score = -999;
-        }
-        else {
-            score = 0;
-        }
+    
+#ifdef NO_SIMD
+    for (int i = 0; i < 64; ++i) {
+        score += ((state->white_bitmap >> i) & 1) * heuristics_map[i];
+        score -= ((state->black_bitmap >> i) & 1) * heuristics_map[i];
     }
-    else {
-        for (int i = 0; i < 64; ++i) {
-            score += ((state->white_bitmap >> i) & 1) * heuristics_map[i];
-            score -= ((state->black_bitmap >> i) & 1) * heuristics_map[i];         
-        }
-        score += 10 * moves_delta;
+#else
+    uint64_t white_bitmaps1[4];
+    uint64_t black_bitmaps1[4];
+    white_bitmaps1[0] = state->white_bitmap;
+    black_bitmaps1[0] = state->black_bitmap;
+    white_bitmaps1[1] = (state->white_bitmap >> 1);
+    black_bitmaps1[1] = (state->black_bitmap >> 1);
+    white_bitmaps1[2] = (state->white_bitmap >> 2);
+    black_bitmaps1[2] = (state->black_bitmap >> 2);
+    white_bitmaps1[3] = (state->white_bitmap >> 3);
+    black_bitmaps1[3] = (state->black_bitmap >> 3);
+
+    uint64_t white_bitmaps2[4];
+    uint64_t black_bitmaps2[4];
+    white_bitmaps2[0] = (state->white_bitmap >> 4);
+    black_bitmaps2[0] = (state->black_bitmap >> 4);
+    white_bitmaps2[1] = (state->white_bitmap >> 5);
+    black_bitmaps2[1] = (state->black_bitmap >> 5);
+    white_bitmaps2[2] = (state->white_bitmap >> 6);
+    black_bitmaps2[2] = (state->black_bitmap >> 6);
+    white_bitmaps2[3] = (state->white_bitmap >> 7);
+    black_bitmaps2[3] = (state->black_bitmap >> 7);
+
+    int64_t heur_map1[4];
+    heur_map1[0] = 0x64f10a05050af164;
+    heur_map1[1] = 0xf1e2fefefefee2f1;
+    heur_map1[2] = 0x0afe01ffff01fe0a;
+    heur_map1[3] = 0x05fefffffffffe05;
+
+    int64_t heur_map2[4];
+    heur_map2[0] = 0x05fefffffffffe05;
+    heur_map2[1] = 0x0afe01ffff01fe0a;
+    heur_map2[2] = 0xf1e2fefefefee2f1;
+    heur_map2[3] = 0x64f10a05050af164;
+
+    __m256i heur_vec1 = _mm256_loadu_si256((__m256i *) heur_map1);
+    __m256i heur_vec2 = _mm256_loadu_si256((__m256i *) heur_map2);
+    __m256i white_vec1 = _mm256_loadu_si256((__m256i *) white_bitmaps1);
+    __m256i white_vec2 = _mm256_loadu_si256((__m256i *) white_bitmaps2);
+    __m256i black_vec1 = _mm256_loadu_si256((__m256i *) black_bitmaps1);
+    __m256i black_vec2 = _mm256_loadu_si256((__m256i *) black_bitmaps2);
+
+    __m256i mask_vec = _mm256_set1_epi64x(0x0101010101010101);
+    white_vec1 = _mm256_and_si256(white_vec1, mask_vec);
+    white_vec2 = _mm256_and_si256(white_vec2, mask_vec);
+    black_vec1 = _mm256_and_si256(black_vec1, mask_vec);
+    black_vec2 = _mm256_and_si256(black_vec2, mask_vec);
+
+    __m256i result_white1 = _mm256_maddubs_epi16(white_vec1, heur_vec1);
+    __m256i result_white2 = _mm256_maddubs_epi16(white_vec2, heur_vec2);
+    __m256i result_black1 = _mm256_maddubs_epi16(black_vec1, heur_vec1);
+    __m256i result_black2 = _mm256_maddubs_epi16(black_vec2, heur_vec2);
+
+    __m256i result_white_joined = _mm256_add_epi16(result_white1, result_white2);
+    __m256i result_black_joined = _mm256_add_epi16(result_black1, result_black2);
+
+    __m256i result_vec = _mm256_sub_epi16(result_white_joined, result_black_joined);
+
+    int16_t int_result[16];
+    _mm256_storeu_si256((__m256i *) int_result, result_vec);
+
+    for (int i = 0; i < 16; ++i) {
+        score += static_cast<int>(int_result[i]);
     }
+#endif
+
+    score += 10 * moves_delta;
     return score;
-} 
+}
 
 uint64_t Reversi::find_best_move(Board *state, bool color) {
     heuristic_count = 0;
     state_count = 0;
     int depth = 10;
-    int moves_count = 0;
     uint64_t best_move = 0;
-    uint64_t possible_moves = state->find_moves(color, moves_count);
-    moves_count = __builtin_popcountll(possible_moves);
+    uint64_t possible_moves = state->find_moves(color);
 
-    if (color == true && moves_count != 0) {
+    if (color == true && possible_moves != 0) {
         int max_eval = -1000;
         int alpha = -1000;
         int beta = 1000;
@@ -73,7 +120,7 @@ uint64_t Reversi::find_best_move(Board *state, bool color) {
         }
         delete next;
     }
-    else if (color == false && moves_count != 0) {
+    else if (color == false && possible_moves != 0) {
         int min_eval = 1000;
         int alpha = -1000;
         int beta = 1000;
@@ -102,24 +149,21 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
     state_count++;
     // reach max depth
     if (depth == 0) {
-        int moves_white = 0;
-        int moves_black = 0;
-        uint64_t white_moves = state->find_moves(true, moves_white);
-        uint64_t black_moves = state->find_moves(false, moves_black);
-        moves_white = __builtin_popcountll(white_moves);
-        moves_black = __builtin_popcountll(black_moves);
-        return heuristics(state, (moves_white - moves_black), false);
+        int moves_white = __builtin_popcountll(state->find_moves(true));
+        int moves_black = __builtin_popcountll(state->find_moves(false));
+        return heuristics(state, (moves_white - moves_black));
     }
-    //search_count++;
-    int moves_count = 0;
     int best_move_id = 0;
-    uint64_t possible_moves = state->find_moves(cur_color, moves_count);
-    moves_count = __builtin_popcountll(possible_moves);
+    uint64_t possible_moves = state->find_moves(cur_color);
     if (cur_color == true) {
         int max_eval = -1000;
-        if (moves_count == 0) {
+        if (possible_moves == 0) {
             if (end_board) {
-                max_eval = heuristics(state, moves_count, true);
+                int moves_white = __builtin_popcountll(state->find_moves(true));
+                int moves_black = __builtin_popcountll(state->find_moves(false));
+                if (moves_white > moves_black) {max_eval = 999;}
+                else if (moves_white < moves_black) {max_eval = -999;}
+                else {max_eval = 0;}
             }
             else {
                 max_eval = minimax(state, depth, !cur_color, alpha, beta, true);
@@ -146,9 +190,13 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
     }
     else {
         int min_eval = 1000;
-        if (moves_count == 0) {
+        if (possible_moves == 0) {
             if (end_board) {
-                min_eval = heuristics(state, moves_count, true);
+                int moves_white = __builtin_popcountll(state->find_moves(true));
+                int moves_black = __builtin_popcountll(state->find_moves(false));
+                if (moves_white > moves_black) {min_eval = 999;}
+                else if (moves_white < moves_black) {min_eval = -999;}
+                else {min_eval = 0;}
             }
             else {
                 min_eval = minimax(state, depth, !cur_color, alpha, beta, true);

@@ -12,6 +12,12 @@ int main() {
     //init_board->print_moves(valid_moves);
     return 0;*/
 
+    /*init_board->load_benchmark_state();
+    init_board->print_board();
+    int result = engine->heuristics(init_board, 0, false);
+    std::cout << result << '\n';
+    return 0;*/
+
     init_board->load_benchmark_state();
     //init_board->load_start_state();
     init_board->print_board();

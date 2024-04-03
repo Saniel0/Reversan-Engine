@@ -20,7 +20,7 @@ class Board {
         void print_board();
         void print_board_moves(uint64_t moves);
         void print_moves(uint64_t moves);
-        uint64_t find_moves(bool color, int &moves_count);
+        uint64_t find_moves(bool color);
         void play_move(bool color, uint64_t move);
         void copy_state(Board *state);
         
@@ -40,9 +40,10 @@ class Reversi {
         static int heuristics_map[64];
         
         int minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board);
-        int heuristics(Board *state, int moves_delta, bool end_board);
+        //int heuristics(Board *state, int moves_delta, bool end_board);
 
     public:
         uint64_t find_best_move(Board *state, bool color);
+        int heuristics(Board *state, int moves_delta);
 
 };

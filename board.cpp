@@ -82,7 +82,7 @@ void Board::load_benchmark_state() {
                    static_cast<uint64_t>(0b00000000);
 }
 
-uint64_t Board::find_moves(bool color, int &moves_count) {
+uint64_t Board::find_moves(bool color) {
     uint64_t valid_moves = 0;
     // create new bitmap of empty spaces from our two bitmaps so we do not have to check both for empty spaces
     uint64_t free_spaces = ~(white_bitmap | black_bitmap);
