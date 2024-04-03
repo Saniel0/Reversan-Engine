@@ -37,6 +37,7 @@ void Board::load_start_state() {
 }
 
 void Board::load_test_state() {
+    // random board used to validate functions
     // or operations just for readability
     // static cast so the number is not simple integer - shifting would go out of range
     white_bitmap = static_cast<uint64_t>(0b01000000) << 56 |
@@ -59,6 +60,7 @@ void Board::load_test_state() {
 }
 
 void Board::load_benchmark_state() {
+    // one of the more difficult board states to compute
     // or operations just for readability
     // static cast so the number is not simple integer - shifting would go out of range
     white_bitmap = static_cast<uint64_t>(0b00000001) << 56 |
@@ -95,6 +97,7 @@ uint64_t Board::find_moves(bool color, int &moves_count) {
         opponent = white_bitmap;
     }
 
+    // horizontal
     uint64_t dir_copy;
     uint64_t opponent_adjusted = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
     dir_copy = ((playing << 1) | (playing >> 1)) & opponent_adjusted;
@@ -104,7 +107,7 @@ uint64_t Board::find_moves(bool color, int &moves_count) {
     dir_copy |= ((dir_copy << 1) | (dir_copy >> 1)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 1) | (dir_copy >> 1)) & opponent_adjusted;
     valid_moves |= (dir_copy << 1) | (dir_copy >> 1);
-
+    // diagonal from bottom left to top right
     opponent_adjusted = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
     dir_copy = ((playing << 7) | (playing >> 7)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 7) | (dir_copy >> 7)) & opponent_adjusted;
@@ -113,7 +116,7 @@ uint64_t Board::find_moves(bool color, int &moves_count) {
     dir_copy |= ((dir_copy << 7) | (dir_copy >> 7)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 7) | (dir_copy >> 7)) & opponent_adjusted;
     valid_moves |= (dir_copy << 7) | (dir_copy >> 7);
-
+    // vertical
     dir_copy = ((playing << 8) | (playing >> 8)) & opponent;
     dir_copy |= ((dir_copy << 8) | (dir_copy >> 8)) & opponent;
     dir_copy |= ((dir_copy << 8) | (dir_copy >> 8)) & opponent;
@@ -121,7 +124,7 @@ uint64_t Board::find_moves(bool color, int &moves_count) {
     dir_copy |= ((dir_copy << 8) | (dir_copy >> 8)) & opponent;
     dir_copy |= ((dir_copy << 8) | (dir_copy >> 8)) & opponent;
     valid_moves |= (dir_copy << 8) | (dir_copy >> 8);
-
+    // diagonal from bottom right to top left
     opponent_adjusted = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
     dir_copy = ((playing << 9) | (playing >> 9)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 9) | (dir_copy >> 9)) & opponent_adjusted;
@@ -130,9 +133,8 @@ uint64_t Board::find_moves(bool color, int &moves_count) {
     dir_copy |= ((dir_copy << 9) | (dir_copy >> 9)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 9) | (dir_copy >> 9)) & opponent_adjusted;
     valid_moves |= (dir_copy << 9) | (dir_copy >> 9);
-
+    // mask by free spaces to get the result
     valid_moves &= free_spaces;
-
 
     // valid moves are returned in form of bitmap
     return valid_moves;
