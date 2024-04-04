@@ -1,4 +1,5 @@
 *.gch
 *.out
-main
+reversi
 *.txt
+*.o

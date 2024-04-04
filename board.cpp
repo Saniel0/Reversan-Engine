@@ -1,8 +1,7 @@
 #include <iostream>
 #include <cstdint>
-#include <cstring>
-#include <vector>
-#include "reversi.h"
+
+#include "board.h"
 
 Board::Board() {
     white_bitmap = 0;

@@ -13,7 +13,6 @@ int Reversi::heuristics_map[64] = {100,-15, 10,  5,  5, 10,-15,100,
                                    -15,-30, -2, -2, -2, -2,-30,-15,
                                    100,-15, 10,  5,  5, 10,-15,100};
 
-[[gnu::noinline]]
 int Reversi::heuristics(Board *state, int moves_delta) {
     int score = 0;
     heuristic_count++;
@@ -173,7 +172,6 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
         int moves_black = __builtin_popcountll(state->find_moves(false));
         return heuristics(state, (moves_white - moves_black));
     }
-    int best_move_id = 0;
     uint64_t possible_moves = state->find_moves(cur_color);
     if (cur_color == true) {
         int max_eval = -1000;
