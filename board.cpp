@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdint>
+#include <immintrin.h>
 
 #include "board.h"
 
@@ -96,9 +97,10 @@ uint64_t Board::find_moves(bool color) {
         opponent = white_bitmap;
     }
 
-    // horizontal
+#ifdef NO_SIMD
     uint64_t dir_copy;
     uint64_t opponent_adjusted = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
+    // horizontal
     dir_copy = ((playing << 1) | (playing >> 1)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 1) | (dir_copy >> 1)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 1) | (dir_copy >> 1)) & opponent_adjusted;
@@ -107,7 +109,6 @@ uint64_t Board::find_moves(bool color) {
     dir_copy |= ((dir_copy << 1) | (dir_copy >> 1)) & opponent_adjusted;
     valid_moves |= (dir_copy << 1) | (dir_copy >> 1);
     // diagonal from bottom left to top right
-    opponent_adjusted = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
     dir_copy = ((playing << 7) | (playing >> 7)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 7) | (dir_copy >> 7)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 7) | (dir_copy >> 7)) & opponent_adjusted;
@@ -124,7 +125,6 @@ uint64_t Board::find_moves(bool color) {
     dir_copy |= ((dir_copy << 8) | (dir_copy >> 8)) & opponent;
     valid_moves |= (dir_copy << 8) | (dir_copy >> 8);
     // diagonal from bottom right to top left
-    opponent_adjusted = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
     dir_copy = ((playing << 9) | (playing >> 9)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 9) | (dir_copy >> 9)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 9) | (dir_copy >> 9)) & opponent_adjusted;
@@ -132,9 +132,94 @@ uint64_t Board::find_moves(bool color) {
     dir_copy |= ((dir_copy << 9) | (dir_copy >> 9)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 9) | (dir_copy >> 9)) & opponent_adjusted;
     valid_moves |= (dir_copy << 9) | (dir_copy >> 9);
+#else
+    // same algorithm as non-vectorized code, uses SIMD
+    // to proccess all directions at once
+
+    // could be improved further by using avx512 instructions
+    // to shift all 4 "playing" at once, but I do not have
+    // access to CPU which support it
+
+    // indexes correspond to certain directions:
+    // 0 -> horizontal
+    // 1 -> diagonal from bottom left to top right
+    // 2 -> vertical
+    // 3 -> diagonal from bottom right to top left
+    
+    // adjust opponent bitboards to handle wrap-around
+    uint64_t opponent_adjusted[4];
+    opponent_adjusted[0] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
+    opponent_adjusted[1] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
+    opponent_adjusted[2] = opponent;
+    opponent_adjusted[3] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
+    __m256i mask_vec = _mm256_loadu_si256((__m256i *) opponent_adjusted);
+    
+    // FIRST SHIFT
+    // load data for first left shift
+    uint64_t left_shift[4];
+    left_shift[0] = playing << 1;
+    left_shift[1] = playing << 7;
+    left_shift[2] = playing << 8;
+    left_shift[3] = playing << 9;
+    __m256i left_shift_vec = _mm256_loadu_si256((__m256i *) left_shift);
+    // load data for first right shift
+    uint64_t right_shift[4];
+    right_shift[0] = playing >> 1;
+    right_shift[1] = playing >> 7;
+    right_shift[2] = playing >> 8;
+    right_shift[3] = playing >> 9;
+    __m256i right_shift_vec = _mm256_loadu_si256((__m256i *) right_shift);
+    // compute first iteration
+    __m256i tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
+    __m256i ans_vec = _mm256_and_si256(tmp_or_vec, mask_vec);
+    // load back result
+    uint64_t playing_tmp[4];
+    _mm256_storeu_si256((__m256i *) playing_tmp, ans_vec);
+    __m256i tmp_and_vec;
+
+    // loop through the rest of iterations (5 remaining)
+    for (int i = 0; i < 5; ++i) {
+        // load data for left shift
+        left_shift[0] = playing_tmp[0] << 1;
+        left_shift[1] = playing_tmp[1] << 7;
+        left_shift[2] = playing_tmp[2] << 8;
+        left_shift[3] = playing_tmp[3] << 9;
+        left_shift_vec = _mm256_loadu_si256((__m256i *) left_shift);
+        // load data for right shift
+        right_shift[0] = playing_tmp[0] >> 1;
+        right_shift[1] = playing_tmp[1] >> 7;
+        right_shift[2] = playing_tmp[2] >> 8;
+        right_shift[3] = playing_tmp[3] >> 9;
+        right_shift_vec = _mm256_loadu_si256((__m256i *) right_shift);
+        // compute iteration
+        tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
+        tmp_and_vec = _mm256_and_si256(tmp_or_vec, mask_vec);
+        ans_vec = _mm256_or_si256(ans_vec, tmp_and_vec);
+        // load back result
+        _mm256_storeu_si256((__m256i *) playing_tmp, ans_vec);
+    }
+    
+    // last shift iteration
+    left_shift[0] = playing_tmp[0] << 1;
+    left_shift[1] = playing_tmp[1] << 7;
+    left_shift[2] = playing_tmp[2] << 8;
+    left_shift[3] = playing_tmp[3] << 9;
+    left_shift_vec = _mm256_loadu_si256((__m256i *) left_shift);
+    right_shift[0] = playing_tmp[0] >> 1;
+    right_shift[1] = playing_tmp[1] >> 7;
+    right_shift[2] = playing_tmp[2] >> 8;
+    right_shift[3] = playing_tmp[3] >> 9;
+    right_shift_vec = _mm256_loadu_si256((__m256i *) right_shift);
+    // add valid moves from each directios
+    tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
+    // extract valid_moves data
+    uint64_t valid_moves_data[4];
+    _mm256_storeu_si256((__m256i *) valid_moves_data, tmp_or_vec);
+    // add result from all directions together
+    valid_moves = valid_moves_data[0] | valid_moves_data[1] | valid_moves_data[2] | valid_moves_data[3];
+#endif 
     // mask by free spaces to get the result
     valid_moves &= free_spaces;
-
     // valid moves are returned in form of bitmap
     return valid_moves;
 }

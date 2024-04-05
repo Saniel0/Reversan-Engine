@@ -6,10 +6,11 @@ int main() {
     Reversi *engine = new Reversi();
     
     /*int moves_count = 0;
-    init_board->load_benchmark_state();
-    uint64_t valid_moves = init_board->find_moves(false, moves_count);
-    init_board->print_board_moves(valid_moves);
-    //init_board->print_moves(valid_moves);
+    init_board->load_start_state();
+    uint64_t valid_moves = init_board->find_moves(false);
+    init_board->print_board();
+    //init_board->print_board_moves(valid_moves);
+    init_board->print_moves(valid_moves);
     return 0;*/
 
     /*init_board->load_benchmark_state();
