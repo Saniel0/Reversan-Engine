@@ -1,7 +1,12 @@
 #include <iostream>
+#include <random>
 #include "reversi.h"
 
 int main() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distr(0, 10);
+
     Board *init_board = new Board();
     Reversi *engine = new Reversi();
     
@@ -19,76 +24,54 @@ int main() {
     std::cout << result << '\n';
     return 0;*/
 
-    init_board->load_benchmark_state();
+    /*init_board->load_benchmark_state();
     //init_board->load_start_state();
     init_board->print_board();
-    engine->find_best_move(init_board, false);
-    return 0;
+    engine->find_best_move(init_board, false, 10);
+    return 0;*/
     
     std::cout << "Setting up board.\n";
     init_board->load_start_state();
     init_board->print_board();
 
-    /*int x, y;
-    int moves_count = 0;
-    uint64_t move, valid_moves;
-    bool color = true;
-    while (true) {
-        // human at turn
-        color = !color;
-        valid_moves = init_board->find_moves(color, moves_count);
-        init_board->print_board_moves(valid_moves);
-        std::cout << "Your turn! Select move > ";
-        std::cin >> x;
-        std::cin >> y;
-        move = static_cast<uint64_t>(1) << (63 - (x * 8 + y));
-        if (valid_moves & move) {
-            std::cout << "You played move " << x << ' ' << y << '\n';
-            init_board->play_move(color, move);
-            std::cout << "-------------------------------------------\n";
-        }
-        else {
-            std::cout << "Invalid move! Choose valid move.\n";
-            continue;
-        }
-    }*/
+    int white_score = 0;
+    int black_score = 0;
 
-    /*int x, y;
-    int moves_count = 0;
-    uint64_t move, valid_moves;
-    bool color = true;
+    bool at_turn = false;
+    bool last_moved = true;
     while (true) {
-         // AI at turn
-        std::cout << "AI at turn!\n";
-        valid_moves = init_board->find_moves(false, moves_count);
-        init_board->print_board_moves(valid_moves);
-        move = engine->find_best_move(init_board, false);
-        if (valid_moves & move) {
-            init_board->play_move(false, move);
-            valid_moves = init_board->find_moves(true, moves_count);
-            init_board->print_board_moves(valid_moves);
-            std::cout << "-------------------------------------------\n";
-        }
-        else {
-            std::cout << "ERROR - AI CHOSE INVALID MOVE.\n";
-            return 0;
+        uint64_t possible_moves = init_board->find_moves(at_turn);
+        if (possible_moves == 0) {
+            if (!last_moved) {
+                std::cout << "Game ended\n";
+                int white = __builtin_popcountll(init_board->white_bitmap);
+                int black = __builtin_popcountll(init_board->black_bitmap);
+                if (white > black) {
+                    white_score++;
+                }
+                else if (white < black) {
+                    black_score++;
+                }
+                break;
+            }
+            last_moved = false;
+            at_turn = !at_turn;
         }
 
-        // human at turn
-        //color = !color;
-        valid_moves = init_board->find_moves(true, moves_count);
-        std::cout << "Your turn! Select move > ";
-        std::cin >> x;
-        std::cin >> y;
-        move = static_cast<uint64_t>(1) << (63 - (x * 8 + y));
-        if (valid_moves & move) {
-            std::cout << "You played move " << x << ' ' << y << '\n';
-            init_board->play_move(true, move);
-            std::cout << "-------------------------------------------\n";
+        if (at_turn) {
+            uint64_t move;
+            move = engine->find_best_move(init_board, at_turn, 10);
+            init_board->play_move(at_turn, move);
         }
         else {
-            std::cout << "Invalid move! Choose valid move.\n";
-            continue;
+            uint64_t move;
+            move = engine->find_best_move(init_board, at_turn, 10);
+            init_board->play_move(at_turn, move);
         }
-    }*/
+
+        at_turn = !at_turn;
+        init_board->print_board();
+    }
+
+    std::cout << '\n' << white_score << ' ' << black_score << '\n';
 }

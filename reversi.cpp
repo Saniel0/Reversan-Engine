@@ -1,7 +1,6 @@
 #include "reversi.h"
 #include <algorithm>
 #include <iostream>
-#include <bit>
 #include <immintrin.h>
 
 int Reversi::heuristics_map[64] = {100,-15, 10,  5,  5, 10,-15,100,
@@ -112,10 +111,10 @@ int Reversi::heuristics(Board *state, int moves_delta) {
     return score;
 }
 
-uint64_t Reversi::find_best_move(Board *state, bool color) {
+uint64_t Reversi::find_best_move(Board *state, bool color, int search_depth) {
     heuristic_count = 0;
     state_count = 0;
-    int depth = 10;
+    int depth = search_depth;
     uint64_t best_move = 0;
     uint64_t possible_moves = state->find_moves(color);
 
@@ -159,8 +158,8 @@ uint64_t Reversi::find_best_move(Board *state, bool color) {
         }
         delete next;
     }
-    std::cout << "Went through " << state_count     << " states.\n";
-    std::cout << "Analyzed     " << heuristic_count << " states.\n";
+    //std::cout << "Went through " << state_count     << " states.\n";
+    //std::cout << "Analyzed     " << heuristic_count << " states.\n";
     return best_move;
 }
 

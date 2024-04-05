@@ -1,5 +1,4 @@
 #include <cstdint>
-
 #include "board.h"
 
 class Reversi {
@@ -15,7 +14,7 @@ class Reversi {
         //int heuristics(Board *state, int moves_delta, bool end_board);
 
     public:
-        uint64_t find_best_move(Board *state, bool color);
+        uint64_t find_best_move(Board *state, bool color, int search_depth);
         int heuristics(Board *state, int moves_delta);
 
 };
