@@ -158,8 +158,8 @@ uint64_t Reversi::find_best_move(Board *state, bool color, int search_depth) {
         }
         delete next;
     }
-    //std::cout << "Went through " << state_count     << " states.\n";
-    //std::cout << "Analyzed     " << heuristic_count << " states.\n";
+    std::cout << "Went through " << state_count     << " states.\n";
+    std::cout << "Analyzed     " << heuristic_count << " states.\n";
     return best_move;
 }
 

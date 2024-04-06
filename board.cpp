@@ -235,6 +235,7 @@ void Board::play_move(bool color, uint64_t move) {
         opponent = white_bitmap;
     }
 
+#ifdef NO_SIMD
     auto check_dir = [&](uint64_t col_mask, int shift) {
         bool found = false;
         uint64_t playing_adjusted = playing & col_mask;
@@ -260,7 +261,86 @@ void Board::play_move(bool color, uint64_t move) {
     check_dir(RIGHT_COL_MASK, 1); // right
     check_dir(LEFT_COL_MASK , 7); // bottom left
     check_dir(NO_COL_MASK   , 8); // bottom
-    check_dir(RIGHT_COL_MASK, 9); // bottom right
+    check_dir(RIGHT_COL_MASK, 9); // bottom right*/
+#else
+    // adjust opponent bitboards to handle wrap-around
+    uint64_t opponent_adjusted[4];
+    opponent_adjusted[0] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
+    opponent_adjusted[1] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
+    opponent_adjusted[2] = opponent;
+    opponent_adjusted[3] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
+    
+    __m256i opponent_adjusted_vec = _mm256_loadu_si256((__m256i *) opponent_adjusted);
+    __m256i opponent_vec = _mm256_set1_epi64x(opponent);
+    __m256i playing_vec = _mm256_set1_epi64x(playing);
+    __m256i compare_vec = _mm256_set1_epi64x(0);
+
+    // load data for first left shift
+    uint64_t left_shift[4];
+    left_shift[0] = move << 1;
+    left_shift[1] = move << 7;
+    left_shift[2] = move << 8;
+    left_shift[3] = move << 9;
+    __m256i left_shift_vec = _mm256_loadu_si256((__m256i *) left_shift);
+    // load data for first right shift
+    uint64_t right_shift[4];
+    right_shift[0] = move >> 1;
+    right_shift[1] = move >> 7;
+    right_shift[2] = move >> 8;
+    right_shift[3] = move >> 9;
+    __m256i right_shift_vec = _mm256_loadu_si256((__m256i *) right_shift);
+    // compute
+    left_shift_vec = _mm256_and_si256(left_shift_vec, opponent_adjusted_vec);
+    right_shift_vec = _mm256_and_si256(right_shift_vec, opponent_adjusted_vec);
+    // load back result
+    uint64_t playing_tmp_left[4];
+    uint64_t playing_tmp_right[4];
+
+    __m256i friendly_left_check = _mm256_set1_epi64x(0);
+    __m256i friendly_right_check = _mm256_set1_epi64x(0);
+    __m256i left_shift_vec_next;
+    __m256i right_shift_vec_next;
+    
+    for (int i = 0; i < 6; ++i) {
+        _mm256_storeu_si256((__m256i *) playing_tmp_left, left_shift_vec);
+        _mm256_storeu_si256((__m256i *) playing_tmp_right, right_shift_vec);
+
+        left_shift[0] = playing_tmp_left[0] << 1;
+        left_shift[1] = playing_tmp_left[1] << 7;
+        left_shift[2] = playing_tmp_left[2] << 8;
+        left_shift[3] = playing_tmp_left[3] << 9;
+        left_shift_vec_next = _mm256_loadu_si256((__m256i *) left_shift);
+
+        right_shift[0] = playing_tmp_right[0] >> 1;
+        right_shift[1] = playing_tmp_right[1] >> 7;
+        right_shift[2] = playing_tmp_right[2] >> 8;
+        right_shift[3] = playing_tmp_right[3] >> 9;
+        right_shift_vec_next = _mm256_loadu_si256((__m256i *) right_shift);
+
+        left_shift_vec = _mm256_or_si256(left_shift_vec, left_shift_vec_next);
+        right_shift_vec = _mm256_or_si256(right_shift_vec, right_shift_vec_next);
+        left_shift_vec = _mm256_and_si256(left_shift_vec, opponent_adjusted_vec);
+        right_shift_vec = _mm256_and_si256(right_shift_vec, opponent_adjusted_vec);
+    }
+
+    friendly_left_check = _mm256_and_si256(left_shift_vec_next, playing_vec);
+    friendly_right_check = _mm256_and_si256(right_shift_vec_next, playing_vec);
+    friendly_left_check = _mm256_cmpeq_epi64(friendly_left_check, compare_vec);
+    friendly_right_check = _mm256_cmpeq_epi64(friendly_right_check, compare_vec);
+    __m256i capture_left_vec = _mm256_andnot_si256(friendly_left_check, left_shift_vec);
+    __m256i capture_right_vec = _mm256_andnot_si256(friendly_right_check, right_shift_vec);
+    opponent_vec = _mm256_xor_si256(opponent_vec, capture_left_vec);
+    opponent_vec = _mm256_xor_si256(opponent_vec, capture_right_vec);
+    playing_vec = _mm256_or_si256(playing_vec, capture_left_vec);
+    playing_vec = _mm256_or_si256(playing_vec, capture_right_vec);
+
+    uint64_t playing_data[4];
+    uint64_t opponent_data[4];
+    _mm256_storeu_si256((__m256i *) playing_data, playing_vec);
+    _mm256_storeu_si256((__m256i *) opponent_data, opponent_vec);
+    playing = playing_data[0] | playing_data[1] | playing_data[2] | playing_data[3] | move;
+    opponent = opponent_data[0] & opponent_data[1] & opponent_data[2] & opponent_data[3];
+#endif
 
     if (color) {
         white_bitmap = playing;

@@ -3,32 +3,21 @@
 #include "reversi.h"
 
 int main() {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(0, 10);
-
     Board *init_board = new Board();
     Reversi *engine = new Reversi();
-    
-    /*int moves_count = 0;
-    init_board->load_start_state();
-    uint64_t valid_moves = init_board->find_moves(false);
-    init_board->print_board();
-    //init_board->print_board_moves(valid_moves);
-    init_board->print_moves(valid_moves);
-    return 0;*/
 
     /*init_board->load_benchmark_state();
     init_board->print_board();
-    int result = engine->heuristics(init_board, 0, false);
-    std::cout << result << '\n';
+    init_board->play_move(false, 1 << 5);
+    init_board->print_moves(init_board->white_bitmap);
+    init_board->print_moves(init_board->black_bitmap);
+    init_board->print_board();
     return 0;*/
 
-    /*init_board->load_benchmark_state();
-    //init_board->load_start_state();
+    init_board->load_benchmark_state();
     init_board->print_board();
     engine->find_best_move(init_board, false, 10);
-    return 0;*/
+    return 0;
     
     std::cout << "Setting up board.\n";
     init_board->load_start_state();
