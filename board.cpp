@@ -1,8 +1,11 @@
 #include <iostream>
 #include <cstdint>
-#include <immintrin.h>
 
 #include "board.h"
+
+#ifndef NO_SIMD
+#include <immintrin.h>
+#endif
 
 Board::Board() {
     white_bitmap = 0;

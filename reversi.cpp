@@ -1,7 +1,10 @@
 #include "reversi.h"
 #include <algorithm>
 #include <iostream>
+
+#ifndef NO_SIMD
 #include <immintrin.h>
+#endif
 
 int Reversi::heuristics_map[64] = {100,-15, 10,  5,  5, 10,-15,100,
                                    -15,-30, -2, -2, -2, -2,-30,-15,
