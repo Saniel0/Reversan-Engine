@@ -454,6 +454,25 @@ void Board::play_move(bool color, uint64_t move) {
     }
 }
 
+uint64_t Board::hash() {
+    // Murmur hash of white
+    uint64_t w = white_bitmap;
+    w ^= w >> 33;
+    w *= 0xff51afd7ed558ccd;
+    w ^= w >> 33;
+    w *= 0xc4ceb9fe1a85ec53;
+    w ^= w >> 33;
+    // Murmur hash of black
+    uint64_t b = black_bitmap;
+    b ^= b >> 33;
+    b *= 0xff51afd7ed558ccd;
+    b ^= b >> 33;
+    b *= 0xc4ceb9fe1a85ec53;
+    b ^= b >> 33;
+    // Combine white and black hashes
+    return w ^ b;
+}
+
 void Board::print_board() {
     uint64_t bit_mask = static_cast<uint64_t>(1) << 63;
     std::cout << "\033[1m  0 1 2 3 4 5 6 7\n\033[0m";

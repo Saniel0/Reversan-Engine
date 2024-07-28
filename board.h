@@ -32,6 +32,7 @@ class Board {
         uint64_t find_moves(bool color);
         void play_move(bool color, uint64_t move);
         void copy_state(Board *state);
+        uint64_t hash();
         
         // functions to load some default boards
         void load_start_state();

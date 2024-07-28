@@ -90,7 +90,7 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
         return state->rate_board();
     }
     if (depth > 1) {
-        hash = hash_combine(state->white_bitmap, state->black_bitmap);
+        hash = state->hash();
         if (transpositionTable.find(hash) != transpositionTable.end()) {
             return transpositionTable[hash];
         }
