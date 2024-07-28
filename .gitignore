@@ -3,3 +3,4 @@
 reversi
 *.txt
 *.o
+.vscode

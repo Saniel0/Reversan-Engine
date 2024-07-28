@@ -85,6 +85,105 @@ void Board::load_benchmark_state() {
                    static_cast<uint64_t>(0b00000000);
 }
 
+int Board::rate_board() {
+    int score = 0;
+    
+#ifdef NO_SIMD
+    for (int i = 0; i < 64; ++i) {
+        score += ((state->white_bitmap >> i) & 1) * heuristics_map[i];
+        score -= ((state->black_bitmap >> i) & 1) * heuristics_map[i];
+    }
+#else
+    // the goal is to manipulate the bitmap to get 256bit vector containing
+    // 8bit signed integers, each representing one position on a board
+    
+    // 8bit * 64 = 512bit, so the board does not fit into
+    // one 256bit vector, solved by splitting board in half
+    
+    uint64_t white_bitmaps1[4]; // first set of vectors, right half of the board
+    uint64_t black_bitmaps1[4];
+    // shift column we want to proccess into the rightest position (column 7)
+    white_bitmaps1[0] = white_bitmap; // column 7
+    black_bitmaps1[0] = black_bitmap;
+    white_bitmaps1[1] = (white_bitmap >> 1); // column 6
+    black_bitmaps1[1] = (black_bitmap >> 1);
+    white_bitmaps1[2] = (white_bitmap >> 2); // column 5
+    black_bitmaps1[2] = (black_bitmap >> 2);
+    white_bitmaps1[3] = (white_bitmap >> 3); // column 4
+    black_bitmaps1[3] = (black_bitmap >> 3);
+
+    uint64_t white_bitmaps2[4]; // second set of vectors, left half of the board
+    uint64_t black_bitmaps2[4];
+    white_bitmaps2[0] = (white_bitmap >> 4); // column 3
+    black_bitmaps2[0] = (black_bitmap >> 4);
+    white_bitmaps2[1] = (white_bitmap >> 5); // column 2
+    black_bitmaps2[1] = (black_bitmap >> 5);
+    white_bitmaps2[2] = (white_bitmap >> 6); // column 1
+    black_bitmaps2[2] = (black_bitmap >> 6);
+    white_bitmaps2[3] = (white_bitmap >> 7); // column 0
+    black_bitmaps2[3] = (black_bitmap >> 7);
+
+    // load heuristic matrix values into corresponding positions
+    int64_t heur_map1[4];
+    heur_map1[0] = 0x64f10a05050af164; // column 7
+    heur_map1[1] = 0xf1e2fefefefee2f1; // column 6
+    heur_map1[2] = 0x0afe01ffff01fe0a; // column 5
+    heur_map1[3] = 0x05fefffffffffe05; // column 4
+
+    int64_t heur_map2[4];
+    heur_map2[0] = 0x05fefffffffffe05; // column 3
+    heur_map2[1] = 0x0afe01ffff01fe0a; // column 2
+    heur_map2[2] = 0xf1e2fefefefee2f1; // column 1
+    heur_map2[3] = 0x64f10a05050af164; // column 0
+
+    // load data into vector registeres
+    __m256i heur_vec1 = _mm256_loadu_si256((__m256i *) heur_map1);
+    __m256i heur_vec2 = _mm256_loadu_si256((__m256i *) heur_map2);
+    __m256i white_vec1 = _mm256_loadu_si256((__m256i *) white_bitmaps1);
+    __m256i white_vec2 = _mm256_loadu_si256((__m256i *) white_bitmaps2);
+    __m256i black_vec1 = _mm256_loadu_si256((__m256i *) black_bitmaps1);
+    __m256i black_vec2 = _mm256_loadu_si256((__m256i *) black_bitmaps2);
+
+    // mask out everything except the right column 
+    __m256i mask_vec = _mm256_set1_epi64x(0x0101010101010101);
+    white_vec1 = _mm256_and_si256(white_vec1, mask_vec);
+    white_vec2 = _mm256_and_si256(white_vec2, mask_vec);
+    black_vec1 = _mm256_and_si256(black_vec1, mask_vec);
+    black_vec2 = _mm256_and_si256(black_vec2, mask_vec);
+
+    // at this point white_vec1/white_vec2/black_vec1/black_ve2
+    // are either 0b00000000 or 0b00000001, which is used in multiplication
+    // with heuristic values to get the score efficiently
+
+    // multiply board vectors with heuristics vectors and partially add the results together
+    // multiply two corresponding 8bit signed integers
+    __m256i result_white1 = _mm256_maddubs_epi16(white_vec1, heur_vec1);
+    __m256i result_white2 = _mm256_maddubs_epi16(white_vec2, heur_vec2);
+    __m256i result_black1 = _mm256_maddubs_epi16(black_vec1, heur_vec1);
+    __m256i result_black2 = _mm256_maddubs_epi16(black_vec2, heur_vec2);
+
+    // join the results of the two halves
+    __m256i result_white_joined = _mm256_add_epi16(result_white1, result_white2);
+    __m256i result_black_joined = _mm256_add_epi16(result_black1, result_black2);
+
+    // subtract black score from white score
+    __m256i result_vec = _mm256_sub_epi16(result_white_joined, result_black_joined);
+
+    // create data_out array
+    int16_t int_result[16];
+    _mm256_storeu_si256((__m256i *) int_result, result_vec); // extract vector result into the array
+
+    // sum all 16bit parts
+    for (int i = 0; i < 16; ++i) {
+        score += static_cast<int>(int_result[i]);
+    }
+#endif
+    
+    int moves_delta = __builtin_popcountll(find_moves(true)) - __builtin_popcountll(find_moves(false));
+    score += 10 * moves_delta;
+    return score;
+}
+
 uint64_t Board::find_moves(bool color) {
     uint64_t valid_moves = 0;
     // create new bitmap of empty spaces from our two bitmaps so we do not have to check both for empty spaces
