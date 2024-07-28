@@ -90,8 +90,8 @@ int Board::rate_board() {
     
 #ifdef NO_SIMD
     for (int i = 0; i < 64; ++i) {
-        score += ((state->white_bitmap >> i) & 1) * heuristics_map[i];
-        score -= ((state->black_bitmap >> i) & 1) * heuristics_map[i];
+        score += ((white_bitmap >> i) & 1) * heuristics_map[i];
+        score -= ((black_bitmap >> i) & 1) * heuristics_map[i];
     }
 #else
     // the goal is to manipulate the bitmap to get 256bit vector containing
