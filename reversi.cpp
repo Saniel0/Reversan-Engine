@@ -2,28 +2,12 @@
 #include <algorithm>
 #include <iostream>
 #include <unordered_map>
-#include <list>
 
 #ifndef NO_SIMD
 #include <immintrin.h>
 #endif
 
 std::unordered_map<uint64_t, int> transpositionTable;
-
-uint64_t MurmurHash3(uint64_t key) {
-    key ^= key >> 33;
-    key *= 0xff51afd7ed558ccd;
-    key ^= key >> 33;
-    key *= 0xc4ceb9fe1a85ec53;
-    key ^= key >> 33;
-    return key;
-}
-
-uint64_t hash_combine(uint64_t a, uint64_t b) {
-    uint64_t hash_a = MurmurHash3(a);
-    uint64_t hash_b = MurmurHash3(b);
-    return hash_a ^ hash_b;
-}
 
 uint64_t Reversi::find_best_move(Board *state, bool color, int search_depth) {
     heuristic_count = 0;
