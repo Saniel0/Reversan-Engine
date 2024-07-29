@@ -6,6 +6,21 @@ int main() {
     Board *init_board = new Board();
     Reversi *engine = new Reversi();
 
+    init_board->load_start_state();
+    uint64_t next_move;
+    bool colour = false;
+    while ((next_move = engine->find_best_move(init_board, colour, 10)) != 0) {
+        init_board->play_move(colour, next_move);
+        //init_board->print_board();
+        if (colour) {
+            colour = false;
+        }
+        else {
+            colour = true;
+        }
+    }
+    init_board->print_board();
+    return 0;
     /*init_board->load_benchmark_state();
     init_board->print_board();
     init_board->play_move(false, 1 << 5);

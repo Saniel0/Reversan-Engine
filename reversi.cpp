@@ -7,9 +7,15 @@
 #include <immintrin.h>
 #endif
 
-std::unordered_map<uint64_t, int> transpositionTable;
+struct SSS {
+    int score;
+    int type;
+};
+
+std::unordered_map<uint64_t, SSS> transpositionTable;
 
 uint64_t Reversi::find_best_move(Board *state, bool color, int search_depth) {
+    transpositionTable.clear();
     heuristic_count = 0;
     state_count = 0;
     int depth = search_depth;
@@ -66,17 +72,28 @@ uint64_t Reversi::find_best_move(Board *state, bool color, int search_depth) {
 }
 
 int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
-    uint64_t hash;
+    int ogalpha = alpha;
+    int ogbeta = beta;
+    uint64_t hash = 0;
     state_count++;
     // reach max depth
     if (depth == 0) {
         heuristic_count++;
         return state->rate_board();
     }
-    if (depth > 1) {
+    if (depth > 2) {
         hash = state->hash();
         if (transpositionTable.find(hash) != transpositionTable.end()) {
-            return transpositionTable[hash];
+            SSS s = transpositionTable[hash];
+            if (s.type == 0) {
+                return s.score;
+            }
+            if (s.type == 1 && s.score >= beta) {
+                return beta;
+            }
+            if (s.type == 2 && s.score <= alpha) {
+                return alpha;
+            }
         }
     }
     uint64_t possible_moves = state->find_moves(cur_color);
@@ -111,8 +128,21 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
             }
             delete next;
         }
-        if (depth > 1) {
-            transpositionTable[hash] = max_eval;
+        if (depth > 2) {
+            SSS s;
+            if (max_eval <= ogalpha) {
+                s.type = 2;
+                s.score = max_eval;
+            }
+            else if (max_eval >= ogbeta) {
+                s.type = 1;
+                s.score = max_eval;
+            }
+            else {
+                s.type = 0;
+                s.score = max_eval;
+            }
+            transpositionTable[hash] = s;
         }
         return max_eval;
     }
@@ -147,8 +177,21 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
             }
             delete next;
         }
-        if (depth > 1) {
-            transpositionTable[hash] = min_eval;
+        if (depth > 2) {
+            SSS s;
+            if (min_eval <= ogalpha) {
+                s.type = 2;
+                s.score = min_eval;
+            }
+            else if (min_eval >= ogbeta) {
+                s.type = 1;
+                s.score = min_eval;
+            }
+            else {
+                s.type = 0;
+                s.score = min_eval;
+            }
+            transpositionTable[hash] = s;
         }
         return min_eval;
     }
