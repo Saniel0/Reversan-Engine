@@ -15,6 +15,4 @@ class Reversi {
 
     public:
         uint64_t find_best_move(Board *state, bool color, int search_depth);
-        int heuristics(Board *state, int moves_delta);
-
 };
