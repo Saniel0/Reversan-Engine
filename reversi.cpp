@@ -147,8 +147,8 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
     int eval;
     if (possible_moves == 0) {
         if (end_board) {
-            int moves_white = __builtin_popcountll(state->find_moves(true));
-            int moves_black = __builtin_popcountll(state->find_moves(false));
+            int moves_white = __builtin_popcountll(state->white_bitmap);
+            int moves_black = __builtin_popcountll(state->black_bitmap);
             if (moves_white > moves_black) {eval = 999;}
             else if (moves_white < moves_black) {eval = -999;}
             else {eval = 0;}
@@ -301,8 +301,8 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
     int eval;
     if (possible_moves == 0) {
         if (end_board) {
-            int moves_white = __builtin_popcountll(state->find_moves(true));
-            int moves_black = __builtin_popcountll(state->find_moves(false));
+            int moves_white = __builtin_popcountll(state->white_bitmap);
+            int moves_black = __builtin_popcountll(state->black_bitmap);
             if (moves_white > moves_black) {eval = 999;}
             else if (moves_white < moves_black) {eval = -999;}
             else {eval = 0;}
