@@ -1,3 +1,6 @@
+#ifndef BOARD_H
+#define BOARD_H
+
 #include <cstdint>
 
 class Board {
@@ -39,3 +42,5 @@ class Board {
         void load_test_state();
         void load_benchmark_state();
 };
+
+#endif
