@@ -8,7 +8,7 @@ void run_bench() {
     Reversi *engine = new Reversi();
     init_board->load_benchmark_state();
     init_board->print_board();
-    engine->find_best_move(init_board, false, 10);
+    engine->start_negascout(init_board, false, 10);
 }
 
 void run_bot_vs_bot_bench() {
@@ -17,7 +17,7 @@ void run_bot_vs_bot_bench() {
     init_board->load_start_state();
     uint64_t next_move;
     bool colour = false;
-    while ((next_move = engine->find_best_move(init_board, colour, 10)) != 0) {
+    while ((next_move = engine->start_negascout(init_board, colour, 10)) != 0) {
         init_board->play_move(colour, next_move);
         if (colour) {
             colour = false;
@@ -76,7 +76,7 @@ void play_against_bot() {
         }
         else {
             uint64_t move;
-            move = engine->find_best_move(current_board, at_turn, 10);
+            move = engine->start_negascout(current_board, at_turn, 10);
             last_board->copy_state(current_board);
             current_board->play_move(at_turn, move);
         }
@@ -87,6 +87,8 @@ void play_against_bot() {
 
 int main() {
     print_title_blur();
-    play_against_bot();
+    //play_against_bot();
+    //run_bench();
+    run_bot_vs_bot_bench();
     return 0;
 }

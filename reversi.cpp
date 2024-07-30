@@ -16,57 +16,6 @@ struct SSS {
 
 std::unordered_map<uint64_t, SSS> transpositionTable;
 
-uint64_t Reversi::find_best_move(Board *state, bool color, int depth) {
-    transpositionTable.clear();
-    heuristic_count = 0;
-    state_count = 0;
-    uint64_t best_move = 0;
-    uint64_t possible_moves = state->find_moves(color);
-
-    int alpha = -1000;
-    int beta = 1000;
-    int eval;
-    int best_eval;
-    Board *next = new Board();
-    
-    if (color == true && possible_moves != 0) {
-        best_eval = -1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
-            if (possible_moves & move) {
-                next->copy_state(state);
-                next->play_move(color, move);
-                eval = negascout(next, depth-1, !color, alpha, beta, false);
-                if (eval > best_eval) {
-                    best_move = move;
-                    best_eval = eval;
-                }
-                alpha = std::max(eval, alpha);
-            }
-        }
-    }
-    else if (color == false && possible_moves != 0) {
-        best_eval = 1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
-            if ((possible_moves & move) != 0) {
-                next->copy_state(state);
-                next->play_move(color, move);
-                eval = negascout(next, depth-1, !color, alpha, beta, false);
-                if (eval < best_eval) {
-                    best_move = move;
-                    best_eval = eval;
-                }
-                beta = std::min(eval, beta);
-            }
-        }
-    }
-    delete next;
-
-    std::cout << "Went through " << state_count     << " states.\n";
-    std::cout << "Analyzed     " << heuristic_count << " states.\n";
-    std::cout << best_eval << '\n';
-    return best_move;
-}
-
 int retrieve_score(uint64_t hash, int alpha, int beta) {
     if (transpositionTable.find(hash) != transpositionTable.end()) {
         SSS s = transpositionTable[hash];
@@ -96,6 +45,80 @@ void save_score(uint64_t hash, int score, int alpha, int beta) {
         s.type = 0;
     }
     transpositionTable[hash] = s;
+}
+
+uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
+    transpositionTable.clear();
+    heuristic_count = 0;
+    state_count = 0;
+    uint64_t best_move = 0;
+    uint64_t possible_moves = state->find_moves(color);
+
+    int alpha = -1000;
+    int beta = 1000;
+    int eval;
+    int best_eval;
+    bool first = true;
+    Board *next = new Board();
+    
+    if (color == true && possible_moves != 0) {
+        best_eval = -1000;
+        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+            if (possible_moves & move) {
+                next->copy_state(state);
+                next->play_move(color, move);
+                
+                if (first) { // run first move with whole window
+                    eval = negascout(next, depth-1, !color, alpha, beta, false);
+                    first = false;
+                }
+                else {
+                    eval = negascout(next, depth-1, !color, alpha, alpha+1, false); // minimize search window
+                    if (eval > alpha && eval < beta) { // if we missed the window and there might still be better move, rerun
+                        eval = negascout(next, depth-1, !color, eval, beta, false);
+                    }
+                }
+
+                if (eval > best_eval) {
+                    best_move = move;
+                    best_eval = eval;
+                }
+                alpha = std::max(eval, alpha);
+            }
+        }
+    }
+    else if (color == false && possible_moves != 0) {
+        best_eval = 1000;
+        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+            if ((possible_moves & move) != 0) {
+                next->copy_state(state);
+                next->play_move(color, move);
+                
+                if (first) { // run first move with whole window
+                    eval = negascout(next, depth-1, !color, alpha, beta, false);
+                    first = false;
+                }
+                else {
+                    eval = negascout(next, depth-1, !color, beta-1, beta, false); // minimize search window
+                    if (eval < beta && eval > alpha) { // if we missed the window and there might still be better move, rerun
+                        eval = negascout(next, depth-1, !color, alpha, eval, false);
+                    }
+                }
+
+                if (eval < best_eval) {
+                    best_move = move;
+                    best_eval = eval;
+                }
+                beta = std::min(eval, beta);
+            }
+        }
+    }
+    delete next;
+
+    std::cout << "Went through " << state_count     << " states.\n";
+    std::cout << "Analyzed     " << heuristic_count << " states.\n";
+    std::cout << best_eval << '\n';
+    return best_move;
 }
 
 int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
@@ -199,6 +222,57 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
 
     delete next;
     return best_eval;
+}
+
+uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
+    transpositionTable.clear();
+    heuristic_count = 0;
+    state_count = 0;
+    uint64_t best_move = 0;
+    uint64_t possible_moves = state->find_moves(color);
+
+    int alpha = -1000;
+    int beta = 1000;
+    int eval;
+    int best_eval;
+    Board *next = new Board();
+    
+    if (color == true && possible_moves != 0) {
+        best_eval = -1000;
+        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+            if (possible_moves & move) {
+                next->copy_state(state);
+                next->play_move(color, move);
+                eval = minimax(next, depth-1, !color, alpha, beta, false);
+                if (eval > best_eval) {
+                    best_move = move;
+                    best_eval = eval;
+                }
+                alpha = std::max(eval, alpha);
+            }
+        }
+    }
+    else if (color == false && possible_moves != 0) {
+        best_eval = 1000;
+        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+            if ((possible_moves & move) != 0) {
+                next->copy_state(state);
+                next->play_move(color, move);
+                eval = minimax(next, depth-1, !color, alpha, beta, false);
+                if (eval < best_eval) {
+                    best_move = move;
+                    best_eval = eval;
+                }
+                beta = std::min(eval, beta);
+            }
+        }
+    }
+    delete next;
+
+    std::cout << "Went through " << state_count     << " states.\n";
+    std::cout << "Analyzed     " << heuristic_count << " states.\n";
+    std::cout << best_eval << '\n';
+    return best_move;
 }
 
 int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {

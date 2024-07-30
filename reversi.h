@@ -18,7 +18,8 @@ class Reversi {
         //int heuristics(Board *state, int moves_delta, bool end_board);
 
     public:
-        uint64_t find_best_move(Board *state, bool color, int search_depth);
+        uint64_t start_negascout(Board *state, bool color, int search_depth);
+        uint64_t start_minimax(Board *state, bool color, int search_depth);
 };
 
 #endif
