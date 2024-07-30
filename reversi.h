@@ -10,6 +10,7 @@ class Reversi {
         // heuristics for board evaluation
         static int heuristics_map[64];
         
+        int negascout(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board);
         int minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board);
         //int heuristics(Board *state, int moves_delta, bool end_board);
 
