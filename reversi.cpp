@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <unordered_map>
+#include <cstring>
 
 #ifndef NO_SIMD
 #include <immintrin.h>
@@ -13,6 +14,30 @@ struct SSS {
     int score;
     int type;
 };
+
+uint64_t calc(int x, int y) {
+    return 1L << (63 - (y*8 + x));
+}
+
+Reversi::Reversi() {
+    // setup move order - can affect performance greatly
+    uint64_t order[64] = {
+        calc(0,0), calc(7,0), calc(0,7), calc(7,7), // check corners first
+        calc(2,0), calc(5,0), calc(0,2), calc(7,2), calc(0,5), calc(7,5), calc(2,7), calc(5,7), // check along corners
+        calc(3,0), calc(4,0), calc(0,3), calc(7,3), calc(0,4), calc(7,4), calc(3,7), calc(4,7), // check along corners
+        calc(1,0), calc(6,0), calc(0,1), calc(7,1), calc(0,6), calc(7,6), calc(1,7), calc(6,7) // check along corners
+    };
+    // go through rest line by line
+    int idj = 28;
+    for (int i = 1; i < 7; ++i) {
+        for (int j = 1; j < 7; ++j) {
+            order[idj] = calc(j, i);
+            idj++;
+        }
+    }
+    // copy order into move_order
+    std::memcpy(move_order, order, 64 * sizeof(uint64_t));
+}
 
 std::unordered_map<uint64_t, SSS> transpositionTable;
 
@@ -63,7 +88,7 @@ uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
     
     if (color == true && possible_moves != 0) {
         best_eval = -1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+        for (uint64_t move : move_order) {
             if (possible_moves & move) {
                 next->copy_state(state);
                 next->play_move(color, move);
@@ -89,7 +114,7 @@ uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
     }
     else if (color == false && possible_moves != 0) {
         best_eval = 1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+        for (uint64_t move : move_order) {
             if ((possible_moves & move) != 0) {
                 next->copy_state(state);
                 next->play_move(color, move);
@@ -118,6 +143,8 @@ uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
     std::cout << "Went through " << state_count     << " states.\n";
     std::cout << "Analyzed     " << heuristic_count << " states.\n";
     std::cout << best_eval << '\n';
+    //state->print_moves(best_move);
+    //std::cout << '\n';
     return best_move;
 }
 
@@ -164,7 +191,7 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
     Board *next = new Board();
     if (cur_color == true) {
         best_eval = -1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+        for (uint64_t move : move_order) {
             if (possible_moves & move) {
                 next->copy_state(state);
                 next->play_move(cur_color, move);
@@ -190,7 +217,7 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
     }
     else {
         best_eval = 1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+        for (uint64_t move : move_order) {
             if (possible_moves & move) {
                 next->copy_state(state);
                 next->play_move(cur_color, move);
@@ -239,7 +266,7 @@ uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
     
     if (color == true && possible_moves != 0) {
         best_eval = -1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+        for (uint64_t move : move_order) {
             if (possible_moves & move) {
                 next->copy_state(state);
                 next->play_move(color, move);
@@ -254,7 +281,7 @@ uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
     }
     else if (color == false && possible_moves != 0) {
         best_eval = 1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+        for (uint64_t move : move_order) {
             if ((possible_moves & move) != 0) {
                 next->copy_state(state);
                 next->play_move(color, move);
@@ -317,7 +344,7 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
     Board *next = new Board();
     if (cur_color == true) {
         best_eval = -1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+        for (uint64_t move : move_order) {
             if (possible_moves & move) {
                 next->copy_state(state);
                 next->play_move(cur_color, move);
@@ -332,7 +359,7 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
     }
     else {
         best_eval = 1000;
-        for (uint64_t move = static_cast<uint64_t>(1) << 63; move != 0; move >>= 1) {
+        for (uint64_t move : move_order) {
             if (possible_moves & move) {
                 next->copy_state(state);
                 next->play_move(cur_color, move);
