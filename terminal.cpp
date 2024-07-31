@@ -1,5 +1,5 @@
-#include <iostream>
 #include "terminal.h"
+#include <iostream>
 
 void print_title_blur() {
     std::cout << "░▒▓███████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░▒▓█▓▒░\n";
