@@ -1,7 +1,6 @@
 #include "reversi.h"
 #include <algorithm>
 #include <iostream>
-#include <unordered_map>
 #include <cstring>
 
 #ifndef NO_SIMD

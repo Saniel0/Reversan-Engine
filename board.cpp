@@ -1,7 +1,5 @@
-#include <iostream>
-#include <cstdint>
-
 #include "board.h"
+#include <iostream>
 
 #ifndef NO_SIMD
 #include <immintrin.h>
