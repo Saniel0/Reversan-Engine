@@ -8,13 +8,6 @@
 #include <immintrin.h>
 #endif
 
-#define NONE 1111
-
-struct SSS {
-    int score;
-    int type;
-};
-
 uint64_t calc(int x, int y) {
     return 1L << (63 - (y*8 + x));
 }
@@ -39,41 +32,8 @@ Reversi::Reversi() {
     std::memcpy(move_order, order, 64 * sizeof(uint64_t));
 }
 
-std::unordered_map<uint64_t, SSS> transpositionTable;
-
-int retrieve_score(uint64_t hash, int alpha, int beta) {
-    if (transpositionTable.find(hash) != transpositionTable.end()) {
-        SSS s = transpositionTable[hash];
-        if (s.type == 0) {
-            return s.score;
-        }
-        if (s.type == 1 && s.score >= beta) {
-            return beta;
-        }
-        if (s.type == 2 && s.score <= alpha) {
-            return alpha;
-        }
-    }
-    return NONE;
-}
-
-void save_score(uint64_t hash, int score, int alpha, int beta) {
-    SSS s;
-    s.score = score;
-    if (score <= alpha) {
-        s.type = 2;
-    }
-    else if (score >= beta) {
-        s.type = 1;
-    }
-    else {
-        s.type = 0;
-    }
-    transpositionTable[hash] = s;
-}
-
 uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
-    transpositionTable.clear();
+    transposition_table.clear();
     heuristic_count = 0;
     state_count = 0;
     uint64_t best_move = 0;
@@ -163,8 +123,8 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
     // check if state was already calculated
     if (depth > 2) {
         hash = state->hash();
-        int score = retrieve_score(hash, alpha, beta);
-        if (score != NONE) {
+        int score = transposition_table.get(hash, alpha, beta);
+        if (score != NOT_FOUND) {
             return score;
         }
     }
@@ -244,7 +204,7 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
     
     // save the score for future
     if (depth > 2) {
-        save_score(hash, best_eval, init_alpha, init_beta);
+        transposition_table.insert(hash, best_eval, init_alpha, init_beta);
     }
 
     delete next;
@@ -252,7 +212,7 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
 }
 
 uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
-    transpositionTable.clear();
+    transposition_table.clear();
     heuristic_count = 0;
     state_count = 0;
     uint64_t best_move = 0;
@@ -317,8 +277,8 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
     // check if state was already calculated
     if (depth > 2) {
         hash = state->hash();
-        int score = retrieve_score(hash, alpha, beta);
-        if (score != NONE) {
+        int score = transposition_table.get(hash, alpha, beta);
+        if (score != NOT_FOUND) {
             return score;
         }
     }
@@ -375,7 +335,7 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
     
     // save the score for future
     if (depth > 2) {
-        save_score(hash, best_eval, init_alpha, init_beta);
+        transposition_table.insert(hash, best_eval, init_alpha, init_beta);
     }
     
     delete next;

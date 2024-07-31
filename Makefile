@@ -6,7 +6,7 @@ LINKER_FLAGS =
 
 MACROS =
 
-SOURCES = main.cpp board.cpp reversi.cpp terminal.cpp
+SOURCES = main.cpp board.cpp reversi.cpp terminal.cpp transposition_table.cpp
 OBJECTS += $(filter %.o,$(SOURCES:%.cpp=%.o))
 TARGET_EXE = reversi
 
