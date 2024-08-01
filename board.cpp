@@ -97,29 +97,6 @@ int Board::rate_board() {
     
     // 8bit * 64 = 512bit, so the board does not fit into
     // one 256bit vector, solved by splitting board in half
-    
-    uint64_t white_bitmaps1[4]; // first set of vectors, right half of the board
-    uint64_t black_bitmaps1[4];
-    // shift column we want to proccess into the rightest position (column 7)
-    white_bitmaps1[0] = white_bitmap; // column 7
-    black_bitmaps1[0] = black_bitmap;
-    white_bitmaps1[1] = (white_bitmap >> 1); // column 6
-    black_bitmaps1[1] = (black_bitmap >> 1);
-    white_bitmaps1[2] = (white_bitmap >> 2); // column 5
-    black_bitmaps1[2] = (black_bitmap >> 2);
-    white_bitmaps1[3] = (white_bitmap >> 3); // column 4
-    black_bitmaps1[3] = (black_bitmap >> 3);
-
-    uint64_t white_bitmaps2[4]; // second set of vectors, left half of the board
-    uint64_t black_bitmaps2[4];
-    white_bitmaps2[0] = (white_bitmap >> 4); // column 3
-    black_bitmaps2[0] = (black_bitmap >> 4);
-    white_bitmaps2[1] = (white_bitmap >> 5); // column 2
-    black_bitmaps2[1] = (black_bitmap >> 5);
-    white_bitmaps2[2] = (white_bitmap >> 6); // column 1
-    black_bitmaps2[2] = (black_bitmap >> 6);
-    white_bitmaps2[3] = (white_bitmap >> 7); // column 0
-    black_bitmaps2[3] = (black_bitmap >> 7);
 
     // load heuristic matrix values into corresponding positions
     int64_t heur_map1[4];
@@ -134,13 +111,24 @@ int Board::rate_board() {
     heur_map2[2] = 0xf1e2fefefefee2f1; // column 1
     heur_map2[3] = 0x64f10a05050af164; // column 0
 
+    // specific values to shift each column into the rightest position
+    __m256i shift_vals_vec1 = _mm256_set_epi64x(3, 2, 1, 0);
+    __m256i shift_vals_vec2 = _mm256_set_epi64x(7, 6, 5, 4);
+
     // load data into vector registeres
+    // 1 -> first set of vectors, right half of the board
+    // 2 -> second set of vectors, left half of the board
     __m256i heur_vec1 = _mm256_loadu_si256((__m256i *) heur_map1);
     __m256i heur_vec2 = _mm256_loadu_si256((__m256i *) heur_map2);
-    __m256i white_vec1 = _mm256_loadu_si256((__m256i *) white_bitmaps1);
-    __m256i white_vec2 = _mm256_loadu_si256((__m256i *) white_bitmaps2);
-    __m256i black_vec1 = _mm256_loadu_si256((__m256i *) black_bitmaps1);
-    __m256i black_vec2 = _mm256_loadu_si256((__m256i *) black_bitmaps2);
+    __m256i white_vec1 = _mm256_set1_epi64x(white_bitmap);
+    __m256i white_vec2 = _mm256_set1_epi64x(white_bitmap);
+    __m256i black_vec1 = _mm256_set1_epi64x(black_bitmap);
+    __m256i black_vec2 = _mm256_set1_epi64x(black_bitmap);
+
+    white_vec1 = _mm256_srlv_epi64(white_vec1, shift_vals_vec1);
+    white_vec2 = _mm256_srlv_epi64(white_vec2, shift_vals_vec2);
+    black_vec1 = _mm256_srlv_epi64(black_vec1, shift_vals_vec1);
+    black_vec2 = _mm256_srlv_epi64(black_vec2, shift_vals_vec2);
 
     // mask out everything except the right column 
     __m256i mask_vec = _mm256_set1_epi64x(0x0101010101010101);
