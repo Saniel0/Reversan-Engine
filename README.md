@@ -1,5 +1,7 @@
 # Reversi Engine
 Powerfull optimized reversi engine with terminal interface. Only uses standard c++ library.
+
+The goal was to learn several concepts to create very optimized engine. The engine uses bitboards alongside AVX2 SIMD instructions, transposition tables, negascout with optimized move ordering and much more to achieve the best performance.
 ```c++
 ░▒▓███████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░▒▓█▓▒░
 ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░
@@ -36,7 +38,7 @@ make no_simd
 ```
 
 ## Usage
-After you compile the project, it starts in interactive mode, where you play against the engine. If you want to change this, there are several options in main.cpp
+After you compile the project, it starts in interactive mode, where you play against the engine. The engine has constant search depth 10 by default. If you want to change this, there are several options in main.cpp
 
 ## Roadmap
 I would like to optimize the engine further, I believe there is not that much room to optimize logic of underlying algorithms (such as find_moves, play_move, rate_board), but I believe there are still ways to prune out more states. I would also like to utilize multithreading in the future, since the code is currently completely single-threaded.
