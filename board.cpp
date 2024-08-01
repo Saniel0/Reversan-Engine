@@ -236,15 +236,17 @@ uint64_t Board::find_moves(bool color) {
     // same algorithm as non-vectorized code, uses SIMD
     // to proccess all directions at once
 
-    // could be improved further by using avx512 instructions
-    // to shift all 4 "playing" at once, but I do not have
-    // access to CPU which support it
-
     // indexes correspond to certain directions:
     // 0 -> horizontal
     // 1 -> diagonal from bottom left to top right
     // 2 -> vertical
     // 3 -> diagonal from bottom right to top left
+
+    // 9 -> top left / bottom right
+    // 8 -> up / down
+    // 7 -> top right / bottom left
+    // 1 -> left / right
+    __m256i shift_vals_vec = _mm256_set_epi64x(9, 8, 7, 1);
     
     // adjust opponent bitboards to handle wrap-around
     uint64_t opponent_adjusted[4];
@@ -253,63 +255,32 @@ uint64_t Board::find_moves(bool color) {
     opponent_adjusted[2] = opponent;
     opponent_adjusted[3] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
     __m256i mask_vec = _mm256_loadu_si256((__m256i *) opponent_adjusted);
+
+    // ans vector is at start filled with 4 bitboards of player at turn
+    __m256i ans_vec = _mm256_set1_epi64x(playing);
     
     // FIRST SHIFT
-    // load data for first left shift
-    uint64_t left_shift[4];
-    left_shift[0] = playing << 1;
-    left_shift[1] = playing << 7;
-    left_shift[2] = playing << 8;
-    left_shift[3] = playing << 9;
-    __m256i left_shift_vec = _mm256_loadu_si256((__m256i *) left_shift);
-    // load data for first right shift
-    uint64_t right_shift[4];
-    right_shift[0] = playing >> 1;
-    right_shift[1] = playing >> 7;
-    right_shift[2] = playing >> 8;
-    right_shift[3] = playing >> 9;
-    __m256i right_shift_vec = _mm256_loadu_si256((__m256i *) right_shift);
+    __m256i left_shift_vec = _mm256_sllv_epi64(ans_vec, shift_vals_vec);
+    __m256i right_shift_vec = _mm256_srlv_epi64(ans_vec, shift_vals_vec);
     // compute first iteration
-    __m256i tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
-    __m256i ans_vec = _mm256_and_si256(tmp_or_vec, mask_vec);
-    // load back result
-    uint64_t playing_tmp[4];
-    _mm256_storeu_si256((__m256i *) playing_tmp, ans_vec);
     __m256i tmp_and_vec;
+    __m256i tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
+    ans_vec = _mm256_and_si256(tmp_or_vec, mask_vec);
 
     // loop through the rest of iterations (5 remaining)
     for (int i = 0; i < 5; ++i) {
-        // load data for left shift
-        left_shift[0] = playing_tmp[0] << 1;
-        left_shift[1] = playing_tmp[1] << 7;
-        left_shift[2] = playing_tmp[2] << 8;
-        left_shift[3] = playing_tmp[3] << 9;
-        left_shift_vec = _mm256_loadu_si256((__m256i *) left_shift);
-        // load data for right shift
-        right_shift[0] = playing_tmp[0] >> 1;
-        right_shift[1] = playing_tmp[1] >> 7;
-        right_shift[2] = playing_tmp[2] >> 8;
-        right_shift[3] = playing_tmp[3] >> 9;
-        right_shift_vec = _mm256_loadu_si256((__m256i *) right_shift);
+        // shift
+        left_shift_vec = _mm256_sllv_epi64(ans_vec, shift_vals_vec);
+        right_shift_vec = _mm256_srlv_epi64(ans_vec, shift_vals_vec);
         // compute iteration
         tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
         tmp_and_vec = _mm256_and_si256(tmp_or_vec, mask_vec);
         ans_vec = _mm256_or_si256(ans_vec, tmp_and_vec);
-        // load back result
-        _mm256_storeu_si256((__m256i *) playing_tmp, ans_vec);
     }
     
     // last shift iteration
-    left_shift[0] = playing_tmp[0] << 1;
-    left_shift[1] = playing_tmp[1] << 7;
-    left_shift[2] = playing_tmp[2] << 8;
-    left_shift[3] = playing_tmp[3] << 9;
-    left_shift_vec = _mm256_loadu_si256((__m256i *) left_shift);
-    right_shift[0] = playing_tmp[0] >> 1;
-    right_shift[1] = playing_tmp[1] >> 7;
-    right_shift[2] = playing_tmp[2] >> 8;
-    right_shift[3] = playing_tmp[3] >> 9;
-    right_shift_vec = _mm256_loadu_si256((__m256i *) right_shift);
+    left_shift_vec = _mm256_sllv_epi64(ans_vec, shift_vals_vec);
+    right_shift_vec = _mm256_srlv_epi64(ans_vec, shift_vals_vec);
     // add valid moves from each directios
     tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
     // extract valid_moves data
@@ -363,6 +334,12 @@ void Board::play_move(bool color, uint64_t move) {
     check_dir(NO_COL_MASK   , 8); // bottom
     check_dir(RIGHT_COL_MASK, 9); // bottom right*/
 #else
+    // 9 -> top left / bottom right
+    // 8 -> up / down
+    // 7 -> top right / bottom left
+    // 1 -> left / right
+    __m256i shift_vals_vec = _mm256_set_epi64x(9, 8, 7, 1);
+
     // adjust opponent bitboards to handle wrap-around
     uint64_t opponent_adjusted[4];
     opponent_adjusted[0] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
@@ -374,27 +351,14 @@ void Board::play_move(bool color, uint64_t move) {
     __m256i opponent_vec = _mm256_set1_epi64x(opponent);
     __m256i playing_vec = _mm256_set1_epi64x(playing);
     __m256i compare_vec = _mm256_set1_epi64x(0);
+    __m256i move_vec = _mm256_set1_epi64x(move);
 
-    // load data for first left shift
-    uint64_t left_shift[4];
-    left_shift[0] = move << 1;
-    left_shift[1] = move << 7;
-    left_shift[2] = move << 8;
-    left_shift[3] = move << 9;
-    __m256i left_shift_vec = _mm256_loadu_si256((__m256i *) left_shift);
-    // load data for first right shift
-    uint64_t right_shift[4];
-    right_shift[0] = move >> 1;
-    right_shift[1] = move >> 7;
-    right_shift[2] = move >> 8;
-    right_shift[3] = move >> 9;
-    __m256i right_shift_vec = _mm256_loadu_si256((__m256i *) right_shift);
+    // FIRST SHIFT
+    __m256i left_shift_vec = _mm256_sllv_epi64(move_vec, shift_vals_vec);
+    __m256i right_shift_vec = _mm256_srlv_epi64(move_vec, shift_vals_vec);
     // compute
     left_shift_vec = _mm256_and_si256(left_shift_vec, opponent_adjusted_vec);
     right_shift_vec = _mm256_and_si256(right_shift_vec, opponent_adjusted_vec);
-    // load back result
-    uint64_t playing_tmp_left[4];
-    uint64_t playing_tmp_right[4];
 
     __m256i friendly_left_check = _mm256_set1_epi64x(0);
     __m256i friendly_right_check = _mm256_set1_epi64x(0);
@@ -402,21 +366,10 @@ void Board::play_move(bool color, uint64_t move) {
     __m256i right_shift_vec_next;
     
     for (int i = 0; i < 6; ++i) {
-        _mm256_storeu_si256((__m256i *) playing_tmp_left, left_shift_vec);
-        _mm256_storeu_si256((__m256i *) playing_tmp_right, right_shift_vec);
-
-        left_shift[0] = playing_tmp_left[0] << 1;
-        left_shift[1] = playing_tmp_left[1] << 7;
-        left_shift[2] = playing_tmp_left[2] << 8;
-        left_shift[3] = playing_tmp_left[3] << 9;
-        left_shift_vec_next = _mm256_loadu_si256((__m256i *) left_shift);
-
-        right_shift[0] = playing_tmp_right[0] >> 1;
-        right_shift[1] = playing_tmp_right[1] >> 7;
-        right_shift[2] = playing_tmp_right[2] >> 8;
-        right_shift[3] = playing_tmp_right[3] >> 9;
-        right_shift_vec_next = _mm256_loadu_si256((__m256i *) right_shift);
-
+        // shift
+        left_shift_vec_next = _mm256_sllv_epi64(left_shift_vec, shift_vals_vec);
+        right_shift_vec_next =_mm256_srlv_epi64(right_shift_vec, shift_vals_vec);
+        // compute
         left_shift_vec = _mm256_or_si256(left_shift_vec, left_shift_vec_next);
         right_shift_vec = _mm256_or_si256(right_shift_vec, right_shift_vec_next);
         left_shift_vec = _mm256_and_si256(left_shift_vec, opponent_adjusted_vec);
