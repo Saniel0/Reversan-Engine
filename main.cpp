@@ -87,8 +87,8 @@ void play_against_bot() {
 
 int main() {
     print_title_blur();
-    //play_against_bot();
+    play_against_bot();
     //run_bench();
-    run_bot_vs_bot_bench();
+    //run_bot_vs_bot_bench();
     return 0;
 }
