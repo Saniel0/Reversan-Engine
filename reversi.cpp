@@ -1,11 +1,6 @@
 #include "reversi.h"
-#include <algorithm>
 #include <iostream>
 #include <cstring>
-
-#ifndef NO_SIMD
-#include <immintrin.h>
-#endif
 
 uint64_t calc(int x, int y) {
     return 1L << (63 - (y*8 + x));
