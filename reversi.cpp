@@ -43,23 +43,23 @@ uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
     int eval;
     int best_eval;
     bool first = true;
-    Board *next = new Board();
+    Board next;
     
     if (color == true && possible_moves != 0) {
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next->copy_state(state);
-                next->play_move(color, move);
+                next.copy_state(state);
+                next.play_move(color, move);
                 
                 if (first) { // run first move with whole window
-                    eval = negascout(next, depth-1, !color, alpha, beta, false);
+                    eval = negascout(&next, depth-1, !color, alpha, beta, false);
                     first = false;
                 }
                 else {
-                    eval = negascout(next, depth-1, !color, alpha, alpha+1, false); // minimize search window
+                    eval = negascout(&next, depth-1, !color, alpha, alpha+1, false); // minimize search window
                     if (eval > alpha && eval < beta) { // if we missed the window and there might still be better move, rerun
-                        eval = negascout(next, depth-1, !color, eval, beta, false);
+                        eval = negascout(&next, depth-1, !color, eval, beta, false);
                     }
                 }
 
@@ -75,17 +75,17 @@ uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if ((possible_moves & move) != 0) {
-                next->copy_state(state);
-                next->play_move(color, move);
+                next.copy_state(state);
+                next.play_move(color, move);
                 
                 if (first) { // run first move with whole window
-                    eval = negascout(next, depth-1, !color, alpha, beta, false);
+                    eval = negascout(&next, depth-1, !color, alpha, beta, false);
                     first = false;
                 }
                 else {
-                    eval = negascout(next, depth-1, !color, beta-1, beta, false); // minimize search window
+                    eval = negascout(&next, depth-1, !color, beta-1, beta, false); // minimize search window
                     if (eval < beta && eval > alpha) { // if we missed the window and there might still be better move, rerun
-                        eval = negascout(next, depth-1, !color, alpha, eval, false);
+                        eval = negascout(&next, depth-1, !color, alpha, eval, false);
                     }
                 }
 
@@ -97,7 +97,6 @@ uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
             }
         }
     }
-    delete next;
 
     std::cout << "Went through " << state_count     << " states.\n";
     std::cout << "Analyzed     " << heuristic_count << " states.\n";
@@ -147,22 +146,22 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
 
     int best_eval;
     bool first = true;
-    Board *next = new Board();
+    Board next;
     if (cur_color == true) {
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next->copy_state(state);
-                next->play_move(cur_color, move);
+                next.copy_state(state);
+                next.play_move(cur_color, move);
                 
                 if (first) { // run first move with whole window
-                    eval = negascout(next, depth-1, !cur_color, alpha, beta, false);
+                    eval = negascout(&next, depth-1, !cur_color, alpha, beta, false);
                     first = false;
                 }
                 else {
-                    eval = negascout(next, depth-1, !cur_color, alpha, alpha+1, false); // minimize search window
+                    eval = negascout(&next, depth-1, !cur_color, alpha, alpha+1, false); // minimize search window
                     if (eval > alpha && eval < beta) { // if we missed the window and there might still be better move, rerun
-                        eval = negascout(next, depth-1, !cur_color, eval, beta, false);
+                        eval = negascout(&next, depth-1, !cur_color, eval, beta, false);
                     }
                 }
 
@@ -178,17 +177,17 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next->copy_state(state);
-                next->play_move(cur_color, move);
+                next.copy_state(state);
+                next.play_move(cur_color, move);
 
                 if (first) { // run first move with whole window
-                    eval = negascout(next, depth-1, !cur_color, alpha, beta, false);
+                    eval = negascout(&next, depth-1, !cur_color, alpha, beta, false);
                     first = false;
                 }
                 else {
-                    eval = negascout(next, depth-1, !cur_color, beta-1, beta, false); // minimize search window
+                    eval = negascout(&next, depth-1, !cur_color, beta-1, beta, false); // minimize search window
                     if (eval < beta && eval > alpha) { // if we missed the window and there might still be better move, rerun
-                        eval = negascout(next, depth-1, !cur_color, alpha, eval, false);
+                        eval = negascout(&next, depth-1, !cur_color, alpha, eval, false);
                     }
                 }
                 
@@ -206,7 +205,6 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
         transposition_table.insert(hash, best_eval, init_alpha, init_beta);
     }
 
-    delete next;
     return best_eval;
 }
 
@@ -221,15 +219,15 @@ uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
     int beta = 1000;
     int eval;
     int best_eval;
-    Board *next = new Board();
+    Board next;
     
     if (color == true && possible_moves != 0) {
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next->copy_state(state);
-                next->play_move(color, move);
-                eval = minimax(next, depth-1, !color, alpha, beta, false);
+                next.copy_state(state);
+                next.play_move(color, move);
+                eval = minimax(&next, depth-1, !color, alpha, beta, false);
                 if (eval > best_eval) {
                     best_move = move;
                     best_eval = eval;
@@ -242,9 +240,9 @@ uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if ((possible_moves & move) != 0) {
-                next->copy_state(state);
-                next->play_move(color, move);
-                eval = minimax(next, depth-1, !color, alpha, beta, false);
+                next.copy_state(state);
+                next.play_move(color, move);
+                eval = minimax(&next, depth-1, !color, alpha, beta, false);
                 if (eval < best_eval) {
                     best_move = move;
                     best_eval = eval;
@@ -253,7 +251,6 @@ uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
             }
         }
     }
-    delete next;
 
     std::cout << "Went through " << state_count     << " states.\n";
     std::cout << "Analyzed     " << heuristic_count << " states.\n";
@@ -300,14 +297,14 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
     }
 
     int best_eval;
-    Board *next = new Board();
+    Board next;
     if (cur_color == true) {
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next->copy_state(state);
-                next->play_move(cur_color, move);
-                eval = minimax(next, depth-1, !cur_color, alpha, beta, false);
+                next.copy_state(state);
+                next.play_move(cur_color, move);
+                eval = minimax(&next, depth-1, !cur_color, alpha, beta, false);
                 best_eval = std::max(eval, best_eval);
                 alpha = std::max(eval, alpha);
                 if (beta <= alpha) {
@@ -320,9 +317,9 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next->copy_state(state);
-                next->play_move(cur_color, move);
-                eval = minimax(next, depth-1, !cur_color, alpha, beta, false);
+                next.copy_state(state);
+                next.play_move(cur_color, move);
+                eval = minimax(&next, depth-1, !cur_color, alpha, beta, false);
                 best_eval = std::min(eval, best_eval);
                 beta = std::min(eval, beta);
                 if (beta <= alpha) {
@@ -337,6 +334,5 @@ int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int bet
         transposition_table.insert(hash, best_eval, init_alpha, init_beta);
     }
     
-    delete next;
     return best_eval;
 }
