@@ -1,3 +1,19 @@
+/*
+    This file is part of Reversan Engine.
+
+    Reversan Engine is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Reversan Engine is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along with Foobar. If not, see <https://www.gnu.org/licenses/>. 
+*/
+
 #include "reversi.h"
 #include <iostream>
 #include <cstring>
@@ -96,6 +112,7 @@ uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
     std::cout << "Went through " << state_count     << " states.\n";
     std::cout << "Analyzed     " << heuristic_count << " states.\n";
     std::cout << best_eval << '\n';
+    //std::cout << state->rate_board() << '\n';
     //state->print_moves(best_move);
     //std::cout << '\n';
     return best_move;
