@@ -40,8 +40,10 @@ class Transposition_table {
          * game state.
          */
         struct Entry {
-            int score; /**< The score associated with the game state. */
-            int type; /**< The type of the entry (exact, lower bound, upper bound). */
+            /// @brief The score associated with the game state.
+            int score;
+            /// @brief The type of the entry (exact, lower bound, upper bound).
+            int type;
         };
 
         std::unordered_map<uint64_t, Entry> map; /**< The internal map storing hash-entry pairs. */

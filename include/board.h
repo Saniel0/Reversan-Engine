@@ -25,20 +25,32 @@
  * 
  * The Board class uses two 64-bit integers to represent the positions of pieces
  * on a game board. Each bit in the bitmap represents a space on the board.
- * Unless specified otherwise by NO_SIMD, the class uses AVX2 SIMD instructions
- * to achieve the best performance.
  */
 class Board {
     private:
         /**
-         * @brief Bit masks to prevent wrap-around during bitwise operations.
+         * @brief Bit mask.
          * 
-         * These masks are used to ensure that bitwise operations do not cause
+         * Used to ensure that bitwise operations do not cause
          * pieces to wrap around to the other side of the board.
          */
-        static constexpr uint64_t LEFT_COL_MASK = 0xfefefefefefefefe; /**< Mask to prevent left column wrap-around. */
-        static constexpr uint64_t RIGHT_COL_MASK = 0x7f7f7f7f7f7f7f7f; /**< Mask to prevent right column wrap-around. */
-        static constexpr uint64_t NO_COL_MASK = 0xffffffffffffffff; /**< Mask with all bits set (no wrap-around). */
+        static constexpr uint64_t LEFT_COL_MASK = 0xfefefefefefefefe;
+
+        /**
+         * @brief Bit mask.
+         * 
+         * Used to ensure that bitwise operations do not cause
+         * pieces to wrap around to the other side of the board.
+         */
+        static constexpr uint64_t RIGHT_COL_MASK = 0x7f7f7f7f7f7f7f7f;
+
+        /**
+         * @brief Bit mask.
+         * 
+         * Used to ensure that bitwise operations do not cause
+         * pieces to wrap around to the other side of the board.
+         */
+        static constexpr uint64_t NO_COL_MASK = 0xffffffffffffffff;
         
         /**
          * @brief Heuristic values for board evaluation.
@@ -59,13 +71,20 @@ class Board {
     
     public:
         /**
-         * @brief Bitmaps representing the positions of pieces.
+         * @brief Bitmap representing the positions of white pieces.
          * 
          * Each bit represents a space on the board, where a set bit indicates
          * the presence of a piece.
          */
-        uint64_t white_bitmap; /**< Bitmap representing white_pieces. */
-        uint64_t black_bitmap; /**< Bitmap representing black_pieces. */
+        uint64_t white_bitmap;
+
+        /**
+         * @brief Bitmap representing the positions of black pieces.
+         * 
+         * Each bit represents a space on the board, where a set bit indicates
+         * the presence of a piece.
+         */
+        uint64_t black_bitmap;
 
         /**
          * @brief Constructor to initialize the board bitmaps.
@@ -118,19 +137,37 @@ class Board {
         uint64_t hash();
         
         /**
-         * @brief Functions for loading specific board states
-         * 
+         * @brief Function initializing start state.
          */
-        void load_start_state(); /**< Loads the start state based on official rules. */
-        void load_benchmark_state(); /**< Loads custom state for comparing performance. */
-        void load_test_state(); /**< Special custom state used to test correctness of the algorithm. */
+        void load_start_state();
 
         /**
-         * @brief Functions for printing out board states to stdout
-         * 
+         * @brief Function initializing benchmark state.
+         */
+        void load_benchmark_state();
+
+        /**
+         * @brief Function initializing test state.
+         */
+        void load_test_state();
+
+        /**
+         * @brief Functions that prints board pieces to stdout
          */
         void print_board();
+
+        /**
+         * @brief Functions that prints board pieces and moves to stdout
+         * 
+         * @param moves Moves to print out along with board pieces.
+         */
         void print_board_moves(uint64_t moves);
+
+        /**
+         * @brief Functions that prints moves to stdout
+         * 
+         * @param moves Moves to print out.
+         */
         void print_moves(uint64_t moves);
 };
 
