@@ -15,7 +15,7 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#include "reversi.h"
+#include "search.h"
 #include <iostream>
 #include <cstring>
 
@@ -23,7 +23,7 @@ uint64_t calc(int x, int y) {
     return 1L << (63 - (y*8 + x));
 }
 
-Reversi::Reversi() {
+Search::Search() {
     // setup move order - can affect performance greatly
     uint64_t order[64] = {
         calc(0,0), calc(7,0), calc(0,7), calc(7,7), // check corners first
@@ -43,7 +43,7 @@ Reversi::Reversi() {
     std::memcpy(move_order, order, 64 * sizeof(uint64_t));
 }
 
-uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
+uint64_t Search::start_negascout(Board *state, bool color, int depth) {
     transposition_table.clear();
     heuristic_count = 0;
     state_count = 0;
@@ -119,7 +119,7 @@ uint64_t Reversi::start_negascout(Board *state, bool color, int depth) {
     return best_move;
 }
 
-int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
+int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
     int init_alpha = alpha;
     int init_beta = beta;
     uint64_t hash = 0;
@@ -221,7 +221,7 @@ int Reversi::negascout(Board *state, int depth, bool cur_color, int alpha, int b
     return best_eval;
 }
 
-uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
+uint64_t Search::start_minimax(Board *state, bool color, int depth) {
     transposition_table.clear();
     heuristic_count = 0;
     state_count = 0;
@@ -271,7 +271,7 @@ uint64_t Reversi::start_minimax(Board *state, bool color, int depth) {
     return best_move;
 }
 
-int Reversi::minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
+int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
     int init_alpha = alpha;
     int init_beta = beta;
     uint64_t hash = 0;

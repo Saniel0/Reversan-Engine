@@ -17,12 +17,12 @@
 
 #include <iostream>
 #include <random>
-#include "reversi.h"
+#include "search.h"
 #include "terminal.h"
 
 void run_bench() {
     Board init_board;
-    Reversi engine;
+    Search engine;
     init_board.load_benchmark_state();
     init_board.print_board();
     engine.start_negascout(&init_board, false, 10);
@@ -30,7 +30,7 @@ void run_bench() {
 
 void run_bot_vs_bot_bench() {
     Board init_board;
-    Reversi engine;
+    Search engine;
     init_board.load_start_state();
     uint64_t next_move;
     bool colour = false;
@@ -49,7 +49,7 @@ void run_bot_vs_bot_bench() {
 void play_against_bot() {
     Board last_board;
     Board current_board;
-    Reversi engine;
+    Search engine;
     
     current_board.load_start_state();
     int white_score = 0;
@@ -104,8 +104,8 @@ void play_against_bot() {
 
 int main() {
     print_title_blur();
-    play_against_bot();
+    //play_against_bot();
     //run_bench();
-    //run_bot_vs_bot_bench();
+    run_bot_vs_bot_bench();
     return 0;
 }

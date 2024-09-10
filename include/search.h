@@ -15,14 +15,14 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#ifndef REVERSI_H
-#define REVERSI_H
+#ifndef SEARCH_H
+#define SEARCH_H
 
 #include <cstdint>
 #include "board.h"
 #include "transposition_table.h"
 
-class Reversi {
+class Search {
     private:
         // used only for statistics
         unsigned long long int heuristic_count;
@@ -38,7 +38,7 @@ class Reversi {
         //int heuristics(Board *state, int moves_delta, bool end_board);
 
     public:
-        Reversi();
+        Search();
         uint64_t start_negascout(Board *state, bool color, int search_depth);
         uint64_t start_minimax(Board *state, bool color, int search_depth);
 };
