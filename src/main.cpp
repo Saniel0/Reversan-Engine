@@ -21,21 +21,21 @@
 #include "terminal.h"
 
 void run_bench() {
-    Board *init_board = new Board();
-    Reversi *engine = new Reversi();
-    init_board->load_benchmark_state();
-    init_board->print_board();
-    engine->start_negascout(init_board, false, 10);
+    Board init_board;
+    Reversi engine;
+    init_board.load_benchmark_state();
+    init_board.print_board();
+    engine.start_negascout(&init_board, false, 10);
 }
 
 void run_bot_vs_bot_bench() {
-    Board *init_board = new Board();
-    Reversi *engine = new Reversi();
-    init_board->load_start_state();
+    Board init_board;
+    Reversi engine;
+    init_board.load_start_state();
     uint64_t next_move;
     bool colour = false;
-    while ((next_move = engine->start_negascout(init_board, colour, 10)) != 0) {
-        init_board->play_move(colour, next_move);
+    while ((next_move = engine.start_negascout(&init_board, colour, 10)) != 0) {
+        init_board.play_move(colour, next_move);
         if (colour) {
             colour = false;
         }
@@ -43,29 +43,29 @@ void run_bot_vs_bot_bench() {
             colour = true;
         }
     }
-    init_board->print_board();
+    init_board.print_board();
 }
 
 void play_against_bot() {
-    Board *last_board = new Board();
-    Board *current_board = new Board();
-    Reversi *engine = new Reversi();
+    Board last_board;
+    Board current_board;
+    Reversi engine;
     
-    current_board->load_start_state();
+    current_board.load_start_state();
     int white_score = 0;
     int black_score = 0;
     bool at_turn = false;
     bool last_moved = true;
 
-    print_boards(last_board, current_board, at_turn);
+    print_boards(&last_board, &current_board, at_turn);
     std::cout << "\n";
     while (true) {
-        uint64_t possible_moves = current_board->find_moves(at_turn);
+        uint64_t possible_moves = current_board.find_moves(at_turn);
         if (possible_moves == 0) {
             if (!last_moved) {
                 std::cout << "Game ended\n";
-                white_score = __builtin_popcountll(current_board->white_bitmap);
-                black_score = __builtin_popcountll(current_board->black_bitmap);
+                white_score = __builtin_popcountll(current_board.white_bitmap);
+                black_score = __builtin_popcountll(current_board.black_bitmap);
                 break;
             }
             last_moved = false;
@@ -75,7 +75,7 @@ void play_against_bot() {
         last_moved = true;
         if (at_turn) {
             delete_lines(13);
-            print_boards(last_board, current_board, at_turn);
+            print_boards(&last_board, &current_board, at_turn);
             uint64_t move;
             while (true) {
                 std::cout << "Select move > ";
@@ -88,14 +88,14 @@ void play_against_bot() {
                 delete_lines(1);
                 std::cout << "INVALID - ";
             }
-            last_board->copy_state(current_board);
-            current_board->play_move(at_turn, move);
+            last_board.copy_state(&current_board);
+            current_board.play_move(at_turn, move);
         }
         else {
             uint64_t move;
-            move = engine->start_negascout(current_board, at_turn, 10);
-            last_board->copy_state(current_board);
-            current_board->play_move(at_turn, move);
+            move = engine.start_negascout(&current_board, at_turn, 10);
+            last_board.copy_state(&current_board);
+            current_board.play_move(at_turn, move);
         }
         at_turn = !at_turn;
     }
