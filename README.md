@@ -1,5 +1,5 @@
-# Reversi Engine
-Powerfull optimized reversi engine with terminal interface. Only uses standard c++ library.
+# Reversan Engine
+Reversan is powerfull and fast reversi engine with terminal interface. Only uses standard c++ libraries.
 
 The goal was to learn several concepts to create very optimized engine. The engine uses bitboards alongside AVX2 SIMD instructions, transposition tables, negascout with optimized move ordering and much more to achieve the best performance.
 ```c++
@@ -26,13 +26,13 @@ Select move >
 Since the project only uses standard c++ libraries, the setup is quite straight forward.
 - The engine makes heavy use of AVX2 instructions to achieve best performance, if your CPU supports these instruction, go forward with defult installation
 ```bash
-git clone https://github.com/Saniel0/Reversi-Engine.git
+git clone https://github.com/Saniel0/Reversan-Engine.git
 make
 ./reversi
 ```
 - If your CPU does not support AVX2 instructions, set no_simd make flag
 ```bash
-git clone https://github.com/Saniel0/Reversi-Engine.git
+git clone https://github.com/Saniel0/Reversan-Engine.git
 make no_simd
 ./reversi
 ```
