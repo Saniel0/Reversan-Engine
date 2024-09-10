@@ -32,13 +32,8 @@
  * entries.
  */
 class Transposition_table {
-    private:
-        /**
-         * @brief Structure representing an entry in the transposition table.
-         * 
-         * The Entry struct holds the score and type information for a given
-         * game state.
-         */
+    private:    
+        /// @brief Structure representing an entry in the transposition table.
         struct Entry {
             /// @brief The score associated with the game state.
             int score;
@@ -46,13 +41,12 @@ class Transposition_table {
             int type;
         };
 
-        std::unordered_map<uint64_t, Entry> map; /**< The internal map storing hash-entry pairs. */
+        /// @brief The internal map storing hash-entry pairs.
+        std::unordered_map<uint64_t, Entry> map;
 
     public:
         /**
-         * @brief Clears the transposition table.
-         * 
-         * This method removes all entries from the transposition table.
+         * @brief Removes all entries stored in the transposition table.
          */
         void clear();
 
@@ -64,8 +58,7 @@ class Transposition_table {
          * @param alpha The alpha value for alpha-beta pruning.
          * @param beta The beta value for alpha-beta pruning.
          * 
-         * This method inserts a new entry into the transposition table with
-         * the given score and alpha-beta values.
+         * Score, alpha and beta values are used to determine entry type.
          */
         void insert(uint64_t hash, int score, int alpha, int beta);
 
