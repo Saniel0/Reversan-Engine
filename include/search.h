@@ -22,24 +22,73 @@
 #include "board.h"
 #include "transposition_table.h"
 
+/**
+ * @brief Class implementing game-tree search algorithms.
+ */
 class Search {
     private:
-        // used only for statistics
+        /// @brief Counter for the number of heuristic evaluations performed (used for statistics).
         unsigned long long int heuristic_count;
+
+        /// @brief Counter for the number of game states evaluated (used for statistics).
         unsigned long long int state_count;
         
-        // order in which possible moves are checked, important for performance reasons
+        /// @brief Array storing the order in which possible moves are evaluated to optimize search performance.
         uint64_t move_order[64];
 
+        /// @brief The transposition table used to store previously evaluated game states and their results, improving search efficiency.
         Transposition_table transposition_table;
         
+        /**
+         * @brief Negascout search algorithm (a variant of alpha-beta pruning) used to find the best move.
+         * 
+         * @param state A pointer to the current game board state.
+         * @param depth The maximum depth of the search tree.
+         * @param cur_color The current player's color (true for one color, false for the other).
+         * @param alpha The alpha value for alpha-beta pruning.
+         * @param beta The beta value for alpha-beta pruning.
+         * @param end_board Flag indicating whether the current board state is the final state.
+         * @return The evaluated score of the board.
+         */
         int negascout(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board);
+
+        /**
+         * @brief Minimax search algorithm with alpha-beta pruning used to find the best move.
+         * 
+         * @param state A pointer to the current game board state.
+         * @param depth The maximum depth of the search tree.
+         * @param cur_color The current player's color (true for one color, false for the other).
+         * @param alpha The alpha value for alpha-beta pruning.
+         * @param beta The beta value for alpha-beta pruning.
+         * @param end_board Flag indicating whether the current board state is the final state.
+         * @return The evaluated score of the board.
+         */
         int minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board);
-        //int heuristics(Board *state, int moves_delta, bool end_board);
 
     public:
+        /**
+         * @brief Constructor for the Search class. Initializes counters and search algorithms. 
+         */
         Search();
+
+        /**
+         * @brief Starts the Negascout search from the given board state.
+         * 
+         * @param state A pointer to the current game board state.
+         * @param color The current player's color (true for one color, false for the other).
+         * @param search_depth The depth limit for the search algorithm.
+         * @return The best move as a bitboard.
+         */
         uint64_t start_negascout(Board *state, bool color, int search_depth);
+
+        /**
+         * @brief Starts the basic Minimax search from the given board state.
+         * 
+         * @param state A pointer to the current game board state.
+         * @param color The current player's color (true for one color, false for the other).
+         * @param search_depth The depth limit for the search algorithm.
+         * @return The best move as a bitboard.
+         */
         uint64_t start_minimax(Board *state, bool color, int search_depth);
 };
 
