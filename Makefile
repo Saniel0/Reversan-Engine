@@ -62,7 +62,7 @@ clean:
 	rm -f -r $(BUILD_DIR)
 	rm -f $(TARGET_EXE)
 
-$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 # Create build directory if it does not exist
