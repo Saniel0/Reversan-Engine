@@ -33,7 +33,7 @@ SOURCES = main.cpp board_print.cpp board_state.cpp reversi.cpp terminal.cpp tran
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES:%.cpp=%.o)))
 
 # Sources when building without any explicit SIMD instructions
-SOURCES_NOSIMD = board.cpp
+SOURCES_NOSIMD = board_nosimd.cpp
 OBJECTS_NOSIMD = $(OBJECTS) $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_NOSIMD:%.cpp=%.o)))
 
 # Sources when building with explicit AVX2 instructions
@@ -51,7 +51,6 @@ debug: CXX_FLAGS += -pg
 debug: LINKER_FLAGS += -pg
 debug: all
 
-no_simd: MACROS += -D NO_SIMD
 no_simd: $(OBJECTS_NOSIMD)
 	$(LINKER) $(LINKER_FLAGS) $^ -o $(TARGET_EXE)
 
@@ -64,7 +63,7 @@ clean:
 	rm -f $(TARGET_EXE)
 
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp $(BUILD_DIR)
-	$(CXX) $(CXX_FLAGS) -c $< -o $@ $(MACROS)
+	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 # Create build directory if it does not exist
 $(BUILD_DIR):
