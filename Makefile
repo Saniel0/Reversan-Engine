@@ -41,7 +41,7 @@ SOURCES_AVX2 = board_avx2.cpp
 OBJECTS_AVX2 = $(OBJECTS) $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_AVX2:%.cpp=%.o)))
 
 # Name of final executable
-TARGET_EXE = reversi
+TARGET_EXE = reversan
 
 all: CXX_FLAGS += -mavx2
 all: $(OBJECTS_AVX2)
