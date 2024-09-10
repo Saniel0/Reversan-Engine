@@ -22,7 +22,7 @@ CXX_FLAGS = -O3 -Wall
 LINKER_FLAGS =
 
 # Temporary directory for object files
-OBJECTS_DIR = obj
+OBJECTS_DIR = build
 
 # Sources for every build
 SOURCES = main.cpp board_print.cpp board_state.cpp reversi.cpp terminal.cpp transposition_table.cpp
@@ -56,7 +56,7 @@ debug_no_simd: LINKER_FLAGS += -pg
 debug_no_simd: no_simd
 
 clean:
-	rm -r $(OBJECTS_DIR)
+	rm -f -r $(OBJECTS_DIR)
 	rm -f $(TARGET_EXE)
 
 $(OBJECTS_DIR)/%.o: %.cpp $(OBJECTS_DIR)
