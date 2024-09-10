@@ -52,8 +52,8 @@ uint64_t Search::start_negascout(Board *state, bool color, int depth) {
 
     int alpha = -1000;
     int beta = 1000;
+    int best_eval = 0;
     int eval;
-    int best_eval;
     bool first = true;
     Board next;
     
@@ -230,8 +230,8 @@ uint64_t Search::start_minimax(Board *state, bool color, int depth) {
 
     int alpha = -1000;
     int beta = 1000;
+    int best_eval = 0;
     int eval;
-    int best_eval;
     Board next;
     
     if (color == true && possible_moves != 0) {
