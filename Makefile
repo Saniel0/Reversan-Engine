@@ -17,24 +17,28 @@
 CXX = g++
 LINKER = g++
 
+# Add include path
+CXX_FLAGS = -Iinclude
+
 # Select compile flags
-CXX_FLAGS = -O3 -Wall
+CXX_FLAGS += -O3 -Wall
 LINKER_FLAGS =
 
-# Temporary directory for object files
-OBJECTS_DIR = build
+# Add source and build path
+SOURCE_DIR = src
+BUILD_DIR = build
 
 # Sources for every build
 SOURCES = main.cpp board_print.cpp board_state.cpp reversi.cpp terminal.cpp transposition_table.cpp
-OBJECTS = $(addprefix $(OBJECTS_DIR)/,$(notdir $(SOURCES:%.cpp=%.o)))
+OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES:%.cpp=%.o)))
 
 # Sources when building without any explicit SIMD instructions
 SOURCES_NOSIMD = board.cpp
-OBJECTS_NOSIMD = $(OBJECTS) $(addprefix $(OBJECTS_DIR)/,$(notdir $(SOURCES_NOSIMD:%.cpp=%.o)))
+OBJECTS_NOSIMD = $(OBJECTS) $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_NOSIMD:%.cpp=%.o)))
 
 # Sources when building with explicit AVX2 instructions
 SOURCES_AVX2 = board_avx2.cpp
-OBJECTS_AVX2 = $(OBJECTS) $(addprefix $(OBJECTS_DIR)/,$(notdir $(SOURCES_AVX2:%.cpp=%.o)))
+OBJECTS_AVX2 = $(OBJECTS) $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_AVX2:%.cpp=%.o)))
 
 # Name of final executable
 TARGET_EXE = reversi
@@ -56,12 +60,12 @@ debug_no_simd: LINKER_FLAGS += -pg
 debug_no_simd: no_simd
 
 clean:
-	rm -f -r $(OBJECTS_DIR)
+	rm -f -r $(BUILD_DIR)
 	rm -f $(TARGET_EXE)
 
-$(OBJECTS_DIR)/%.o: %.cpp $(OBJECTS_DIR)
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp $(BUILD_DIR)
 	$(CXX) $(CXX_FLAGS) -c $< -o $@ $(MACROS)
 
-# Create object directory if it does not exist
-$(OBJECTS_DIR):
+# Create build directory if it does not exist
+$(BUILD_DIR):
 	mkdir $@
