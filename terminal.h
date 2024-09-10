@@ -11,7 +11,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License along with Foobar. If not, see <https://www.gnu.org/licenses/>. 
+    You should have received a copy of the GNU General Public License
+    along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
 #ifndef TERMINAL_H
