@@ -16,10 +16,19 @@
 */
 
 #include "move_order.h"
+#include <iostream>
+#include <cstring>
 
 Move_order::Move_order(const int *order) {
-    uint64_t cur = 1L << 63;
+    // check order validity, if it is not valid, initialize array to zeros
+    if (order != LINE_BY_LINE && order != OPTIMIZED && order != OPTIMIZED2) {
+        std::cerr << "Invalid move order! Initializing move order to zeros." << '\n';
+        memset(move_order, 0, 64 * sizeof(uint64_t));
+        return;
+    }
 
+    // if valid order was provided, load it
+    uint64_t cur = 1L << 63;
     for (int i = 0; i < 64; ++i) {
         move_order[order[i]] = cur;
         cur >>= 1;
