@@ -21,8 +21,8 @@ LINKER = g++
 CXX_FLAGS = -Iinclude
 
 # Select compile flags
-CXX_FLAGS += -O3 -Wall
-LINKER_FLAGS =
+CXX_FLAGS += -O3 -flto -Wall
+LINKER_FLAGS = -flto
 
 # Add source and build path
 SOURCE_DIR = src
