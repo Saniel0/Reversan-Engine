@@ -23,7 +23,9 @@
 /**
  * @brief Class containing an array specifying order of move evaluation.
  * 
- * Includes example orders.
+ * Order of checking possible moves has huge impact on performance.
+ * It is crucial to optimize the move order. Changin the move order
+ * can affect result, if two possible moves have the same state score.
  */
 class Move_order {
     private:
@@ -31,7 +33,7 @@ class Move_order {
         uint64_t move_order[64];
 
     public:
-        /// @brief Example order 1
+        /// @brief Simple example order, very bad pruning performance, not reccomended.
         static constexpr int LINE_BY_LINE[64] = {  0,  1,  2,  3,  4,  5,  6,  7,
                                                    8,  9, 10, 11, 12, 13, 14, 15,
                                                   16, 17, 18, 19, 20, 21, 22, 23,
@@ -42,7 +44,7 @@ class Move_order {
                                                   56, 57, 58, 59, 60, 61, 62, 63
         };
 
-        /// @brief Example order 2
+        /// @brief Optimized order based on board heuristics values.
         static constexpr int OPTIMIZED[64] = {  0, 20,  4, 12, 13,  5, 21,  1,
                                                22, 28, 29, 30, 31, 32, 33, 23,
                                                 6, 34, 35, 36, 37, 38, 39,  7,
@@ -53,13 +55,21 @@ class Move_order {
                                                 2, 26, 10, 18, 19, 11, 27,  3
         };
 
+        /// @brief Alternate optimized order based on board heuristics values.
+        static constexpr int OPTIMIZED2[64] = {  0, 52,  4, 12, 13,  5, 53,  1,
+                                               54, 60, 36, 37, 38, 39, 61, 55,
+                                                6, 40, 20, 24, 25, 21, 41,  7,
+                                               14, 42, 26, 27, 28, 29, 43, 15,
+                                               16, 44, 30, 31, 32, 33, 45, 17,
+                                                8, 46, 22, 34, 35, 23, 47,  9,
+                                               56, 62, 48, 49, 50, 51, 63, 57,
+                                                2, 58, 10, 18, 19, 11, 59,  3
+        };
+
         /**
          * @brief Constructor for the Move_order class.
          * 
          * @param order Order in which to check possible moves
-         * 
-         * Order of checking possible moves has huge impact on performance.
-         * It is crucial to optimize the move order.
          */
         Move_order(const int *order);
 
