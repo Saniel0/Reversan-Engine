@@ -28,11 +28,17 @@
  */
 class Search {
     private:
-        /// @brief Counter for the number of heuristic evaluations performed (used for statistics).
-        unsigned long long int heuristic_count;
+        /// @brief Number of heuristic evaluations performed in the last search (used for statistics).
+        unsigned long long int last_heuristic_count;
 
-        /// @brief Counter for the number of game states evaluated (used for statistics).
-        unsigned long long int state_count;
+        /// @brief Number of game states evaluated in the last search (used for statistics).
+        unsigned long long int last_state_count;
+
+        /// @brief Number of heuristic evaluations performed in the lifetime of class instance (used for statistics).
+        unsigned long long int total_heuristic_count;
+
+        /// @brief Number of game states evaluated in the lifetime of class instance (used for statistics).
+        unsigned long long int total_state_count;
         
         /// @brief Array storing the order in which possible moves are evaluated to optimize search performance.
         Move_order move_order;

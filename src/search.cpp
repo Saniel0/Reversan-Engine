@@ -18,13 +18,17 @@
 #include "search.h"
 #include <iostream>
 
-// specify move order in the constructor
-Search::Search(): move_order(Move_order::OPTIMIZED){}
+// initialize stats counters and select move order
+Search::Search(): total_heuristic_count(0), total_state_count(0), move_order(Move_order::OPTIMIZED) {}
 
 uint64_t Search::start_negascout(Board *state, bool color, int depth) {
+    // transposition table must be empty before calculation of best move, otherwise results would be affected
     transposition_table.clear();
-    heuristic_count = 0;
-    state_count = 0;
+    
+    // reset stats counters
+    last_heuristic_count = 0;
+    last_state_count = 0;
+
     uint64_t best_move = 0;
     uint64_t possible_moves = state->find_moves(color);
 
@@ -88,12 +92,14 @@ uint64_t Search::start_negascout(Board *state, bool color, int depth) {
         }
     }
 
-    std::cout << "Went through " << state_count     << " states.\n";
-    std::cout << "Analyzed     " << heuristic_count << " states.\n";
+    std::cout << "Went through " << last_state_count     << " states.\n";
+    std::cout << "Analyzed     " << last_heuristic_count << " states.\n";
     std::cout << best_eval << '\n';
     //std::cout << state->rate_board() << '\n';
     //state->print_moves(best_move);
     //std::cout << '\n';
+    total_heuristic_count += last_heuristic_count;
+    total_state_count += last_state_count;
     return best_move;
 }
 
@@ -101,11 +107,11 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
     int init_alpha = alpha;
     int init_beta = beta;
     uint64_t hash = 0;
-    state_count++;
+    last_state_count++;
     
     // reach max depth
     if (depth == 0) {
-        heuristic_count++;
+        last_heuristic_count++;
         return state->rate_board();
     }
     
@@ -200,9 +206,13 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
 }
 
 uint64_t Search::start_minimax(Board *state, bool color, int depth) {
+    // transposition table must be empty before calculation of best move, otherwise results would be affected
     transposition_table.clear();
-    heuristic_count = 0;
-    state_count = 0;
+    
+    // reset stats counters
+    last_heuristic_count = 0;
+    last_state_count = 0;
+    
     uint64_t best_move = 0;
     uint64_t possible_moves = state->find_moves(color);
 
@@ -243,9 +253,11 @@ uint64_t Search::start_minimax(Board *state, bool color, int depth) {
         }
     }
 
-    std::cout << "Went through " << state_count     << " states.\n";
-    std::cout << "Analyzed     " << heuristic_count << " states.\n";
+    std::cout << "Went through " << last_state_count     << " states.\n";
+    std::cout << "Analyzed     " << last_heuristic_count << " states.\n";
     std::cout << best_eval << '\n';
+    total_heuristic_count += last_heuristic_count;
+    total_state_count += last_state_count;
     return best_move;
 }
 
@@ -253,11 +265,11 @@ int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta
     int init_alpha = alpha;
     int init_beta = beta;
     uint64_t hash = 0;
-    state_count++;
+    last_heuristic_count++;
     
     // reach max depth
     if (depth == 0) {
-        heuristic_count++;
+        last_heuristic_count++;
         return state->rate_board();
     }
     
