@@ -69,7 +69,7 @@ class Move_order {
         /**
          * @brief Constructor for the Move_order class.
          * 
-         * @param order Order in which to check possible moves
+         * @param order Order in which to check possible moves.
          */
         Move_order(const int *order);
 
