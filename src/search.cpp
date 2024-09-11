@@ -17,31 +17,9 @@
 
 #include "search.h"
 #include <iostream>
-#include <cstring>
 
-uint64_t calc(int x, int y) {
-    return 1L << (63 - (y*8 + x));
-}
-
-Search::Search() {
-    // setup move order - can affect performance greatly
-    uint64_t order[64] = {
-        calc(0,0), calc(7,0), calc(0,7), calc(7,7), // check corners first
-        calc(2,0), calc(5,0), calc(0,2), calc(7,2), calc(0,5), calc(7,5), calc(2,7), calc(5,7), // check along corners
-        calc(3,0), calc(4,0), calc(0,3), calc(7,3), calc(0,4), calc(7,4), calc(3,7), calc(4,7), // check along corners
-        calc(1,0), calc(6,0), calc(0,1), calc(7,1), calc(0,6), calc(7,6), calc(1,7), calc(6,7) // check along corners
-    };
-    // go through rest line by line
-    int idj = 28;
-    for (int i = 1; i < 7; ++i) {
-        for (int j = 1; j < 7; ++j) {
-            order[idj] = calc(j, i);
-            idj++;
-        }
-    }
-    // copy order into move_order
-    std::memcpy(move_order, order, 64 * sizeof(uint64_t));
-}
+// specify move order in the constructor
+Search::Search(): move_order(Move_order::OPTIMIZED){}
 
 uint64_t Search::start_negascout(Board *state, bool color, int depth) {
     transposition_table.clear();

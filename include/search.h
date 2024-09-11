@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include "board.h"
+#include "move_order.h"
 #include "transposition_table.h"
 
 /**
@@ -34,7 +35,7 @@ class Search {
         unsigned long long int state_count;
         
         /// @brief Array storing the order in which possible moves are evaluated to optimize search performance.
-        uint64_t move_order[64];
+        Move_order move_order;
 
         /// @brief The transposition table used to store previously evaluated game states and their results, improving search efficiency.
         Transposition_table transposition_table;
