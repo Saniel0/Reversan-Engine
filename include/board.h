@@ -50,6 +50,14 @@ class Board {
          * Used to ensure that bitwise operations do not cause
          * pieces to wrap around to the other side of the board.
          */
+        static constexpr uint64_t SIDE_COLS_MASK = 0x7e7e7e7e7e7e7e7e;
+
+        /**
+         * @brief Bit mask.
+         * 
+         * Used to ensure that bitwise operations do not cause
+         * pieces to wrap around to the other side of the board.
+         */
         static constexpr uint64_t NO_COL_MASK = 0xffffffffffffffff;
         
         /**
