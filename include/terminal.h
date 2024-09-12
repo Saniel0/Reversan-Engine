@@ -42,6 +42,11 @@ void print_title_3d();
 void print_title_tile();
 
 /**
+ * @brief Prints help message to terminal.
+ */
+void print_help();
+
+/**
  * @brief Deletes a specified number of lines from the terminal.
  * 
  * @param count The number of lines to delete from the terminal.

@@ -60,6 +60,20 @@ void print_title_tile() {
     std::cout << "██   ██ ███████   ████   ███████ ██   ██ ███████ ██ \n";
 }
 
+void print_help() {
+    std::cout << 
+"Usage: reversan [MODE] [OPTIONS]\n\
+\n\
+Modes:\n\
+--help, -h            Display this help message.\n\
+--play                Play against the engine in terminal interface.\n\
+--bot-vs-bot          Start game where the engine plays against itself.\n\
+--benchmark           Run search on pre-defined state.\n\
+\n\
+Additional Options:\n\
+--depth, --d <value>  Specify engine search depth, 10 by default.\n";
+}
+
 void delete_lines(int count) {
     for (int i = 0; i < count; ++i) {
         std::cout << "\033[A\033[K";
