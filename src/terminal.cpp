@@ -65,13 +65,15 @@ void print_help() {
 "Usage: reversan [MODE] [OPTIONS]\n\
 \n\
 Modes:\n\
---help, -h            Display this help message.\n\
---play                Play against the engine in terminal interface.\n\
---bot-vs-bot          Start game where the engine plays against itself.\n\
---benchmark           Run search on pre-defined state.\n\
+--help, -h                           Display this help message.\n\
+--play                               Play against the engine in terminal interface.\n\
+--bot-vs-bot                         Start game where the engine plays against itself.\n\
+--benchmark                          Run search on pre-defined state.\n\
 \n\
 Additional Options:\n\
---depth, --d <value>  Specify engine search depth, 10 by default.\n";
+--depth, -d <1 - 49>                 Set the engine's search depth (default: 10).\n\
+--search, -s <negascout | minimax>   Choose the tree search algorithm (default: negascout).\n";
+
 }
 
 void delete_lines(int count) {
