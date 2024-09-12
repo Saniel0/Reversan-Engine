@@ -22,12 +22,12 @@ Board::Board() {
     black_bitmap = 0;
 }
 
-void Board::copy_state(Board *state) {
+__attribute__((always_inline)) void Board::copy_state(Board *state) {
     white_bitmap = state->white_bitmap;
     black_bitmap = state->black_bitmap;
 }
 
-uint64_t Board::hash() {
+__attribute__((always_inline)) uint64_t Board::hash() {
     // Murmur hash of white
     uint64_t w = white_bitmap;
     w ^= w >> 33;

@@ -19,7 +19,7 @@
 #include <immintrin.h>
 
 
-int Board::rate_board() {
+__attribute__((always_inline)) int Board::rate_board() {
     int score = 0;
     
     // the goal is to manipulate the bitmap to get 256bit vector containing
@@ -99,7 +99,7 @@ int Board::rate_board() {
     return score;
 }
 
-uint64_t Board::find_moves(bool color) {
+__attribute__((always_inline)) uint64_t Board::find_moves(bool color) {
     uint64_t valid_moves = 0;
     // create new bitmap of empty spaces from our two bitmaps so we do not have to check both for empty spaces
     uint64_t free_spaces = ~(white_bitmap | black_bitmap);
@@ -176,7 +176,7 @@ uint64_t Board::find_moves(bool color) {
     return valid_moves;
 }
 
-void Board::play_move(bool color, uint64_t move) {
+__attribute__((always_inline)) void Board::play_move(bool color, uint64_t move) {
     uint64_t playing, opponent;
     if (color) {
         playing = white_bitmap;
