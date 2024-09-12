@@ -16,9 +16,14 @@
 -->
 
 # Reversan Engine
-Reversan is powerfull and fast reversi engine with terminal interface. Only uses standard c++ libraries.
+**Reversan Engine** is a powerful Reversi/Othello engine written in C++ that can defeat most above-average players. It employs advanced techniques to ensure efficient, fast searches, including:
 
-The goal was to learn several concepts to create very optimized engine. The engine uses bitboards alongside AVX2 SIMD instructions, transposition tables, negascout with optimized move ordering and much more to achieve the best performance.
+- NegaScout game-tree search
+- Bitboards
+- Transposition tables
+- Move reordering
+
+Additionally, **Reversan Engine** leverages AVX2 SIMD instructions, boosting performance by up to 5x (depending on CPU architecture).
 ```c++
 ░▒▓███████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░▒▓█▓▒░
 ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░
@@ -40,22 +45,31 @@ Select move >
 ```
 
 ## Installation
-Since the project only uses standard c++ libraries, the setup is quite straight forward.
-- The engine makes heavy use of AVX2 instructions to achieve best performance, if your CPU supports these instruction, go forward with defult installation
+The engine requires only standard C++ libraries, making the setup straightforward. Follow the instructions below based on your CPU architecture.
+
+#### Standard Installation (for AVX2 Supported CPUs)
+
+If your CPU supports AVX2 instruction set (most modern x86 CPUs), proceed with the default installation:
 ```bash
 git clone https://github.com/Saniel0/Reversan-Engine.git
 make
-./reversi
+./reversan
 ```
-- If your CPU does not support AVX2 instructions, set no_simd make flag
+#### Alternative Installation (for Non-AVX2 CPUs)
+If your CPU does not support AVX2, use the `no_simd` flag:
 ```bash
 git clone https://github.com/Saniel0/Reversan-Engine.git
 make no_simd
-./reversi
+./reversan
 ```
 
 ## Usage
-After you compile the project, it starts in interactive mode, where you play against the engine. The engine has constant search depth 10 by default. If you want to change this, there are several options in main.cpp
+Once compiled, the engine starts in interactive mode, allowing you to play against it. By default, it searches to a depth of 10 moves. You can modify the search depth and other settings by editing the options in `main.cpp`.
 
 ## Roadmap
-I would like to optimize the engine further, I believe there is not that much room to optimize logic of underlying algorithms (such as find_moves, play_move, rate_board), but I believe there are still ways to prune out more states. I would also like to utilize multithreading in the future, since the code is currently completely single-threaded.
+- **Optimizations**: I plan to further optimize the engine, although the core algorithms (find_moves, play_move, rate_board) may have limited optimization potential. Future improvements could include additional state pruning strategies.
+
+- **Multithreading**: Currently, the engine is single-threaded. I aim to implement multithreading in future versions to further improve performance on modern hardware.
+
+## License
+Reversan Engine is released under the GNU General Public License (GPLv3). See the [COPYING](./COPYING) file for more information.
