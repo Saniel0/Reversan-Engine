@@ -122,22 +122,19 @@ __attribute__((always_inline)) uint64_t Board::find_moves(bool color) {
     // 1 -> diagonal from bottom left to top right
     // 2 -> vertical
     // 3 -> diagonal from bottom right to top left
-    //
+
     // 9 -> top left / bottom right
     // 8 -> up / down
     // 7 -> top right / bottom left
     // 1 -> left / right
     __m256i shift_vals_vec = _mm256_set_epi64x(9, 8, 7, 1);
     
-    // adjust opponent bitboards to handle wrap-around
-    uint64_t opponent_adjusted[4];
-    opponent_adjusted[0] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
-    opponent_adjusted[1] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
-    opponent_adjusted[2] = opponent;
-    opponent_adjusted[3] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
-    __m256i mask_vec = _mm256_loadu_si256((__m256i *) opponent_adjusted);
+    // opponent vec must be masked to prevent wrap around
+    __m256i col_mask_vec = _mm256_set_epi64x(RIGHT_COL_MASK & LEFT_COL_MASK, NO_COL_MASK, RIGHT_COL_MASK & LEFT_COL_MASK, RIGHT_COL_MASK & LEFT_COL_MASK);
+    __m256i opponent_vec = _mm256_set1_epi64x(opponent);
+    __m256i opponent_adjusted_vec = _mm256_and_si256(opponent_vec, col_mask_vec);
 
-    // ans vector is at start filled with 4 bitboards of player at turn
+    // ans vec is at start filled with 4 bitboards of player at turn
     __m256i ans_vec = _mm256_set1_epi64x(playing);
     
     // FIRST SHIFT
@@ -146,7 +143,7 @@ __attribute__((always_inline)) uint64_t Board::find_moves(bool color) {
     // compute first iteration
     __m256i tmp_and_vec;
     __m256i tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
-    ans_vec = _mm256_and_si256(tmp_or_vec, mask_vec);
+    ans_vec = _mm256_and_si256(tmp_or_vec, opponent_adjusted_vec);
 
     // loop through the rest of iterations (5 remaining)
     for (int i = 0; i < 5; ++i) {
@@ -155,7 +152,7 @@ __attribute__((always_inline)) uint64_t Board::find_moves(bool color) {
         right_shift_vec = _mm256_srlv_epi64(ans_vec, shift_vals_vec);
         // compute iteration
         tmp_or_vec = _mm256_or_si256(left_shift_vec, right_shift_vec);
-        tmp_and_vec = _mm256_and_si256(tmp_or_vec, mask_vec);
+        tmp_and_vec = _mm256_and_si256(tmp_or_vec, opponent_adjusted_vec);
         ans_vec = _mm256_or_si256(ans_vec, tmp_and_vec);
     }
     
@@ -193,18 +190,14 @@ __attribute__((always_inline)) void Board::play_move(bool color, uint64_t move) 
     // 1 -> left / right
     __m256i shift_vals_vec = _mm256_set_epi64x(9, 8, 7, 1);
 
-    // adjust opponent bitboards to handle wrap-around
-    uint64_t opponent_adjusted[4];
-    opponent_adjusted[0] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
-    opponent_adjusted[1] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
-    opponent_adjusted[2] = opponent;
-    opponent_adjusted[3] = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
-    
-    __m256i opponent_adjusted_vec = _mm256_loadu_si256((__m256i *) opponent_adjusted);
-    __m256i opponent_vec = _mm256_set1_epi64x(opponent);
-    __m256i playing_vec = _mm256_set1_epi64x(playing);
+    __m256i col_mask_vec = _mm256_set_epi64x(RIGHT_COL_MASK & LEFT_COL_MASK, NO_COL_MASK, RIGHT_COL_MASK & LEFT_COL_MASK, RIGHT_COL_MASK & LEFT_COL_MASK);
     __m256i compare_vec = _mm256_set1_epi64x(0);
     __m256i move_vec = _mm256_set1_epi64x(move);
+
+    // load bitboards into vectors, 4 in each
+    __m256i playing_vec = _mm256_set1_epi64x(playing);
+    __m256i opponent_vec = _mm256_set1_epi64x(opponent);
+    __m256i opponent_adjusted_vec =_mm256_and_si256(opponent_vec, col_mask_vec); // prevent wrap around
 
     // FIRST SHIFT
     __m256i left_shift_vec = _mm256_sllv_epi64(move_vec, shift_vals_vec);
