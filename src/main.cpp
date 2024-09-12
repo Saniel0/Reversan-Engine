@@ -16,37 +16,141 @@
 */
 
 #include <iostream>
-#include <random>
+#include <string>
+#include <cstdlib>
 #include "search.h"
 #include "terminal.h"
 
-void run_bench() {
-    Board init_board;
-    Search engine;
-    init_board.load_benchmark_state();
-    init_board.print_board();
-    engine.start_negascout(&init_board, false, 10);
+#define MINIMAX 0
+#define NEGASCOUT 1
+
+void play_against_bot(int depth, int search);
+void run_bot_vs_bot(int depth, int search);
+void run_bench(int depth, int search);
+
+int main(int argc, char *argv[]) {
+    if (argc == 1) {
+        std::cout << "No arguments provided. Use --help or -h for usage information." << '\n';
+        return 1;
+    }
+
+    // launch options with default values
+    int depth = 10;
+    int search = NEGASCOUT;
+
+
+    // Options parsing
+    if (argc > 2) {
+        for (int i = 2; i < argc; ++i) {
+            std::string arg = argv[i];
+            
+            if (arg == "--depth" || arg == "-d") {
+                if (i + 1 < argc) {
+                    i++;
+                    depth = std::atoi(argv[i]);
+                    if (depth < 1 || depth > 50) {
+                        std::cout << "Invalid depth. Use --help or -h for usage information." << '\n';
+                        return 1;
+                    }
+                }
+                else {
+                    std::cout << "Flags --depth and -d requires an integer argument. Use --help or -h for usage information." << '\n';
+                    return 1;
+                }
+            }
+
+            else if (arg == "--search" || arg == "-s") {
+                if (i + 1 < argc) {
+                    i++;
+                    arg = argv[i];
+                    if (arg == "minimax") {
+                        search = MINIMAX;
+                    }
+                    else if (arg == "negascout") {
+                        search = NEGASCOUT;
+                    }
+                    else {
+                        std::cout << "Invalid search algorithm. Use --help or -h for usage information." << '\n';
+                        return 1;
+                    }
+                }
+                else {
+                    std::cout << "Flags --search and -s requires an integer argument. Use --help or -h for usage information." << '\n';
+                    return 1;
+                }
+            }
+
+            else {
+                std::cout << "Invalid option. Use --help or -h for usage information." << '\n';
+                return 1;
+            }
+        }
+    }
+
+    // Mode parsing
+    std::string mode = argv[1];
+    if (mode == "--play") {
+        play_against_bot(depth, search);
+    }
+    else if (mode == "--bot-vs-bot") {
+        run_bot_vs_bot(depth, search);
+    }
+    else if (mode == "--benchmark") {
+        run_bench(depth, search);
+    }
+    else if (mode == "--help" || mode == "-h") {
+        print_help();
+    }
+    else {
+        std::cout << "Invalid mode. Use --help or -h for usage information." << '\n';
+        return 1;
+    }
+    
+    return 0;
 }
 
-void run_bot_vs_bot_bench() {
+void run_bench(int depth, int search) {
     Board init_board;
     Search engine;
+    uint64_t move;
+    
+    init_board.load_benchmark_state();
+    if (search == MINIMAX) {
+        move = engine.start_minimax(&init_board, false, depth);
+    }
+    else if (search == NEGASCOUT) {
+        move = engine.start_negascout(&init_board, false, depth);
+    }
+    init_board.print_board_moves(move);
+}
+
+void run_bot_vs_bot(int depth, int search) {
+    Board init_board;
+    Search engine;
+    uint64_t move;
+
     init_board.load_start_state();
-    uint64_t next_move;
-    bool colour = false;
-    while ((next_move = engine.start_negascout(&init_board, colour, 10)) != 0) {
-        init_board.play_move(colour, next_move);
-        if (colour) {
-            colour = false;
+    bool color = false;
+    while (true) {
+        if (search == MINIMAX) {
+            move = engine.start_minimax(&init_board, color, depth);
         }
-        else {
-            colour = true;
+        else if (search == NEGASCOUT) {
+            move = engine.start_negascout(&init_board, color, depth);
         }
+
+        if (move == 0) {
+            break;
+        }
+
+        init_board.play_move(color, move);
+        color = !color;
     }
     init_board.print_board();
 }
 
-void play_against_bot() {
+void play_against_bot(int depth, int search) {
+    print_title_blur();
     Board last_board;
     Board current_board;
     Search engine;
@@ -93,19 +197,16 @@ void play_against_bot() {
         }
         else {
             uint64_t move;
-            move = engine.start_negascout(&current_board, at_turn, 10);
+            if (search == MINIMAX) {
+                move = engine.start_minimax(&current_board, at_turn, depth);
+            }
+            else if (search == NEGASCOUT) {
+                move = engine.start_negascout(&current_board, at_turn, depth);
+            }
             last_board.copy_state(&current_board);
             current_board.play_move(at_turn, move);
         }
         at_turn = !at_turn;
     }
     std::cout << '\n' << white_score << ' ' << black_score << '\n';
-}
-
-int main() {
-    print_title_blur();
-    play_against_bot();
-    //run_bench();
-    //run_bot_vs_bot_bench();
-    return 0;
 }
