@@ -265,7 +265,7 @@ int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta
     int init_alpha = alpha;
     int init_beta = beta;
     uint64_t hash = 0;
-    last_heuristic_count++;
+    last_state_count++;
     
     // reach max depth
     if (depth == 0) {
