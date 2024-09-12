@@ -53,18 +53,31 @@ If your CPU supports AVX2 instruction set (most modern x86 CPUs), proceed with t
 ```bash
 git clone https://github.com/Saniel0/Reversan-Engine.git
 make
-./reversan
 ```
 #### Alternative Installation (for Non-AVX2 CPUs)
 If your CPU does not support AVX2, use the `no_simd` flag:
 ```bash
 git clone https://github.com/Saniel0/Reversan-Engine.git
 make no_simd
-./reversan
 ```
 
 ## Usage
-Once compiled, the engine starts in interactive mode, allowing you to play against it. By default, it searches to a depth of 10 moves. You can modify the search depth and other settings by editing the options in `main.cpp`.
+#### Play against the engine
+```bash
+reversan --play
+```
+#### Let the engine play against itself
+```bash
+reversan --bot-vs-bot
+```
+#### Benchmark engine efficiency on pre-defined state
+```bash
+reversan --benchmark
+```
+#### For additional options and details, run
+```bash
+reversan --help
+```
 
 ## Roadmap
 - **Optimizations**: I plan to further optimize the engine, although the core algorithms (find_moves, play_move, rate_board) may have limited optimization potential. Future improvements could include additional state pruning strategies.
