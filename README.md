@@ -45,21 +45,35 @@ Select move >
 ```
 
 ## Installation
-The engine requires only standard C++ libraries, making the setup straightforward. Follow the instructions below based on your CPU architecture.
+**Reversan Engine** requires only standard C++ libraries, making the setup straightforward. Follow the instructions below based on your preferred installation method and CPU architecture.
 
-#### Standard Installation (for AVX2 Supported CPUs)
-
-If your CPU supports AVX2 instruction set (most modern x86 CPUs), proceed with the default installation:
-```bash
-git clone https://github.com/Saniel0/Reversan-Engine.git
-make
-```
-#### Alternative Installation (for Non-AVX2 CPUs)
-If your CPU does not support AVX2, use the `no_simd` flag:
-```bash
-git clone https://github.com/Saniel0/Reversan-Engine.git
-make no_simd
-```
+### CMake (recommended)
+Using `cmake` is the default and recommended method for installing **Reversan Engine**. This method automatically detects whether your CPU supports AVX2.
+1. **Build the Project:**
+   ```bash
+   git clone https://github.com/Saniel0/Reversan-Engine.git
+   cmake -B build
+   cmake --build build
+   ```
+    This will build both AVX2 (if supported) and non-AVX2 versions.
+1. **Debug Build (Optional):** To create additional debug builds for profiling with `gprof`, use
+    ```bash
+    git clone https://github.com/Saniel0/Reversan-Engine.git
+    cmake -B build -DCMAKE_BUILD_TYPE=Debug
+    cmake --build build
+    ```
+### Make
+You can also install **Reversan Engine** using `make`. This method provides a simpler setup but requires manual selection of the AVX2 support.
+1. **AVX2 Version:**
+    ```bash
+    git clone https://github.com/Saniel0/Reversan-Engine.git
+    make
+    ```
+2. **Non-AVX2 version:**
+    ```bash
+    git clone https://github.com/Saniel0/Reversan-Engine.git
+    make no_simd
+    ```
 
 ## Usage
 #### Play against the engine
