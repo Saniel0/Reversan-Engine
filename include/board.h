@@ -65,9 +65,8 @@ class Board {
         /**
          * @brief Heuristic values for board evaluation.
          * 
-         * The heuristics_map array contains predefined values used to evaluate
-         * the board state. The index represents the position on the board, and
-         * the value represents the heuristic score for that position.
+         * Value at every position HAS TO BE between -127 128,
+         * otherwise AVX2 version breaks.
          */
         static constexpr int heuristics_map[64] = {100,-15, 10,  5,  5, 10,-15,100,
                                                    -15,-30, -2, -2, -2, -2,-30,-15,
