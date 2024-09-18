@@ -59,6 +59,8 @@ class Board {
          * pieces to wrap around to the other side of the board.
          */
         static constexpr uint64_t NO_COL_MASK = 0xffffffffffffffff;
+
+    public:
         
         /**
          * @brief Heuristic values for board evaluation.
@@ -77,7 +79,6 @@ class Board {
                                                    100,-15, 10,  5,  5, 10,-15,100
         };
     
-    public:
         /**
          * @brief Bitmap representing the positions of white pieces.
          * 
