@@ -20,8 +20,8 @@
 __attribute__((always_inline)) int Board::rate_board() {
     int score = 0;
     for (int i = 0; i < 64; ++i) {
-        score += ((white_bitmap >> i) & 1) * heuristics_map[i];
-        score -= ((black_bitmap >> i) & 1) * heuristics_map[i];
+        score += ((white_bitmap >> i) & 1) * heuristics_map[63 - i];
+        score -= ((black_bitmap >> i) & 1) * heuristics_map[63 - i];
     }
     
     int moves_delta = __builtin_popcountll(find_moves(true)) - __builtin_popcountll(find_moves(false));
