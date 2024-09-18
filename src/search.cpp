@@ -116,6 +116,9 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
     }
     
     // check if state was already calculated
+    // overhead of using transposition table becomes
+    // too large at lower levels, it is then faster
+    // to just calculate the score again
     if (depth > 2) {
         hash = state->hash();
         int score = transposition_table.get(hash, alpha, beta);
@@ -274,6 +277,9 @@ int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta
     }
     
     // check if state was already calculated
+    // overhead of using transposition table becomes
+    // too large at lower levels, it is then faster
+    // to just calculate the score again
     if (depth > 2) {
         hash = state->hash();
         int score = transposition_table.get(hash, alpha, beta);
