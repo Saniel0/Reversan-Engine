@@ -18,6 +18,19 @@
 #include "board.h"
 #include <immintrin.h>
 
+// heuristics map has to be converted into format optimized for SIMD instructions
+constexpr uint64_t convert_col(int col) {
+    uint64_t val = 0;
+    for (int i = 0; i < 8; ++i) {
+        val <<= 8;
+        val |= static_cast<uint8_t>(Board::heuristics_map[i*8 + col]);
+    }
+    return val;
+}
+
+static constexpr uint64_t heur_map1[4] = {convert_col(7), convert_col(6), convert_col(5), convert_col(4)};
+static constexpr uint64_t heur_map2[4] = {convert_col(3), convert_col(2), convert_col(1), convert_col(0)};
+
 
 __attribute__((always_inline)) int Board::rate_board() {
     int score = 0;
@@ -27,19 +40,6 @@ __attribute__((always_inline)) int Board::rate_board() {
     
     // 8bit * 64 = 512bit, so the board does not fit into
     // one 256bit vector, solved by splitting board in half
-
-    // load heuristic matrix values into corresponding positions
-    int64_t heur_map1[4];
-    heur_map1[0] = 0x64f10a05050af164; // column 7
-    heur_map1[1] = 0xf1e2fefefefee2f1; // column 6
-    heur_map1[2] = 0x0afe01ffff01fe0a; // column 5
-    heur_map1[3] = 0x05fefffffffffe05; // column 4
-
-    int64_t heur_map2[4];
-    heur_map2[0] = 0x05fefffffffffe05; // column 3
-    heur_map2[1] = 0x0afe01ffff01fe0a; // column 2
-    heur_map2[2] = 0xf1e2fefefefee2f1; // column 1
-    heur_map2[3] = 0x64f10a05050af164; // column 0
 
     // specific values to shift each column into the rightest position
     __m256i shift_vals_vec1 = _mm256_set_epi64x(3, 2, 1, 0);
