@@ -21,7 +21,7 @@ void Transposition_table::clear() {
     map.clear();
 }
 
-void Transposition_table::insert(uint64_t hash, int score, int alpha, int beta) {
+__attribute__((always_inline)) void Transposition_table::insert(uint64_t hash, int score, int alpha, int beta) {
     Entry e;
     e.score = score;
     if (score <= alpha) {
@@ -36,7 +36,7 @@ void Transposition_table::insert(uint64_t hash, int score, int alpha, int beta) 
     map[hash] = e;
 }
 
-int Transposition_table::get(uint64_t hash, int alpha, int beta) {
+__attribute__((always_inline)) int Transposition_table::get(uint64_t hash, int alpha, int beta) {
     if (map.find(hash) != map.end()) {
         Entry e = map[hash];
         if (e.type == 0) {
