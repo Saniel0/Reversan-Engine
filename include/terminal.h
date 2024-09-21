@@ -28,20 +28,6 @@
 void print_title_blur();
 
 /**
- * @brief Prints a 3D title to the terminal.
- * 
- * This function prints a stylized title with a 3D effect to the terminal.
- */
-void print_title_3d();
-
-/**
- * @brief Prints a tiled title to the terminal.
- * 
- * This function prints a stylized title with a tile effect to the terminal.
- */
-void print_title_tile();
-
-/**
  * @brief Prints help message to terminal.
  */
 void print_help();
