@@ -42,6 +42,28 @@ void print_help();
 void delete_lines(int count);
 
 /**
+ * @brief Prints board pieces in color to stdout
+ * 
+ * @param board Board to print out.
+ */
+void print_board(Board *board);
+
+/**
+ * @brief Prints board pieces and moves in color to stdout
+ * 
+ * @param board Board to print out.
+ * @param moves Moves to print out.
+ */
+void print_board_moves(Board *board, uint64_t moves);
+
+/**
+ * @brief Prints moves in color to stdout
+ * 
+ * @param moves Moves to print out.
+ */
+void print_moves(uint64_t moves);
+
+/**
  * @brief Prints the previous and current board states side by side.
  * 
  * @param last_state Pointer to the Board object representing the last state.

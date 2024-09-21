@@ -158,25 +158,6 @@ class Board {
          * @brief Function initializing test state.
          */
         void load_test_state();
-
-        /**
-         * @brief Functions that prints board pieces to stdout
-         */
-        void print_board();
-
-        /**
-         * @brief Functions that prints board pieces and moves to stdout
-         * 
-         * @param moves Moves to print out along with board pieces.
-         */
-        void print_board_moves(uint64_t moves);
-
-        /**
-         * @brief Functions that prints moves to stdout
-         * 
-         * @param moves Moves to print out.
-         */
-        void print_moves(uint64_t moves);
 };
 
 #endif

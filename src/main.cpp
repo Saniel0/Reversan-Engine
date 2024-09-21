@@ -121,7 +121,7 @@ void run_bench(int depth, int search) {
     else if (search == NEGASCOUT) {
         move = engine.start_negascout(&init_board, false, depth);
     }
-    init_board.print_board_moves(move);
+    print_board_moves(&init_board, move);
 }
 
 void run_bot_vs_bot(int depth, int search) {
@@ -146,7 +146,7 @@ void run_bot_vs_bot(int depth, int search) {
         init_board.play_move(color, move);
         color = !color;
     }
-    init_board.print_board();
+    print_board(&init_board);
 }
 
 void play_against_bot(int depth, int search) {

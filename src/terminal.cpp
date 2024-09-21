@@ -50,6 +50,69 @@ void delete_lines(int count) {
     }
 }
 
+void print_board(Board *board) {
+    uint64_t bit_mask = static_cast<uint64_t>(1) << 63;
+    std::cout << "\033[1m  0 1 2 3 4 5 6 7\n\033[0m";
+    for (int i = 0; i < 8; ++i) {
+        std::cout << "\033[1m" << i << " \033[0m";
+        for (int j = 0; j < 8; ++j) {
+            if (board->white_bitmap & bit_mask) {
+                std::cout << "\033[1;33mX \033[0m";
+            }
+            else if (board->black_bitmap & bit_mask) {
+                std::cout << "\033[1;32mO \033[0m";
+            }
+            else {
+                std::cout << "- ";
+            }
+            bit_mask >>= 1;
+        }
+        std::cout << '\n';
+    }
+}
+
+void print_board_moves(Board *board, uint64_t moves) {
+    uint64_t bit_mask = static_cast<uint64_t>(1) << 63;
+    std::cout << "\033[1m  0 1 2 3 4 5 6 7\n\033[0m";
+    for (int i = 0; i < 8; ++i) {
+        std::cout << "\033[1m" << i << " \033[0m";
+        for (int j = 0; j < 8; ++j) {
+            if (board->white_bitmap & bit_mask) {
+                std::cout << "\033[1;33mX \033[0m";
+            }
+            else if (board->black_bitmap & bit_mask) {
+                std::cout << "\033[1;32mO \033[0m";
+            }
+            else if (moves & bit_mask) {
+                std::cout << "\033[31m+ \033[0m";
+            }
+            else {
+                std::cout << "- ";
+            }
+            bit_mask >>= 1;
+        }
+        std::cout << '\n';
+    }
+}
+
+void print_moves(uint64_t moves) {
+    uint64_t bit_mask = static_cast<uint64_t>(1) << 63;
+    std::cout << "\033[1m  0 1 2 3 4 5 6 7\n\033[0m";
+    for (int i = 0; i < 8; ++i) {
+        std::cout << "\033[1m" << i << " \033[0m";
+        for (int j = 0; j < 8; ++j) {
+            if (moves & bit_mask) {
+                std::cout << "\033[1;31mX \033[0m";
+            }
+            else {
+                std::cout << "- ";
+            }
+            bit_mask >>= 1;
+        }
+        std::cout << '\n';
+    }
+}
+
 void print_boards(Board *last_state, Board *current_state, bool current_color) {
     uint64_t bit_mask1 = static_cast<uint64_t>(1) << 63;
     uint64_t bit_mask2 = static_cast<uint64_t>(1) << 63;

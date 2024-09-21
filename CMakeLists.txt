@@ -16,7 +16,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 # Source files common to all builds
 set(SOURCES
     src/main.cpp
-    src/board_print.cpp
     src/board_state.cpp
     src/search.cpp
     src/terminal.cpp
