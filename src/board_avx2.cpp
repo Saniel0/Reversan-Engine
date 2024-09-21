@@ -32,7 +32,7 @@ static constexpr uint64_t heur_map1[4] = {convert_col(7), convert_col(6), conver
 static constexpr uint64_t heur_map2[4] = {convert_col(3), convert_col(2), convert_col(1), convert_col(0)};
 
 
-__attribute__((always_inline)) int Board::rate_board() {
+__attribute__((always_inline)) int Board::rate_board() const {
     int score = 0;
     
     // the goal is to manipulate the bitmap to get 256bit vector containing
@@ -99,7 +99,7 @@ __attribute__((always_inline)) int Board::rate_board() {
     return score;
 }
 
-__attribute__((always_inline)) uint64_t Board::find_moves(bool color) {
+__attribute__((always_inline)) uint64_t Board::find_moves(bool color) const {
     uint64_t valid_moves = 0;
     // create new bitmap of empty spaces from our two bitmaps so we do not have to check both for empty spaces
     uint64_t free_spaces = ~(white_bitmap | black_bitmap);

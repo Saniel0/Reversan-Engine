@@ -27,7 +27,7 @@ __attribute__((always_inline)) void Board::copy_state(Board *state) {
     black_bitmap = state->black_bitmap;
 }
 
-__attribute__((always_inline)) uint64_t Board::hash() {
+__attribute__((always_inline)) uint64_t Board::hash() const {
     // Murmur hash of white
     uint64_t w = white_bitmap;
     w ^= w >> 33;

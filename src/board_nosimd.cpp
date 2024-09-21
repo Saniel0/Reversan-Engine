@@ -17,7 +17,7 @@
 
 #include "board.h"
 
-__attribute__((always_inline)) int Board::rate_board() {
+__attribute__((always_inline)) int Board::rate_board() const {
     int score = 0;
     for (int i = 0; i < 64; ++i) {
         score += ((white_bitmap >> i) & 1) * heuristics_map[63 - i];
@@ -30,7 +30,7 @@ __attribute__((always_inline)) int Board::rate_board() {
     return score;
 }
 
-__attribute__((always_inline)) uint64_t Board::find_moves(bool color) {
+__attribute__((always_inline)) uint64_t Board::find_moves(bool color) const {
     uint64_t valid_moves = 0;
     // create new bitmap of empty spaces from our two bitmaps so we do not have to check both for empty spaces
     uint64_t free_spaces = ~(white_bitmap | black_bitmap);

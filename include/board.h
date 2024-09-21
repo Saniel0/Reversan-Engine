@@ -109,14 +109,6 @@ class Board {
         void copy_state(Board *state);
 
         /**
-         * @brief Finds all possible moves for the given color.
-         * 
-         * @param color Boolean indicating the color (true for white, false for black).
-         * @return uint64_t Bitmap representing all possible moves for the given color.
-         */
-        uint64_t find_moves(bool color);
-
-        /**
          * @brief Plays a move on the board.
          * 
          * @param color Boolean indicating the color (true for white, false for black).
@@ -127,13 +119,21 @@ class Board {
         void play_move(bool color, uint64_t move);
 
         /**
+         * @brief Finds all possible moves for the given color.
+         * 
+         * @param color Boolean indicating the color (true for white, false for black).
+         * @return uint64_t Bitmap representing all possible moves for the given color.
+         */
+        uint64_t find_moves(bool color) const;
+
+        /**
          * @brief Rates the current board state.
          * 
          * @return int The heuristic score of the current board state.
          * 
          * Evaluates the board using the heuristic values and other methods to determine a score.
          */
-        int rate_board();
+        int rate_board() const;
 
         /**
          * @brief Generates a hash value for the current board state.
@@ -142,7 +142,7 @@ class Board {
          * 
          * Uses murmur3 hashing algorithm.
          */
-        uint64_t hash();
+        uint64_t hash() const;
         
         /**
          * @brief Function initializing start state.
