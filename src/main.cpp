@@ -116,10 +116,10 @@ void run_bench(int depth, int search) {
     
     init_board.load_benchmark_state();
     if (search == MINIMAX) {
-        move = engine.start_minimax(&init_board, false, depth);
+        move = engine.start_minimax(init_board, false, depth);
     }
     else if (search == NEGASCOUT) {
-        move = engine.start_negascout(&init_board, false, depth);
+        move = engine.start_negascout(init_board, false, depth);
     }
     print_board_moves(&init_board, move);
 }
@@ -133,10 +133,10 @@ void run_bot_vs_bot(int depth, int search) {
     bool color = false;
     while (true) {
         if (search == MINIMAX) {
-            move = engine.start_minimax(&init_board, color, depth);
+            move = engine.start_minimax(init_board, color, depth);
         }
         else if (search == NEGASCOUT) {
-            move = engine.start_negascout(&init_board, color, depth);
+            move = engine.start_negascout(init_board, color, depth);
         }
 
         if (move == 0) {
@@ -198,10 +198,10 @@ void play_against_bot(int depth, int search) {
         else {
             uint64_t move = 0;
             if (search == MINIMAX) {
-                move = engine.start_minimax(&current_board, at_turn, depth);
+                move = engine.start_minimax(current_board, at_turn, depth);
             }
             else if (search == NEGASCOUT) {
-                move = engine.start_negascout(&current_board, at_turn, depth);
+                move = engine.start_negascout(current_board, at_turn, depth);
             }
             last_board.copy_state(&current_board);
             current_board.play_move(at_turn, move);

@@ -57,7 +57,7 @@ class Search {
          * @param end_board Flag indicating whether the current board state is the final state.
          * @return The evaluated score of the board.
          */
-        int negascout(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board);
+        int negascout(Board state, int depth, bool cur_color, int alpha, int beta, bool end_board);
 
         /**
          * @brief Minimax search algorithm with alpha-beta pruning used to find the best move.
@@ -70,7 +70,7 @@ class Search {
          * @param end_board Flag indicating whether the current board state is the final state.
          * @return The evaluated score of the board.
          */
-        int minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board);
+        int minimax(Board state, int depth, bool cur_color, int alpha, int beta, bool end_board);
 
     public:
         /**
@@ -86,7 +86,7 @@ class Search {
          * @param search_depth The depth limit for the search algorithm.
          * @return The best move as a bitboard.
          */
-        uint64_t start_negascout(Board *state, bool color, int search_depth);
+        uint64_t start_negascout(Board state, bool color, int search_depth);
 
         /**
          * @brief Starts the basic Minimax search from the given board state.
@@ -96,7 +96,7 @@ class Search {
          * @param search_depth The depth limit for the search algorithm.
          * @return The best move as a bitboard.
          */
-        uint64_t start_minimax(Board *state, bool color, int search_depth);
+        uint64_t start_minimax(Board state, bool color, int search_depth);
 };
 
 #endif

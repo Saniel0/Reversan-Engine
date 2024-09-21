@@ -21,7 +21,7 @@
 // initialize stats counters and select move order
 Search::Search(): total_heuristic_count(0), total_state_count(0), move_order(Move_order::OPTIMIZED) {}
 
-uint64_t Search::start_negascout(Board *state, bool color, int depth) {
+uint64_t Search::start_negascout(Board state, bool color, int depth) {
     // transposition table must be empty before calculation of best move, otherwise results would be affected
     transposition_table.clear();
     
@@ -30,7 +30,7 @@ uint64_t Search::start_negascout(Board *state, bool color, int depth) {
     last_state_count = 0;
 
     uint64_t best_move = 0;
-    uint64_t possible_moves = state->find_moves(color);
+    uint64_t possible_moves = state.find_moves(color);
 
     int alpha = -1000;
     int beta = 1000;
@@ -43,17 +43,17 @@ uint64_t Search::start_negascout(Board *state, bool color, int depth) {
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(state);
+                next.copy_state(&state);
                 next.play_move(color, move);
                 
                 if (first) { // run first move with whole window
-                    eval = negascout(&next, depth-1, !color, alpha, beta, false);
+                    eval = negascout(next, depth-1, !color, alpha, beta, false);
                     first = false;
                 }
                 else {
-                    eval = negascout(&next, depth-1, !color, alpha, alpha+1, false); // minimize search window
+                    eval = negascout(next, depth-1, !color, alpha, alpha+1, false); // minimize search window
                     if (eval > alpha && eval < beta) { // if we missed the window and there might still be better move, rerun
-                        eval = negascout(&next, depth-1, !color, eval, beta, false);
+                        eval = negascout(next, depth-1, !color, eval, beta, false);
                     }
                 }
 
@@ -69,17 +69,17 @@ uint64_t Search::start_negascout(Board *state, bool color, int depth) {
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if ((possible_moves & move) != 0) {
-                next.copy_state(state);
+                next.copy_state(&state);
                 next.play_move(color, move);
                 
                 if (first) { // run first move with whole window
-                    eval = negascout(&next, depth-1, !color, alpha, beta, false);
+                    eval = negascout(next, depth-1, !color, alpha, beta, false);
                     first = false;
                 }
                 else {
-                    eval = negascout(&next, depth-1, !color, beta-1, beta, false); // minimize search window
+                    eval = negascout(next, depth-1, !color, beta-1, beta, false); // minimize search window
                     if (eval < beta && eval > alpha) { // if we missed the window and there might still be better move, rerun
-                        eval = negascout(&next, depth-1, !color, alpha, eval, false);
+                        eval = negascout(next, depth-1, !color, alpha, eval, false);
                     }
                 }
 
@@ -103,7 +103,7 @@ uint64_t Search::start_negascout(Board *state, bool color, int depth) {
     return best_move;
 }
 
-int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
+int Search::negascout(Board state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
     int init_alpha = alpha;
     int init_beta = beta;
     uint64_t hash = 0;
@@ -112,7 +112,7 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
     // reach max depth
     if (depth == 0) {
         last_heuristic_count++;
-        return state->rate_board();
+        return state.rate_board();
     }
     
     // check if state was already calculated
@@ -120,7 +120,7 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
     // too large at lower levels, it is then faster
     // to just calculate the score again
     if (depth > 2) {
-        hash = state->hash();
+        hash = state.hash();
         int score = transposition_table.get(hash, alpha, beta);
         if (score != NOT_FOUND) {
             return score;
@@ -128,12 +128,12 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
     }
 
     // if there are no possible moves
-    uint64_t possible_moves = state->find_moves(cur_color);
+    uint64_t possible_moves = state.find_moves(cur_color);
     int eval;
     if (possible_moves == 0) {
         if (end_board) {
-            int moves_white = __builtin_popcountll(state->white_bitmap);
-            int moves_black = __builtin_popcountll(state->black_bitmap);
+            int moves_white = __builtin_popcountll(state.white_bitmap);
+            int moves_black = __builtin_popcountll(state.black_bitmap);
             if (moves_white > moves_black) {eval = 999;}
             else if (moves_white < moves_black) {eval = -999;}
             else {eval = 0;}
@@ -151,17 +151,17 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(state);
+                next.copy_state(&state);
                 next.play_move(cur_color, move);
                 
                 if (first) { // run first move with whole window
-                    eval = negascout(&next, depth-1, !cur_color, alpha, beta, false);
+                    eval = negascout(next, depth-1, !cur_color, alpha, beta, false);
                     first = false;
                 }
                 else {
-                    eval = negascout(&next, depth-1, !cur_color, alpha, alpha+1, false); // minimize search window
+                    eval = negascout(next, depth-1, !cur_color, alpha, alpha+1, false); // minimize search window
                     if (eval > alpha && eval < beta) { // if we missed the window and there might still be better move, rerun
-                        eval = negascout(&next, depth-1, !cur_color, eval, beta, false);
+                        eval = negascout(next, depth-1, !cur_color, eval, beta, false);
                     }
                 }
 
@@ -177,17 +177,17 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(state);
+                next.copy_state(&state);
                 next.play_move(cur_color, move);
 
                 if (first) { // run first move with whole window
-                    eval = negascout(&next, depth-1, !cur_color, alpha, beta, false);
+                    eval = negascout(next, depth-1, !cur_color, alpha, beta, false);
                     first = false;
                 }
                 else {
-                    eval = negascout(&next, depth-1, !cur_color, beta-1, beta, false); // minimize search window
+                    eval = negascout(next, depth-1, !cur_color, beta-1, beta, false); // minimize search window
                     if (eval < beta && eval > alpha) { // if we missed the window and there might still be better move, rerun
-                        eval = negascout(&next, depth-1, !cur_color, alpha, eval, false);
+                        eval = negascout(next, depth-1, !cur_color, alpha, eval, false);
                     }
                 }
                 
@@ -208,7 +208,7 @@ int Search::negascout(Board *state, int depth, bool cur_color, int alpha, int be
     return best_eval;
 }
 
-uint64_t Search::start_minimax(Board *state, bool color, int depth) {
+uint64_t Search::start_minimax(Board state, bool color, int depth) {
     // transposition table must be empty before calculation of best move, otherwise results would be affected
     transposition_table.clear();
     
@@ -217,7 +217,7 @@ uint64_t Search::start_minimax(Board *state, bool color, int depth) {
     last_state_count = 0;
     
     uint64_t best_move = 0;
-    uint64_t possible_moves = state->find_moves(color);
+    uint64_t possible_moves = state.find_moves(color);
 
     int alpha = -1000;
     int beta = 1000;
@@ -229,9 +229,9 @@ uint64_t Search::start_minimax(Board *state, bool color, int depth) {
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(state);
+                next.copy_state(&state);
                 next.play_move(color, move);
-                eval = minimax(&next, depth-1, !color, alpha, beta, false);
+                eval = minimax(next, depth-1, !color, alpha, beta, false);
                 if (eval > best_eval) {
                     best_move = move;
                     best_eval = eval;
@@ -244,9 +244,9 @@ uint64_t Search::start_minimax(Board *state, bool color, int depth) {
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if ((possible_moves & move) != 0) {
-                next.copy_state(state);
+                next.copy_state(&state);
                 next.play_move(color, move);
-                eval = minimax(&next, depth-1, !color, alpha, beta, false);
+                eval = minimax(next, depth-1, !color, alpha, beta, false);
                 if (eval < best_eval) {
                     best_move = move;
                     best_eval = eval;
@@ -264,7 +264,7 @@ uint64_t Search::start_minimax(Board *state, bool color, int depth) {
     return best_move;
 }
 
-int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
+int Search::minimax(Board state, int depth, bool cur_color, int alpha, int beta, bool end_board) {
     int init_alpha = alpha;
     int init_beta = beta;
     uint64_t hash = 0;
@@ -273,7 +273,7 @@ int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta
     // reach max depth
     if (depth == 0) {
         last_heuristic_count++;
-        return state->rate_board();
+        return state.rate_board();
     }
     
     // check if state was already calculated
@@ -281,7 +281,7 @@ int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta
     // too large at lower levels, it is then faster
     // to just calculate the score again
     if (depth > 2) {
-        hash = state->hash();
+        hash = state.hash();
         int score = transposition_table.get(hash, alpha, beta);
         if (score != NOT_FOUND) {
             return score;
@@ -289,12 +289,12 @@ int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta
     }
     
     // if there are no possible moves
-    uint64_t possible_moves = state->find_moves(cur_color);
+    uint64_t possible_moves = state.find_moves(cur_color);
     int eval;
     if (possible_moves == 0) {
         if (end_board) {
-            int moves_white = __builtin_popcountll(state->white_bitmap);
-            int moves_black = __builtin_popcountll(state->black_bitmap);
+            int moves_white = __builtin_popcountll(state.white_bitmap);
+            int moves_black = __builtin_popcountll(state.black_bitmap);
             if (moves_white > moves_black) {eval = 999;}
             else if (moves_white < moves_black) {eval = -999;}
             else {eval = 0;}
@@ -311,9 +311,9 @@ int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(state);
+                next.copy_state(&state);
                 next.play_move(cur_color, move);
-                eval = minimax(&next, depth-1, !cur_color, alpha, beta, false);
+                eval = minimax(next, depth-1, !cur_color, alpha, beta, false);
                 best_eval = std::max(eval, best_eval);
                 alpha = std::max(eval, alpha);
                 if (beta <= alpha) {
@@ -326,9 +326,9 @@ int Search::minimax(Board *state, int depth, bool cur_color, int alpha, int beta
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(state);
+                next.copy_state(&state);
                 next.play_move(cur_color, move);
-                eval = minimax(&next, depth-1, !cur_color, alpha, beta, false);
+                eval = minimax(next, depth-1, !cur_color, alpha, beta, false);
                 best_eval = std::min(eval, best_eval);
                 beta = std::min(eval, beta);
                 if (beta <= alpha) {
