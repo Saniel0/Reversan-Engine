@@ -59,70 +59,73 @@ ALWAYS_INLINE uint64_t Board::hash() const {
     return w ^ b;
 }
 
-void Board::load_start_state() {
+const Board Board::States::initial = Board(
     // or operations just for readability
     // static cast so the number is not simple integer - shifting would go out of range
-    white_bitmap = static_cast<uint64_t>(0b00000000) << 56 |
-                   static_cast<uint64_t>(0b00000000) << 48 |
-                   static_cast<uint64_t>(0b00000000) << 40 |
-                   static_cast<uint64_t>(0b00010000) << 32 |
-                   static_cast<uint64_t>(0b00001000) << 24 |
-                   static_cast<uint64_t>(0b00000000) << 16 |
-                   static_cast<uint64_t>(0b00000000) << 8 |
-                   static_cast<uint64_t>(0b00000000);
-    
-    black_bitmap = static_cast<uint64_t>(0b00000000) << 56 |
-                   static_cast<uint64_t>(0b00000000) << 48 |
-                   static_cast<uint64_t>(0b00000000) << 40 |
-                   static_cast<uint64_t>(0b00001000) << 32 |
-                   static_cast<uint64_t>(0b00010000) << 24 |
-                   static_cast<uint64_t>(0b00000000) << 16 |
-                   static_cast<uint64_t>(0b00000000) << 8 |
-                   static_cast<uint64_t>(0b00000000);
-}
+    // WHITE
+    static_cast<uint64_t>(0b00000000) << 56 |
+    static_cast<uint64_t>(0b00000000) << 48 |
+    static_cast<uint64_t>(0b00000000) << 40 |
+    static_cast<uint64_t>(0b00010000) << 32 |
+    static_cast<uint64_t>(0b00001000) << 24 |
+    static_cast<uint64_t>(0b00000000) << 16 |
+    static_cast<uint64_t>(0b00000000) << 8 |
+    static_cast<uint64_t>(0b00000000),
+    // BLACK
+    static_cast<uint64_t>(0b00000000) << 56 |
+    static_cast<uint64_t>(0b00000000) << 48 |
+    static_cast<uint64_t>(0b00000000) << 40 |
+    static_cast<uint64_t>(0b00001000) << 32 |
+    static_cast<uint64_t>(0b00010000) << 24 |
+    static_cast<uint64_t>(0b00000000) << 16 |
+    static_cast<uint64_t>(0b00000000) << 8 |
+    static_cast<uint64_t>(0b00000000)
+);
 
-void Board::load_test_state() {
+const Board Board::States::test = Board(
     // random board used to validate functions
     // or operations just for readability
     // static cast so the number is not simple integer - shifting would go out of range
-    white_bitmap = static_cast<uint64_t>(0b01000000) << 56 |
-                   static_cast<uint64_t>(0b01000000) << 48 |
-                   static_cast<uint64_t>(0b00010000) << 40 |
-                   static_cast<uint64_t>(0b00001000) << 32 |
-                   static_cast<uint64_t>(0b00010100) << 24 |
-                   static_cast<uint64_t>(0b00000000) << 16 |
-                   static_cast<uint64_t>(0b00000000) << 8 |
-                   static_cast<uint64_t>(0b00000000);
-    
-    black_bitmap = static_cast<uint64_t>(0b00000000) << 56 |
-                   static_cast<uint64_t>(0b00000000) << 48 |
-                   static_cast<uint64_t>(0b11100000) << 40 |
-                   static_cast<uint64_t>(0b00010000) << 32 |
-                   static_cast<uint64_t>(0b00001000) << 24 |
-                   static_cast<uint64_t>(0b00000100) << 16 |
-                   static_cast<uint64_t>(0b00000000) << 8 |
-                   static_cast<uint64_t>(0b00000000);
-}
+    // WHITE
+    static_cast<uint64_t>(0b01000000) << 56 |
+    static_cast<uint64_t>(0b01000000) << 48 |
+    static_cast<uint64_t>(0b00010000) << 40 |
+    static_cast<uint64_t>(0b00001000) << 32 |
+    static_cast<uint64_t>(0b00010100) << 24 |
+    static_cast<uint64_t>(0b00000000) << 16 |
+    static_cast<uint64_t>(0b00000000) << 8 |
+    static_cast<uint64_t>(0b00000000),
+    // BLACK
+    static_cast<uint64_t>(0b00000000) << 56 |
+    static_cast<uint64_t>(0b00000000) << 48 |
+    static_cast<uint64_t>(0b11100000) << 40 |
+    static_cast<uint64_t>(0b00010000) << 32 |
+    static_cast<uint64_t>(0b00001000) << 24 |
+    static_cast<uint64_t>(0b00000100) << 16 |
+    static_cast<uint64_t>(0b00000000) << 8 |
+    static_cast<uint64_t>(0b00000000)
+);
 
-void Board::load_benchmark_state() {
+const Board Board::States::benchmark = Board(
     // one of the more difficult board states to compute
     // or operations just for readability
     // static cast so the number is not simple integer - shifting would go out of range
-    white_bitmap = static_cast<uint64_t>(0b00000001) << 56 |
-                   static_cast<uint64_t>(0b00010010) << 48 |
-                   static_cast<uint64_t>(0b01111110) << 40 |
-                   static_cast<uint64_t>(0b01111100) << 32 |
-                   static_cast<uint64_t>(0b00111100) << 24 |
-                   static_cast<uint64_t>(0b00010100) << 16 |
-                   static_cast<uint64_t>(0b00110000) << 8 |
-                   static_cast<uint64_t>(0b00010000);
-    
-    black_bitmap = static_cast<uint64_t>(0b11111100) << 56 |
-                   static_cast<uint64_t>(0b00101100) << 48 |
-                   static_cast<uint64_t>(0b00000000) << 40 |
-                   static_cast<uint64_t>(0b00000000) << 32 |
-                   static_cast<uint64_t>(0b11000000) << 24 |
-                   static_cast<uint64_t>(0b11101000) << 16 |
-                   static_cast<uint64_t>(0b00000000) << 8 |
-                   static_cast<uint64_t>(0b00000000);
-}
+    // WHITE
+    static_cast<uint64_t>(0b00000001) << 56 |
+    static_cast<uint64_t>(0b00010010) << 48 |
+    static_cast<uint64_t>(0b01111110) << 40 |
+    static_cast<uint64_t>(0b01111100) << 32 |
+    static_cast<uint64_t>(0b00111100) << 24 |
+    static_cast<uint64_t>(0b00010100) << 16 |
+    static_cast<uint64_t>(0b00110000) << 8 |
+    static_cast<uint64_t>(0b00010000),
+    // BLACK
+    static_cast<uint64_t>(0b11111100) << 56 |
+    static_cast<uint64_t>(0b00101100) << 48 |
+    static_cast<uint64_t>(0b00000000) << 40 |
+    static_cast<uint64_t>(0b00000000) << 32 |
+    static_cast<uint64_t>(0b11000000) << 24 |
+    static_cast<uint64_t>(0b11101000) << 16 |
+    static_cast<uint64_t>(0b00000000) << 8 |
+    static_cast<uint64_t>(0b00000000)
+);

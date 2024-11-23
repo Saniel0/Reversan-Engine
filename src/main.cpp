@@ -110,11 +110,10 @@ int main(int argc, char *argv[]) {
 }
 
 void run_bench(int depth, int search) {
-    Board init_board;
+    Board init_board = Board::States::benchmark;
     Search engine;
     uint64_t move = 0;
     
-    init_board.load_benchmark_state();
     if (search == MINIMAX) {
         move = engine.start_minimax(init_board, false, depth);
     }
@@ -125,11 +124,10 @@ void run_bench(int depth, int search) {
 }
 
 void run_bot_vs_bot(int depth, int search) {
-    Board init_board;
+    Board init_board = Board::States::initial;
     Search engine;
     uint64_t move = 0;
 
-    init_board.load_start_state();
     bool color = false;
     while (true) {
         if (search == MINIMAX) {
@@ -152,10 +150,9 @@ void run_bot_vs_bot(int depth, int search) {
 void play_against_bot(int depth, int search) {
     print_title_blur();
     Board last_board;
-    Board current_board;
+    Board current_board = Board::States::initial;
     Search engine;
     
-    current_board.load_start_state();
     int white_score = 0;
     int black_score = 0;
     bool at_turn = false;

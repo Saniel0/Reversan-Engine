@@ -58,6 +58,12 @@ class Board {
                                                    -15,-30, -2, -2, -2, -2,-30,-15,
                                                    100,-15, 10,  5,  5, 10,-15,100
         };
+
+        struct States {
+            static const Board initial;
+            static const Board test;
+            static const Board benchmark;
+        };
     
         /**
          * @brief Bitmap representing the positions of white pieces.
@@ -146,21 +152,6 @@ class Board {
          * @param other Reference to other Board object.
          */
         void operator=(const Board& other);
-        
-        /**
-         * @brief Function initializing start state.
-         */
-        void load_start_state();
-
-        /**
-         * @brief Function initializing benchmark state.
-         */
-        void load_benchmark_state();
-
-        /**
-         * @brief Function initializing test state.
-         */
-        void load_test_state();
 };
 
 #endif
