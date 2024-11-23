@@ -29,7 +29,7 @@
 class Board {
     private:
         /**
-         * @brief Colection of bit masks.
+         * @brief Colection of pre-defined bit masks.
          * 
          * Used to ensure that bitwise operations do not cause
          * pieces to wrap around to the other side of the board.
@@ -60,7 +60,7 @@ class Board {
         };
 
         /**
-         * @brief Collection of multiple usefull states.
+         * @brief Collection of multiple pre-defined usefull states.
          */
         struct States {
             static const Board initial;
