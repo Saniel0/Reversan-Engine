@@ -192,7 +192,7 @@ void play_against_bot(int depth, int search) {
                 delete_lines(1);
                 std::cout << "INVALID - ";
             }
-            last_board.copy_state(&current_board);
+            last_board = current_board;
             current_board.play_move(at_turn, move);
         }
         else {
@@ -203,7 +203,7 @@ void play_against_bot(int depth, int search) {
             else if (search == NEGASCOUT) {
                 move = engine.start_negascout(current_board, at_turn, depth);
             }
-            last_board.copy_state(&current_board);
+            last_board = current_board;
             current_board.play_move(at_turn, move);
         }
         at_turn = !at_turn;

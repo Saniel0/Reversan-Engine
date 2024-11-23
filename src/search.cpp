@@ -43,7 +43,7 @@ uint64_t Search::start_negascout(Board state, bool color, int depth) {
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(&state);
+                next = state;
                 next.play_move(color, move);
                 
                 if (first) { // run first move with whole window
@@ -69,7 +69,7 @@ uint64_t Search::start_negascout(Board state, bool color, int depth) {
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if ((possible_moves & move) != 0) {
-                next.copy_state(&state);
+                next = state;
                 next.play_move(color, move);
                 
                 if (first) { // run first move with whole window
@@ -151,7 +151,7 @@ int Search::negascout(Board state, int depth, bool cur_color, int alpha, int bet
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(&state);
+                next = state;
                 next.play_move(cur_color, move);
                 
                 if (first) { // run first move with whole window
@@ -177,7 +177,7 @@ int Search::negascout(Board state, int depth, bool cur_color, int alpha, int bet
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(&state);
+                next = state;
                 next.play_move(cur_color, move);
 
                 if (first) { // run first move with whole window
@@ -229,7 +229,7 @@ uint64_t Search::start_minimax(Board state, bool color, int depth) {
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(&state);
+                next = state;
                 next.play_move(color, move);
                 eval = minimax(next, depth-1, !color, alpha, beta, false);
                 if (eval > best_eval) {
@@ -244,7 +244,7 @@ uint64_t Search::start_minimax(Board state, bool color, int depth) {
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if ((possible_moves & move) != 0) {
-                next.copy_state(&state);
+                next = state;
                 next.play_move(color, move);
                 eval = minimax(next, depth-1, !color, alpha, beta, false);
                 if (eval < best_eval) {
@@ -311,7 +311,7 @@ int Search::minimax(Board state, int depth, bool cur_color, int alpha, int beta,
         best_eval = -1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(&state);
+                next = state;
                 next.play_move(cur_color, move);
                 eval = minimax(next, depth-1, !cur_color, alpha, beta, false);
                 best_eval = std::max(eval, best_eval);
@@ -326,7 +326,7 @@ int Search::minimax(Board state, int depth, bool cur_color, int alpha, int beta,
         best_eval = 1000;
         for (uint64_t move : move_order) {
             if (possible_moves & move) {
-                next.copy_state(&state);
+                next = state;
                 next.play_move(cur_color, move);
                 eval = minimax(next, depth-1, !cur_color, alpha, beta, false);
                 best_eval = std::min(eval, best_eval);

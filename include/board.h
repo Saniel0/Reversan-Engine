@@ -102,13 +102,6 @@ class Board {
         Board();
 
         /**
-         * @brief Copies the state of the board.
-         * 
-         * @param state Pointer to the Board object from which the state will be copied.
-         */
-        void copy_state(Board *state);
-
-        /**
          * @brief Plays a move on the board.
          * 
          * @param color Boolean indicating the color (true for white, false for black).
@@ -143,6 +136,13 @@ class Board {
          * Uses murmur3 hashing algorithm.
          */
         uint64_t hash() const;
+
+        /**
+         * @brief Copies the state of the board.
+         * 
+         * @param other Reference to other Board object.
+         */
+        void operator=(const Board& other);
         
         /**
          * @brief Function initializing start state.

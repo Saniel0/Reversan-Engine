@@ -22,9 +22,9 @@ Board::Board() {
     black_bitmap = 0;
 }
 
-__attribute__((always_inline)) void Board::copy_state(Board *state) {
-    white_bitmap = state->white_bitmap;
-    black_bitmap = state->black_bitmap;
+__attribute__((always_inline)) void Board::operator=(const Board& other) {
+    white_bitmap = other.white_bitmap;
+    black_bitmap = other.black_bitmap;
 }
 
 __attribute__((always_inline)) uint64_t Board::hash() const {
