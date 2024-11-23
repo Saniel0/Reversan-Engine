@@ -25,6 +25,8 @@
 #include "board.h"
 #include <bit>
 
+Board::Board() : white_bitmap(0), black_bitmap(0) {}
+
 Board::Board(const uint64_t white_bitmap, const uint64_t black_bitmap) : white_bitmap(white_bitmap), black_bitmap(black_bitmap) {}
 
 ALWAYS_INLINE int Board::count_white() const {
@@ -33,11 +35,6 @@ ALWAYS_INLINE int Board::count_white() const {
 
 ALWAYS_INLINE int Board::count_black() const {
     return std::popcount(black_bitmap);
-}
-
-ALWAYS_INLINE void Board::operator=(const Board& other) {
-    white_bitmap = other.white_bitmap;
-    black_bitmap = other.black_bitmap;
 }
 
 ALWAYS_INLINE uint64_t Board::hash() const {

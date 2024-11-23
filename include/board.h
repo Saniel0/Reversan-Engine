@@ -89,14 +89,7 @@ class Board {
          * 
          * Initializes the bitmaps to 0 (empty) to ensure memory safety.
          */
-        Board() = default;
-
-        /**
-         * @brief Board copy constructor.
-         * 
-         * @param state Board object to be copied.
-         */
-        Board(const Board& state) = default;
+        Board();
 
         /**
          * @brief Board constructor initializing state from bitmaps.
@@ -148,13 +141,6 @@ class Board {
          * Uses murmur3 hashing algorithm.
          */
         uint64_t hash() const;
-
-        /**
-         * @brief Copies the state of the board.
-         * 
-         * @param other Reference to other Board object.
-         */
-        void operator=(const Board& other);
 };
 
 #endif
