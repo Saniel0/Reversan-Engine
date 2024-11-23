@@ -19,7 +19,7 @@
 #include <iostream>
 
 // initialize stats counters and select move order
-Search::Search(): total_heuristic_count(0), total_state_count(0), move_order(Move_order::OPTIMIZED) {}
+Search::Search(): total_heuristic_count(0), total_state_count(0), move_order(Move_order::Orders::OPTIMIZED) {}
 
 uint64_t Search::start_negascout(Board state, bool color, int depth) {
     // transposition table must be empty before calculation of best move, otherwise results would be affected
