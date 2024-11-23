@@ -23,8 +23,17 @@
 #endif
 
 #include "board.h"
+#include <bit>
 
 Board::Board(const uint64_t white_bitmap, const uint64_t black_bitmap) : white_bitmap(white_bitmap), black_bitmap(black_bitmap) {}
+
+ALWAYS_INLINE int Board::count_white() const {
+    return std::popcount(white_bitmap);
+}
+
+ALWAYS_INLINE int Board::count_black() const {
+    return std::popcount(black_bitmap);
+}
 
 ALWAYS_INLINE void Board::operator=(const Board& other) {
     white_bitmap = other.white_bitmap;

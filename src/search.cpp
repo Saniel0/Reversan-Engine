@@ -132,10 +132,10 @@ int Search::negascout(Board state, int depth, bool cur_color, int alpha, int bet
     int eval;
     if (possible_moves == 0) {
         if (end_board) {
-            int moves_white = __builtin_popcountll(state.white_bitmap);
-            int moves_black = __builtin_popcountll(state.black_bitmap);
-            if (moves_white > moves_black) {eval = 999;}
-            else if (moves_white < moves_black) {eval = -999;}
+            int count_white = state.count_white();
+            int count_black = state.count_black();
+            if (count_white > count_black) {eval = 999;}
+            else if (count_white < count_black) {eval = -999;}
             else {eval = 0;}
         }
         else {
@@ -293,10 +293,10 @@ int Search::minimax(Board state, int depth, bool cur_color, int alpha, int beta,
     int eval;
     if (possible_moves == 0) {
         if (end_board) {
-            int moves_white = __builtin_popcountll(state.white_bitmap);
-            int moves_black = __builtin_popcountll(state.black_bitmap);
-            if (moves_white > moves_black) {eval = 999;}
-            else if (moves_white < moves_black) {eval = -999;}
+            int count_white = state.count_white();
+            int count_black = state.count_black();
+            if (count_white > count_black) {eval = 999;}
+            else if (count_white < count_black) {eval = -999;}
             else {eval = 0;}
         }
         else {

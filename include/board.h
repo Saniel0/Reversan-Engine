@@ -113,6 +113,16 @@ class Board {
         uint64_t find_moves(bool color) const;
 
         /**
+         * @brief Counts number of white pieces on the board
+         */
+        int count_white() const;
+
+        /**
+         * @brief Counts number of black pieces on the board
+         */
+        int count_black() const;
+
+        /**
          * @brief Rates the current board state.
          * 
          * @return int The heuristic score of the current board state.

@@ -168,8 +168,8 @@ void play_against_bot(int depth, int search) {
         if (possible_moves == 0) {
             if (!last_moved) {
                 std::cout << "Game ended\n";
-                white_score = __builtin_popcountll(current_board.white_bitmap);
-                black_score = __builtin_popcountll(current_board.black_bitmap);
+                white_score = current_board.count_white();
+                black_score = current_board.count_black();
                 break;
             }
             last_moved = false;
