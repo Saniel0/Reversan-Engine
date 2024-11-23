@@ -15,6 +15,13 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
+// __atribute__ is not standard, enable only with supported compillers
+#if defined(__GNUC__) || defined(__clang__)
+#define ALWAYS_INLINE __attribute__((always_inline))
+#else
+#define ALWAYS_INLINE
+#endif
+
 #include "board.h"
 #include <immintrin.h>
 
@@ -32,7 +39,7 @@ static constexpr uint64_t heur_map1[4] = {convert_col(7), convert_col(6), conver
 static constexpr uint64_t heur_map2[4] = {convert_col(3), convert_col(2), convert_col(1), convert_col(0)};
 
 
-__attribute__((always_inline)) int Board::rate_board() const {
+ALWAYS_INLINE int Board::rate_board() const {
     int score = 0;
     
     // the goal is to manipulate the bitmap to get 256bit vector containing
@@ -99,7 +106,7 @@ __attribute__((always_inline)) int Board::rate_board() const {
     return score;
 }
 
-__attribute__((always_inline)) uint64_t Board::find_moves(bool color) const {
+ALWAYS_INLINE uint64_t Board::find_moves(bool color) const {
     uint64_t valid_moves = 0;
     // create new bitmap of empty spaces from our two bitmaps so we do not have to check both for empty spaces
     uint64_t free_spaces = ~(white_bitmap | black_bitmap);
@@ -173,7 +180,7 @@ __attribute__((always_inline)) uint64_t Board::find_moves(bool color) const {
     return valid_moves;
 }
 
-__attribute__((always_inline)) void Board::play_move(bool color, uint64_t move) {
+ALWAYS_INLINE void Board::play_move(bool color, uint64_t move) {
     uint64_t playing, opponent;
     if (color) {
         playing = white_bitmap;

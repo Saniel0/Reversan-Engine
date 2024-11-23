@@ -15,16 +15,23 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
+// __atribute__ is not standard, enable only with supported compillers
+#if defined(__GNUC__) || defined(__clang__)
+#define ALWAYS_INLINE __attribute__((always_inline))
+#else
+#define ALWAYS_INLINE
+#endif
+
 #include "board.h"
 
 Board::Board(const uint64_t white_bitmap, const uint64_t black_bitmap) : white_bitmap(white_bitmap), black_bitmap(black_bitmap) {}
 
-__attribute__((always_inline)) void Board::operator=(const Board& other) {
+ALWAYS_INLINE void Board::operator=(const Board& other) {
     white_bitmap = other.white_bitmap;
     black_bitmap = other.black_bitmap;
 }
 
-__attribute__((always_inline)) uint64_t Board::hash() const {
+ALWAYS_INLINE uint64_t Board::hash() const {
     // Murmur hash of white
     uint64_t w = white_bitmap;
     w ^= w >> 33;

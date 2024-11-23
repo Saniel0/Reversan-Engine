@@ -15,13 +15,20 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
+// __atribute__ is not standard, enable only with supported compillers
+#if defined(__GNUC__) || defined(__clang__)
+#define ALWAYS_INLINE __attribute__((always_inline))
+#else
+#define ALWAYS_INLINE
+#endif
+
 #include "transposition_table.h"
 
 void Transposition_table::clear() {
     map.clear();
 }
 
-__attribute__((always_inline)) void Transposition_table::insert(uint64_t hash, int score, int alpha, int beta) {
+ALWAYS_INLINE void Transposition_table::insert(uint64_t hash, int score, int alpha, int beta) {
     Entry e;
     e.score = score;
     if (score <= alpha) {
@@ -36,7 +43,7 @@ __attribute__((always_inline)) void Transposition_table::insert(uint64_t hash, i
     map[hash] = e;
 }
 
-__attribute__((always_inline)) int Transposition_table::get(uint64_t hash, int alpha, int beta) {
+ALWAYS_INLINE int Transposition_table::get(uint64_t hash, int alpha, int beta) {
     if (map.find(hash) != map.end()) {
         Entry e = map[hash];
         if (e.type == 0) {
