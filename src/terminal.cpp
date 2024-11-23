@@ -117,8 +117,8 @@ void print_boards(Board *last_state, Board *current_state, bool current_color) {
     uint64_t bit_mask1 = static_cast<uint64_t>(1) << 63;
     uint64_t bit_mask2 = static_cast<uint64_t>(1) << 63;
     uint64_t bit_mask3 = static_cast<uint64_t>(1) << 63;
-    int white_score = __builtin_popcountll(current_state->white_bitmap);
-    int black_score = __builtin_popcountll(current_state->black_bitmap);
+    int white_score = current_state->count_white();
+    int black_score = current_state->count_black();
     std::cout << "\033[1m  0 1 2 3 4 5 6 7        0 1 2 3 4 5 6 7     |       0 1 2 3 4 5 6 7\n\033[0m";
     for (int i = 0; i < 8; ++i) {
         std::cout << "\033[1m" << i << " \033[0m";

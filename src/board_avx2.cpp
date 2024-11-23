@@ -24,6 +24,7 @@
 
 #include "board.h"
 #include <immintrin.h>
+#include <bit>
 
 // heuristics map has to be converted into format optimized for SIMD instructions
 constexpr uint64_t convert_col(int col) {
@@ -101,7 +102,7 @@ ALWAYS_INLINE int Board::rate_board() const {
         score += static_cast<int>(int_result[i]);
     }
     
-    int moves_delta = __builtin_popcountll(find_moves(true)) - __builtin_popcountll(find_moves(false));
+    int moves_delta = std::popcount(find_moves(true)) - std::popcount(find_moves(false));
     score += 10 * moves_delta;
     return score;
 }

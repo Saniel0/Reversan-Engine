@@ -23,6 +23,7 @@
 #endif
 
 #include "board.h"
+#include <bit>
 
 ALWAYS_INLINE int Board::rate_board() const {
     int score = 0;
@@ -31,7 +32,7 @@ ALWAYS_INLINE int Board::rate_board() const {
         score -= ((black_bitmap >> i) & 1) * heuristics_map[63 - i];
     }
     
-    int moves_delta = __builtin_popcountll(find_moves(true)) - __builtin_popcountll(find_moves(false));
+    int moves_delta = std::popcount(find_moves(true)) - std::popcount(find_moves(false));
     score += 10 * moves_delta;
 
     return score;
