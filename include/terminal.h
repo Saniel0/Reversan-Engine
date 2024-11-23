@@ -18,60 +18,65 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 
-#include "board.h"
+#include "ui.h"
 
-/**
- * @brief Prints a blurred title to the terminal.
- * 
- * This function prints a stylized title with a blur effect to the terminal.
- */
-void print_title_blur();
+class Terminal : public UI {
+    private:
+        /// @brief Collection of ANSI escape sequences
+        struct Escapes {
+            static constexpr std::string SWITCH_BUFFER = "\x1B[?1049h";
+            static constexpr std::string RESTORE_BUFFER = "\x1B[?1049l";
+            static constexpr std::string CLEAR_BUFFER = "\x1B[2J\x1B[H";
+            static constexpr std::string COLOR_RESET = "\033[0m";
+            static constexpr std::string RED = "\033[1;31m"; // also bold
+            static constexpr std::string YELLOW = "\033[1;33m"; // also bold
+            static constexpr std::string GREEN = "\033[1;32m"; // also bold
+            static constexpr std::string BOLD = "\033[1m";
+        };
 
-/**
- * @brief Prints help message to terminal.
- */
-void print_help();
+        /// @brief Clears whole terminal
+        void clear_terminal() const;
 
-/**
- * @brief Deletes a specified number of lines from the terminal.
- * 
- * @param count The number of lines to delete from the terminal.
- * 
- * This function uses ANSI escape codes to move the cursor up and clear the line.
- */
-void delete_lines(int count);
+        /// @brief Prints title to the terminal
+        void print_title() const;
 
-/**
- * @brief Prints board pieces in color to stdout
- * 
- * @param board Board to print out.
- */
-void print_board(Board *board);
+    public:
+        /// @brief Switches to separate terminal buffer.
+        Terminal();
+        
+        /// @brief Restores original terminal buffer.
+        ~Terminal();
 
-/**
- * @brief Prints board pieces and moves in color to stdout
- * 
- * @param board Board to print out.
- * @param moves Moves to print out.
- */
-void print_board_moves(Board *board, uint64_t moves);
+        /// @return user input from terminal
+        UserInput get_input() override;
 
-/**
- * @brief Prints moves in color to stdout
- * 
- * @param moves Moves to print out.
- */
-void print_moves(uint64_t moves);
+        /// @brief Prints help message to the terminal.
+        void display_help() override;
 
-/**
- * @brief Prints the previous and current board states side by side.
- * 
- * @param last_state Pointer to the Board object representing the last state.
- * @param current_state Pointer to the Board object representing the current state.
- * @param current_color Boolean indicating the current player's color (true for white, false for black).
- * 
- * This function displays three boards side by side: the previous state, the current state, and the current state with possible moves highlighted.
- */
-void print_boards(Board *last_state, Board *current_state, bool current_color);
+        /// @brief Prints custom message.
+        void display_message(std::string str) override;
+
+        /// @brief Prints error message to the original terminal buffer.
+        void display_error_message(std::string str) override;
+
+        /**
+         * @brief Prints board and highlights moves in the terminal.
+         * 
+         * @param state Board to be displayed, 0 if none.
+         * @param moves Moves to be highlighted, 0 if none.
+         */
+        void display_board(Board &state, uint64_t moves) override;
+
+        /** 
+         * @brief Prints game state to the terminal.
+         * 
+         * @param last_state Last board state.
+         * @param current_state Current board state.
+         * @param current_color Current player's color.
+         * 
+         * Displays multiple boards for clarity.
+         */
+        void display_game(Board &last_state, Board &current_state, bool current_color) override;
+};
 
 #endif

@@ -18,73 +18,74 @@
 #include "terminal.h"
 #include <iostream>
 
-void print_title_blur() {
-    std::cout << "\
-░▒▓███████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░░▒▓██████▓▒░░▒▓███████▓▒░\n\
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n\
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░       ░▒▓█▓▒▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n\
-░▒▓███████▓▒░░▒▓██████▓▒░  ░▒▓█▓▒▒▓█▓▒░░▒▓██████▓▒░ ░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░\n\
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n\
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n\
-░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░  ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n";
+Terminal::Terminal() {
+    std::cout << Escapes::SWITCH_BUFFER;
 }
 
-void print_help() {
-    std::cout << "\
-Usage: reversan [MODE] [OPTIONS]\n\
-\n\
-Modes:\n\
---help, -h                           Display this help message.\n\
---play                               Play against the engine in terminal interface.\n\
---bot-vs-bot                         Start game where the engine plays against itself.\n\
---benchmark                          Run search on pre-defined state.\n\
-\n\
-Additional Options:\n\
---depth, -d <1 - 49>                 Set the engine's search depth (default: 10).\n\
---search, -s <negascout | minimax>   Choose the tree search algorithm (default: negascout).\n";
+Terminal::~Terminal() {
+    std::cout << Escapes::RESTORE_BUFFER;
 }
 
-void delete_lines(int count) {
-    for (int i = 0; i < count; ++i) {
-        std::cout << "\033[A\033[K";
-    }
+void Terminal::clear_terminal() const {
+    std::cout << Escapes::CLEAR_BUFFER;
 }
 
-void print_board(Board *board) {
+UI::UserInput Terminal::get_input() {
+    UserInput input;
+    std::cin >> input.x >> input.y;
+    return input;
+}
+
+void Terminal::print_title() const {
+    std::cout
+        << "░▒▓███████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░░▒▓██████▓▒░░▒▓███████▓▒░\n"
+        << "░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n"
+        << "░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░       ░▒▓█▓▒▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n"
+        << "░▒▓███████▓▒░░▒▓██████▓▒░  ░▒▓█▓▒▒▓█▓▒░░▒▓██████▓▒░ ░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░\n"
+        << "░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n"
+        << "░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n"
+        << "░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░  ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░\n";
+}
+
+void Terminal::display_help() {
+    std::cout 
+        << Escapes::RESTORE_BUFFER // print to original buffer
+        << "Usage: reversan [MODE] [OPTIONS]\n"
+        << "\n"
+        << "Modes:\n"
+        << "--help, -h                           Display this help message.\n"
+        <<"--play                               Play against the engine in terminal interface.\n"
+        << "--bot-vs-bot                         Start game where the engine plays against itself.\n"
+        << "--benchmark                          Run search on pre-defined state.\n"
+        << "\n"
+        << "Additional Options:\n"
+        << "--depth, -d <1 - 49>                 Set the engine's search depth (default: 10).\n"
+        << "--search, -s <negascout | minimax>   Choose the tree search algorithm (default: negascout).\n"
+        << Escapes::SWITCH_BUFFER; // switch back to temporary buffer
+}
+
+void Terminal::display_message(std::string str) {
+    std::cout << str << '\n';
+}
+
+void Terminal::display_error_message(std::string str) {
+    std::cout << Escapes::RESTORE_BUFFER << str << '\n' << Escapes::SWITCH_BUFFER;
+}
+
+void Terminal::display_board(Board &board, uint64_t moves) {
     uint64_t bit_mask = static_cast<uint64_t>(1) << 63;
-    std::cout << "\033[1m  0 1 2 3 4 5 6 7\n\033[0m";
+    std::cout << Escapes::BOLD << "  0 1 2 3 4 5 6 7\n" << Escapes::COLOR_RESET;
     for (int i = 0; i < 8; ++i) {
-        std::cout << "\033[1m" << i << " \033[0m";
+        std::cout << Escapes::BOLD << i << ' ' << Escapes::COLOR_RESET;
         for (int j = 0; j < 8; ++j) {
-            if (board->white_bitmap & bit_mask) {
-                std::cout << "\033[1;33mX \033[0m";
+            if (board.white_bitmap & bit_mask) {
+                std::cout << Escapes::YELLOW << "X " << Escapes::COLOR_RESET;
             }
-            else if (board->black_bitmap & bit_mask) {
-                std::cout << "\033[1;32mO \033[0m";
-            }
-            else {
-                std::cout << "- ";
-            }
-            bit_mask >>= 1;
-        }
-        std::cout << '\n';
-    }
-}
-
-void print_board_moves(Board *board, uint64_t moves) {
-    uint64_t bit_mask = static_cast<uint64_t>(1) << 63;
-    std::cout << "\033[1m  0 1 2 3 4 5 6 7\n\033[0m";
-    for (int i = 0; i < 8; ++i) {
-        std::cout << "\033[1m" << i << " \033[0m";
-        for (int j = 0; j < 8; ++j) {
-            if (board->white_bitmap & bit_mask) {
-                std::cout << "\033[1;33mX \033[0m";
-            }
-            else if (board->black_bitmap & bit_mask) {
-                std::cout << "\033[1;32mO \033[0m";
+            else if (board.black_bitmap & bit_mask) {
+                std::cout << Escapes::GREEN << "O " << Escapes::COLOR_RESET;
             }
             else if (moves & bit_mask) {
-                std::cout << "\033[31m+ \033[0m";
+                std::cout << Escapes::RED << "+ " << Escapes::COLOR_RESET;
             }
             else {
                 std::cout << "- ";
@@ -95,71 +96,55 @@ void print_board_moves(Board *board, uint64_t moves) {
     }
 }
 
-void print_moves(uint64_t moves) {
-    uint64_t bit_mask = static_cast<uint64_t>(1) << 63;
-    std::cout << "\033[1m  0 1 2 3 4 5 6 7\n\033[0m";
-    for (int i = 0; i < 8; ++i) {
-        std::cout << "\033[1m" << i << " \033[0m";
-        for (int j = 0; j < 8; ++j) {
-            if (moves & bit_mask) {
-                std::cout << "\033[1;31mX \033[0m";
-            }
-            else {
-                std::cout << "- ";
-            }
-            bit_mask >>= 1;
-        }
-        std::cout << '\n';
-    }
-}
-
-void print_boards(Board *last_state, Board *current_state, bool current_color) {
+void Terminal::display_game(Board &last_state, Board &current_state, bool current_color) {
+    clear_terminal();
+    print_title();
     uint64_t bit_mask1 = static_cast<uint64_t>(1) << 63;
     uint64_t bit_mask2 = static_cast<uint64_t>(1) << 63;
     uint64_t bit_mask3 = static_cast<uint64_t>(1) << 63;
-    int white_score = current_state->count_white();
-    int black_score = current_state->count_black();
-    std::cout << "\033[1m  0 1 2 3 4 5 6 7        0 1 2 3 4 5 6 7     |       0 1 2 3 4 5 6 7\n\033[0m";
+    int white_score = current_state.count_white();
+    int black_score = current_state.count_black();
+    std::cout << Escapes::BOLD << "  0 1 2 3 4 5 6 7        0 1 2 3 4 5 6 7     |       0 1 2 3 4 5 6 7\n" << Escapes::COLOR_RESET;
     for (int i = 0; i < 8; ++i) {
-        std::cout << "\033[1m" << i << " \033[0m";
+        std::cout << Escapes::BOLD << i << ' ' << Escapes::COLOR_RESET;
         for (int j = 0; j < 8; ++j) {
-            if (last_state->white_bitmap & bit_mask1) {
-                std::cout << "\033[1;33mX \033[0m";
+            if (last_state.white_bitmap & bit_mask1) {
+                std::cout << Escapes::YELLOW << "X " << Escapes::COLOR_RESET;
             }
-            else if (last_state->black_bitmap & bit_mask1) {
-                std::cout << "\033[1;32mO \033[0m";
+            else if (last_state.black_bitmap & bit_mask1) {
+                std::cout << Escapes::GREEN << "O " << Escapes::COLOR_RESET;
             }
-            else if (last_state->find_moves(!current_color) & bit_mask1) {
-                std::cout << "\033[31m+ \033[0m";
+            else if (last_state.find_moves(!current_color) & bit_mask1) {
+                std::cout << Escapes::RED << "+ " << Escapes::COLOR_RESET;
             }
             else {
                 std::cout << "- ";
             }
             bit_mask1 >>= 1;
         }
-        std::cout << "\033[1m     " << i << " \033[0m";
+        std::cout << Escapes::BOLD << "     " << i << ' ' << Escapes::COLOR_RESET;
         for (int j = 0; j < 8; ++j) {
-            if (current_state->white_bitmap & bit_mask2) {
-                std::cout << "\033[1;33mX \033[0m";
+            if (current_state.white_bitmap & bit_mask2) {
+                std::cout << Escapes::YELLOW << "X " << Escapes::COLOR_RESET;
             }
-            else if (current_state->black_bitmap & bit_mask2) {
-                std::cout << "\033[1;32mO \033[0m";
+            else if (current_state.black_bitmap & bit_mask2) {
+                std::cout << Escapes::GREEN << "O " << Escapes::COLOR_RESET;
             }
             else {
                 std::cout << "- ";
             }
             bit_mask2 >>= 1;
         }
-        std::cout << "\033[1m    |     " << i << " \033[0m";
+        std::cout << Escapes::BOLD << "    |     " << i << ' ' << Escapes::COLOR_RESET;
         for (int j = 0; j < 8; ++j) {
-            if (current_state->white_bitmap & bit_mask3) {
-                std::cout << "\033[1;33mX \033[0m";
+            if (current_state.white_bitmap & bit_mask3) {
+                std::cout << Escapes::YELLOW << "X " << Escapes::COLOR_RESET;
             }
-            else if (current_state->black_bitmap & bit_mask3) {
-                std::cout << "\033[1;32mO \033[0m";
+            else if (current_state.black_bitmap & bit_mask3) {
+                std::cout << Escapes::GREEN << "O " << Escapes::COLOR_RESET;
             }
-            else if (current_state->find_moves(current_color) & bit_mask3) {
-                std::cout << "\033[31m+ \033[0m";
+            else if (current_state.find_moves(current_color) & bit_mask3) {
+                std::cout << Escapes::RED << "+ " << Escapes::COLOR_RESET;
             }
             else {
                 std::cout << "- ";
