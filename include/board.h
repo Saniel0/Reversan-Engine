@@ -41,8 +41,7 @@ class Board {
             static constexpr uint64_t NO_COL_MASK = 0xffffffffffffffff;
         };
 
-    public:
-        
+    public:   
         /**
          * @brief Heuristic values for board evaluation.
          * 
@@ -59,13 +58,11 @@ class Board {
                                                    100,-15, 10,  5,  5, 10,-15,100
         };
 
-        /**
-         * @brief Collection of multiple pre-defined usefull states.
-         */
+        /// @brief Collection of multiple pre-defined usefull states.
         struct States {
-            static const Board initial;
-            static const Board test;
-            static const Board benchmark;
+            static const Board INITIAL;
+            static const Board TEST;
+            static const Board BENCHMARK;
         };
     
         /**
@@ -91,9 +88,7 @@ class Board {
          */
         Board();
 
-        /**
-         * @brief Board constructor initializing state from bitmaps.
-         */
+        /// @brief Board constructor initializing state from bitmaps.
         Board(const uint64_t white_bitmap, const uint64_t black_bitmap);
 
         /**
@@ -114,14 +109,10 @@ class Board {
          */
         uint64_t find_moves(bool color) const;
 
-        /**
-         * @brief Counts number of white pieces on the board
-         */
+        /// @brief Counts number of white pieces on the board
         int count_white() const;
 
-        /**
-         * @brief Counts number of black pieces on the board
-         */
+        /// @brief Counts number of black pieces on the board
         int count_black() const;
 
         /**

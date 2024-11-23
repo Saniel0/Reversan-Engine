@@ -73,9 +73,7 @@ class Search {
         int minimax(Board state, int depth, bool cur_color, int alpha, int beta, bool end_board);
 
     public:
-        /**
-         * @brief Constructor for the Search class. Initializes counters and search algorithms. 
-         */
+        /// @brief Constructor for the Search class. Initializes counters and search algorithms. 
         Search();
 
         /**

@@ -122,7 +122,7 @@ int Search::negascout(Board state, int depth, bool cur_color, int alpha, int bet
     if (depth > 2) {
         hash = state.hash();
         int score = transposition_table.get(hash, alpha, beta);
-        if (score != NOT_FOUND) {
+        if (score != Transposition_table::NOT_FOUND) {
             return score;
         }
     }
@@ -283,7 +283,7 @@ int Search::minimax(Board state, int depth, bool cur_color, int alpha, int beta,
     if (depth > 2) {
         hash = state.hash();
         int score = transposition_table.get(hash, alpha, beta);
-        if (score != NOT_FOUND) {
+        if (score != Transposition_table::NOT_FOUND) {
             return score;
         }
     }

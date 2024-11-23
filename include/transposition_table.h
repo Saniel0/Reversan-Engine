@@ -21,8 +21,6 @@
 #include <cstdint>
 #include <unordered_map>
 
-#define NOT_FOUND 1111
-
 /**
  * @brief Class representing a transposition table for storing game states.
  * 
@@ -45,9 +43,10 @@ class Transposition_table {
         std::unordered_map<uint64_t, Entry> map;
 
     public:
-        /**
-         * @brief Removes all entries stored in the transposition table.
-         */
+        /// @brief Constant representing that entry was not found.
+        static constexpr int NOT_FOUND = 1111;
+
+        /// @brief Removes all entries stored in the transposition table.
         void clear();
 
         /**

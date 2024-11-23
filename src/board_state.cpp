@@ -56,7 +56,7 @@ ALWAYS_INLINE uint64_t Board::hash() const {
     return w ^ b;
 }
 
-const Board Board::States::initial = Board(
+const Board Board::States::INITIAL = Board(
     // or operations just for readability
     // static cast so the number is not simple integer - shifting would go out of range
     // WHITE
@@ -79,7 +79,7 @@ const Board Board::States::initial = Board(
     static_cast<uint64_t>(0b00000000)
 );
 
-const Board Board::States::test = Board(
+const Board Board::States::TEST = Board(
     // random board used to validate functions
     // or operations just for readability
     // static cast so the number is not simple integer - shifting would go out of range
@@ -103,7 +103,7 @@ const Board Board::States::test = Board(
     static_cast<uint64_t>(0b00000000)
 );
 
-const Board Board::States::benchmark = Board(
+const Board Board::States::BENCHMARK = Board(
     // one of the more difficult board states to compute
     // or operations just for readability
     // static cast so the number is not simple integer - shifting would go out of range

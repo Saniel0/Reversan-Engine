@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 }
 
 void run_bench(int depth, int search) {
-    Board init_board = Board::States::benchmark;
+    Board init_board = Board::States::BENCHMARK;
     Search engine;
     uint64_t move = 0;
     
@@ -124,7 +124,7 @@ void run_bench(int depth, int search) {
 }
 
 void run_bot_vs_bot(int depth, int search) {
-    Board init_board = Board::States::initial;
+    Board init_board = Board::States::INITIAL;
     Search engine;
     uint64_t move = 0;
 
@@ -150,7 +150,7 @@ void run_bot_vs_bot(int depth, int search) {
 void play_against_bot(int depth, int search) {
     print_title_blur();
     Board last_board;
-    Board current_board = Board::States::initial;
+    Board current_board = Board::States::INITIAL;
     Search engine;
     
     int white_score = 0;
