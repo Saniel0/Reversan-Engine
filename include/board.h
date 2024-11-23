@@ -41,6 +41,22 @@ class Board {
             static constexpr uint64_t NO_COL_MASK = 0xffffffffffffffff;
         };
 
+        /**
+         * @brief Bitmap representing the positions of white pieces.
+         * 
+         * Each bit represents a space on the board, where a set bit indicates
+         * the presence of a piece.
+         */
+        uint64_t white_bitmap;
+
+        /**
+         * @brief Bitmap representing the positions of black pieces.
+         * 
+         * Each bit represents a space on the board, where a set bit indicates
+         * the presence of a piece.
+         */
+        uint64_t black_bitmap;
+
     public:   
         /**
          * @brief Heuristic values for board evaluation.
@@ -64,22 +80,6 @@ class Board {
             static const Board TEST;
             static const Board BENCHMARK;
         };
-    
-        /**
-         * @brief Bitmap representing the positions of white pieces.
-         * 
-         * Each bit represents a space on the board, where a set bit indicates
-         * the presence of a piece.
-         */
-        uint64_t white_bitmap;
-
-        /**
-         * @brief Bitmap representing the positions of black pieces.
-         * 
-         * Each bit represents a space on the board, where a set bit indicates
-         * the presence of a piece.
-         */
-        uint64_t black_bitmap;
 
         /**
          * @brief Default constructor.
@@ -109,10 +109,16 @@ class Board {
          */
         uint64_t find_moves(bool color) const;
 
-        /// @brief Counts number of white pieces on the board
+        /// @brief White bitmap getter. 
+        uint64_t white() const;
+
+        /// @brief Black bitmap getter. 
+        uint64_t black() const;
+
+        /// @brief Counts number of white pieces on the board.
         int count_white() const;
 
-        /// @brief Counts number of black pieces on the board
+        /// @brief Counts number of black pieces on the board.
         int count_black() const;
 
         /**

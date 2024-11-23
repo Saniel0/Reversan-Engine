@@ -78,10 +78,10 @@ void Terminal::display_board(Board &board, uint64_t moves) {
     for (int i = 0; i < 8; ++i) {
         std::cout << Escapes::BOLD << i << ' ' << Escapes::COLOR_RESET;
         for (int j = 0; j < 8; ++j) {
-            if (board.white_bitmap & bit_mask) {
+            if (board.white() & bit_mask) {
                 std::cout << Escapes::YELLOW << "X " << Escapes::COLOR_RESET;
             }
-            else if (board.black_bitmap & bit_mask) {
+            else if (board.black() & bit_mask) {
                 std::cout << Escapes::GREEN << "O " << Escapes::COLOR_RESET;
             }
             else if (moves & bit_mask) {
@@ -108,10 +108,10 @@ void Terminal::display_game(Board &last_state, Board &current_state, bool curren
     for (int i = 0; i < 8; ++i) {
         std::cout << Escapes::BOLD << i << ' ' << Escapes::COLOR_RESET;
         for (int j = 0; j < 8; ++j) {
-            if (last_state.white_bitmap & bit_mask1) {
+            if (last_state.white() & bit_mask1) {
                 std::cout << Escapes::YELLOW << "X " << Escapes::COLOR_RESET;
             }
-            else if (last_state.black_bitmap & bit_mask1) {
+            else if (last_state.black() & bit_mask1) {
                 std::cout << Escapes::GREEN << "O " << Escapes::COLOR_RESET;
             }
             else if (last_state.find_moves(!current_color) & bit_mask1) {
@@ -124,10 +124,10 @@ void Terminal::display_game(Board &last_state, Board &current_state, bool curren
         }
         std::cout << Escapes::BOLD << "     " << i << ' ' << Escapes::COLOR_RESET;
         for (int j = 0; j < 8; ++j) {
-            if (current_state.white_bitmap & bit_mask2) {
+            if (current_state.white() & bit_mask2) {
                 std::cout << Escapes::YELLOW << "X " << Escapes::COLOR_RESET;
             }
-            else if (current_state.black_bitmap & bit_mask2) {
+            else if (current_state.black() & bit_mask2) {
                 std::cout << Escapes::GREEN << "O " << Escapes::COLOR_RESET;
             }
             else {
@@ -137,10 +137,10 @@ void Terminal::display_game(Board &last_state, Board &current_state, bool curren
         }
         std::cout << Escapes::BOLD << "    |     " << i << ' ' << Escapes::COLOR_RESET;
         for (int j = 0; j < 8; ++j) {
-            if (current_state.white_bitmap & bit_mask3) {
+            if (current_state.white() & bit_mask3) {
                 std::cout << Escapes::YELLOW << "X " << Escapes::COLOR_RESET;
             }
-            else if (current_state.black_bitmap & bit_mask3) {
+            else if (current_state.black() & bit_mask3) {
                 std::cout << Escapes::GREEN << "O " << Escapes::COLOR_RESET;
             }
             else if (current_state.find_moves(current_color) & bit_mask3) {

@@ -29,6 +29,14 @@ Board::Board() : white_bitmap(0), black_bitmap(0) {}
 
 Board::Board(const uint64_t white_bitmap, const uint64_t black_bitmap) : white_bitmap(white_bitmap), black_bitmap(black_bitmap) {}
 
+ALWAYS_INLINE uint64_t Board::white() const {
+    return white_bitmap;
+}
+
+ALWAYS_INLINE uint64_t Board::black() const {
+    return black_bitmap;
+}
+
 ALWAYS_INLINE int Board::count_white() const {
     return std::popcount(white_bitmap);
 }
