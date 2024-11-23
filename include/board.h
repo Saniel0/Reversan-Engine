@@ -59,6 +59,9 @@ class Board {
                                                    100,-15, 10,  5,  5, 10,-15,100
         };
 
+        /**
+         * @brief Collection of multiple usefull states.
+         */
         struct States {
             static const Board initial;
             static const Board test;
