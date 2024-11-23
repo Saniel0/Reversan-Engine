@@ -130,7 +130,7 @@ __attribute__((always_inline)) uint64_t Board::find_moves(bool color) const {
     __m256i shift_vals_vec = _mm256_set_epi64x(9, 8, 7, 1);
     
     // opponent vec must be masked to prevent wrap around
-    __m256i col_mask_vec = _mm256_set_epi64x(SIDE_COLS_MASK, NO_COL_MASK, SIDE_COLS_MASK, SIDE_COLS_MASK);
+    __m256i col_mask_vec = _mm256_set_epi64x(Masks::SIDE_COLS_MASK, Masks::NO_COL_MASK, Masks::SIDE_COLS_MASK, Masks::SIDE_COLS_MASK);
     __m256i opponent_vec = _mm256_set1_epi64x(opponent);
     __m256i opponent_adjusted_vec = _mm256_and_si256(opponent_vec, col_mask_vec);
 
@@ -190,7 +190,7 @@ __attribute__((always_inline)) void Board::play_move(bool color, uint64_t move) 
     // 1 -> left / right
     __m256i shift_vals_vec = _mm256_set_epi64x(9, 8, 7, 1);
 
-    __m256i col_mask_vec = _mm256_set_epi64x(SIDE_COLS_MASK, NO_COL_MASK, SIDE_COLS_MASK, SIDE_COLS_MASK);
+    __m256i col_mask_vec = _mm256_set_epi64x(Masks::SIDE_COLS_MASK, Masks::NO_COL_MASK, Masks::SIDE_COLS_MASK, Masks::SIDE_COLS_MASK);
     __m256i compare_vec = _mm256_set1_epi64x(0);
     __m256i move_vec = _mm256_set1_epi64x(move);
 

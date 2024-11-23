@@ -29,36 +29,17 @@
 class Board {
     private:
         /**
-         * @brief Bit mask.
+         * @brief Colection of bit masks.
          * 
          * Used to ensure that bitwise operations do not cause
          * pieces to wrap around to the other side of the board.
          */
-        static constexpr uint64_t LEFT_COL_MASK = 0xfefefefefefefefe;
-
-        /**
-         * @brief Bit mask.
-         * 
-         * Used to ensure that bitwise operations do not cause
-         * pieces to wrap around to the other side of the board.
-         */
-        static constexpr uint64_t RIGHT_COL_MASK = 0x7f7f7f7f7f7f7f7f;
-
-        /**
-         * @brief Bit mask.
-         * 
-         * Used to ensure that bitwise operations do not cause
-         * pieces to wrap around to the other side of the board.
-         */
-        static constexpr uint64_t SIDE_COLS_MASK = 0x7e7e7e7e7e7e7e7e;
-
-        /**
-         * @brief Bit mask.
-         * 
-         * Used to ensure that bitwise operations do not cause
-         * pieces to wrap around to the other side of the board.
-         */
-        static constexpr uint64_t NO_COL_MASK = 0xffffffffffffffff;
+        struct Masks {
+            static constexpr uint64_t LEFT_COL_MASK = 0xfefefefefefefefe;
+            static constexpr uint64_t RIGHT_COL_MASK = 0x7f7f7f7f7f7f7f7f;
+            static constexpr uint64_t SIDE_COLS_MASK = 0x7e7e7e7e7e7e7e7e;
+            static constexpr uint64_t NO_COL_MASK = 0xffffffffffffffff;
+        };
 
     public:
         
@@ -95,11 +76,23 @@ class Board {
         uint64_t black_bitmap;
 
         /**
-         * @brief Constructor to initialize the board bitmaps.
+         * @brief Default constructor.
          * 
-         * Initializes the bitmaps to 0 to ensure memory safety.
+         * Initializes the bitmaps to 0 (empty) to ensure memory safety.
          */
-        Board();
+        Board() = default;
+
+        /**
+         * @brief Board copy constructor.
+         * 
+         * @param state Board object to be copied.
+         */
+        Board(const Board& state) = default;
+
+        /**
+         * @brief Board constructor initializing state from bitmaps.
+         */
+        Board(const uint64_t white_bitmap, const uint64_t black_bitmap);
 
         /**
          * @brief Plays a move on the board.

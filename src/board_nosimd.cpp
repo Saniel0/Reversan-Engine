@@ -46,7 +46,7 @@ __attribute__((always_inline)) uint64_t Board::find_moves(bool color) const {
     }
 
     uint64_t dir_copy;
-    uint64_t opponent_adjusted = opponent & RIGHT_COL_MASK & LEFT_COL_MASK;
+    uint64_t opponent_adjusted = opponent & Masks::RIGHT_COL_MASK & Masks::LEFT_COL_MASK;
     // horizontal
     dir_copy = ((playing << 1) | (playing >> 1)) & opponent_adjusted;
     dir_copy |= ((dir_copy << 1) | (dir_copy >> 1)) & opponent_adjusted;
@@ -115,14 +115,14 @@ __attribute__((always_inline)) void Board::play_move(bool color, uint64_t move) 
     };
 
     playing |= move; // capture the space
-    check_dir(LEFT_COL_MASK ,-9); // top left
-    check_dir(NO_COL_MASK   ,-8); // top
-    check_dir(RIGHT_COL_MASK,-7); // top right
-    check_dir(LEFT_COL_MASK ,-1); // left
-    check_dir(RIGHT_COL_MASK, 1); // right
-    check_dir(LEFT_COL_MASK , 7); // bottom left
-    check_dir(NO_COL_MASK   , 8); // bottom
-    check_dir(RIGHT_COL_MASK, 9); // bottom right*/
+    check_dir(Masks::LEFT_COL_MASK ,-9); // top left
+    check_dir(Masks::NO_COL_MASK   ,-8); // top
+    check_dir(Masks::RIGHT_COL_MASK,-7); // top right
+    check_dir(Masks::LEFT_COL_MASK ,-1); // left
+    check_dir(Masks::RIGHT_COL_MASK, 1); // right
+    check_dir(Masks::LEFT_COL_MASK , 7); // bottom left
+    check_dir(Masks::NO_COL_MASK   , 8); // bottom
+    check_dir(Masks::RIGHT_COL_MASK, 9); // bottom right*/
 
     if (color) {
         white_bitmap = playing;

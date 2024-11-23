@@ -17,10 +17,7 @@
 
 #include "board.h"
 
-Board::Board() {
-    white_bitmap = 0;
-    black_bitmap = 0;
-}
+Board::Board(const uint64_t white_bitmap, const uint64_t black_bitmap) : white_bitmap(white_bitmap), black_bitmap(black_bitmap) {}
 
 __attribute__((always_inline)) void Board::operator=(const Board& other) {
     white_bitmap = other.white_bitmap;
