@@ -20,7 +20,7 @@
 
 Terminal::Terminal(UIStyle style) {
     load_style(style);
-    //std::cout << Escapes::SWITCH_BUFFER;
+    std::cout << Escapes::SWITCH_BUFFER;
     std::cout << Escapes::BOLD << pallete.background;
 }
 
