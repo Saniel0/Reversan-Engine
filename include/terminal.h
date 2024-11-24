@@ -31,8 +31,66 @@ class Terminal : public UI {
             static constexpr std::string RED = "\033[1;31m"; // also bold
             static constexpr std::string YELLOW = "\033[1;33m"; // also bold
             static constexpr std::string GREEN = "\033[1;32m"; // also bold
+            static constexpr std::string GRAY = "\033[1;90m"; // also bold
             static constexpr std::string BOLD = "\033[1m";
         };
+
+        /**
+         * @brief Generates string containg 'count' chars c.
+         * 
+         * @param count String length.
+         * @param c Char to dupe.
+         * 
+         * @return Generated string.
+         */
+        std::string dup_string(int count, char c) const;
+
+        /**
+         * @brief Generates string for the left edge of the UI.
+         * 
+         * @param edge_size Size of edge.
+         * @param gap_size Size of gap to the right of the edge.
+         * @param style ASCII style of the edge.
+         * @param parity Parity of the first char of the edge.
+         * 
+         * @return Generated string.
+         */
+        std::string left_edge(int edge_size, int gap_size, std::string style, bool parity) const;
+
+        /**
+         * @brief Generates string for the right edge of the UI.
+         * 
+         * @param edge_size Size of edge.
+         * @param gap_size Size of gap to the left of the edge.
+         * @param style ASCII style of the edge.
+         * @param parity Parity of the first char of the edge.
+         * 
+         * @return Generated string.
+         */
+        std::string right_edge(int edge_size, int gap_size, std::string style, bool parity) const;
+
+        /**
+         * @brief Generates string for one row of the UI.
+         * 
+         * @param row_size Size of the row - width.
+         * @param style ASCII style of the row.
+         * @param parity Parity of the first char of the row.
+         * 
+         * @return Generated string.
+         */
+        std::string row(int row_size, std::string style, bool parity) const;
+
+        /**
+         * @brief Generates string for one row of the UI including gap.
+         * 
+         * @param row_size Size of the row - width.
+         * @param gap_size Size of the middle gap.
+         * @param style ASCII style of edges.
+         * @param parity Parity of the first char of edges.
+         * 
+         * @return Generated string.
+         */
+        std::string row_with_gap(int edge_size, int gap_size, std::string style, bool parity) const;
 
         /// @brief Clears whole terminal
         void clear_terminal() const;
