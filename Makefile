@@ -21,7 +21,7 @@ LINKER = g++
 CXX_FLAGS = -Iinclude
 
 # Select compile flags
-CXX_FLAGS += -O3 -flto -Wall
+CXX_FLAGS += -std=c++20 -O3 -flto -Wall -Wno-attributes
 LINKER_FLAGS = -flto
 
 # Add source and build path
@@ -29,7 +29,7 @@ SOURCE_DIR = src
 BUILD_DIR = build
 
 # Sources for every build
-SOURCES = main.cpp board_state.cpp search.cpp terminal.cpp transposition_table.cpp move_order.cpp
+SOURCES = main.cpp app.cpp board_state.cpp search.cpp terminal.cpp transposition_table.cpp move_order.cpp
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES:%.cpp=%.o)))
 
 # Sources when building without any explicit SIMD instructions
