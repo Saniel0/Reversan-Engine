@@ -25,23 +25,28 @@
 
 Additionally, **Reversan Engine** leverages AVX2 SIMD instructions, boosting performance by up to 5x (depending on CPU architecture).
 ```c++
-░▒▓███████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░░▒▓██████▓▒░░▒▓███████▓▒░
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░       ░▒▓█▓▒▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
-░▒▓███████▓▒░░▒▓██████▓▒░  ░▒▓█▓▒▒▓█▓▒░░▒▓██████▓▒░ ░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
-░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░  ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
-  0 1 2 3 4 5 6 7        0 1 2 3 4 5 6 7     |       0 1 2 3 4 5 6 7
-0 - X X X + + + -      0 - X X X - - - -     |     0 - X X X - - - - 
-1 - + X X X X - X      1 - - X X X X - X     |     1 - + X X X X - X     WHITE
-2 O O X O O O X X      2 O O X O O O X X     |     2 O O X O O O X X     17
-3 + X O O O O X X      3 - X O O O O X X     |     3 + X O O O O X X 
-4 X + O X X + X +      4 X - O O O O X -     |     4 X + O O O O X - 
-5 - O + + + + X +      5 - O - - - - X -     |     5 - O + + + + X -     BLACK
-6 - - - - - - - -      6 - - - - - - - -     |     6 + - + - - - - -     14
-7 - - - - - - - -      7 - - - - - - - -     |     7 - - - - - - - - 
-Select move > 
+xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxox
+oxoxo   ____                                        oxoxo
+xoxox  |  _ \ _____   _____ _ __ ___  __ _ _ __     xoxox
+oxoxo  | |_) / _ \ \ / / _ \ '__/ __|/ _` | '_ \    oxoxo
+xoxox  |  _ <  __/\ V /  __/ |  \__ \ (_| | | | |   xoxox
+oxoxo  |_| \_\___| \_/ \___|_|  |___/\__,_|_| |_|   oxoxo
+oxoxo                                               oxoxo
+xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxox
+oxoxo                                               oxoxo
+xoxox     0 1 2 3 4 5 6 7   |     0 1 2 3 4 5 6 7   xoxox
+oxoxo   0 - - - - - - - -   |   0 - - - - - - - -   oxoxo
+xoxox   1 - - - - - - - -   |   1 - - - - - - - -   xoxox
+oxoxo   2 - - - + - - - -   |   2 - - + O + - - -   oxoxo
+xoxox   3 - - + X O - - -   |   3 - - - O O - - -   xoxox
+oxoxo   4 - - - O X + - -   |   4 - - + O X - - -   oxoxo
+xoxox   5 - - - - + - - -   |   5 - - - - - - - -   xoxox
+oxoxo   6 - - - - - - - -   |   6 - - - - - - - -   oxoxo
+xoxox   7 - - - - - - - -   |   7 - - - - - - - -   xoxox
+oxoxo                                               oxoxo
+xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxox
+oxoxo        X -> 1                   O -> 4        oxoxo
+xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxox
 ```
 
 ## Installation
@@ -62,8 +67,8 @@ Using `cmake` is the default and recommended method for installing **Reversan En
     cmake -B build -DCMAKE_BUILD_TYPE=Debug
     cmake --build build
     ```
-### Make
-You can also install **Reversan Engine** using `make`. This method provides a simpler setup but requires manual selection of the AVX2 support.
+### Make (not recommended)
+You can also install **Reversan Engine** using `make`. This method provides a simpler setup but requires manual selection of the AVX2 support. Use only if you cannot use `cmake`.
 1. **AVX2 Version:**
     ```bash
     git clone https://github.com/Saniel0/Reversan-Engine.git
