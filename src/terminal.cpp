@@ -62,7 +62,7 @@ void Terminal::clear_terminal() const {
 
 UI::UserInput Terminal::get_input() {
     // prompt user
-    std::cout << Escapes::BLINK << "Select move > " << Escapes::BLINK_RESET;
+    std::cout << Escapes::BLINK << pallete.text << "Select move > " << Escapes::BLINK_RESET;
     // read input
     UserInput input;
     std::cin >> input.x >> input.y;
@@ -192,7 +192,7 @@ void Terminal::display_game(Board &last_state, Board &current_state, bool curren
             }
             bit_mask1 >>= 1;
         }
-        std::cout << pallete.background << "  |   " << pallete.text << i << ' ';
+        std::cout << pallete.text << "  |   " << i << ' ';
         for (int j = 0; j < 8; ++j) {
             if (current_state.white() & bit_mask3) {
                 std::cout << pallete.white << "X ";
@@ -216,7 +216,7 @@ void Terminal::display_game(Board &last_state, Board &current_state, bool curren
     int black_score = current_state.count_black();
     std::cout << row_block(0, 5, 24, true) << row_block(23, 5, 0, true) << '\n';
     std::cout << row_block(0, 57, 0, false) << '\n';
-    std::cout << row_block(0, 5, 8, true) << pallete.white << "X -> " << white_score;
-    std::cout << pallete.black << "                   O -> " << black_score << row_block(8, 5, 0, true) << '\n';
+    std::cout << row_block(0, 5, 8 - (white_score >= 10), true) << pallete.white << "X -> " << white_score;
+    std::cout << pallete.black << "                   O -> " << black_score << row_block(8 - (black_score >= 10), 5, 0, true) << '\n';
     std::cout << row_block(0, 57, 0, false) << '\n';
 }
