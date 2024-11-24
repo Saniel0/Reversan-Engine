@@ -57,7 +57,6 @@ void App::run_play() {
             ui->display_game(last_board, current_board, at_turn);
             uint64_t move;
             while (true) {
-                ui->display_message("Select move>");
                 UI::UserInput input = ui->get_input();
                 move = 1L << (63 - (input.y*8 + input.x));
                 if (move & possible_moves) {
@@ -169,7 +168,7 @@ bool App::parse_settings(int argc, char **argv) {
                 }
             }
             // parse search flag
-            else if (arg == "--search" || arg == "-s") {
+            else if (arg == "--engine" || arg == "-e") {
                 if (i + 1 < argc) {
                     i++;
                     arg = argv[i];
@@ -180,12 +179,36 @@ bool App::parse_settings(int argc, char **argv) {
                         search = Engine::NEGASCOUT;
                     }
                     else {
-                        ui->display_error_message("Invalid search algorithm. Use --help or -h for usage information.");
+                        ui->display_error_message("Invalid search engine. Use --help or -h for usage information.");
                         return false;
                     }
                 }
                 else {
-                    ui->display_error_message("Flags --search and -s requires an integer argument. Use --help or -h for usage information.");
+                    ui->display_error_message("Flags --engine and -e requires an additional argument. Use --help or -h for usage information.");
+                    return false;
+                }
+            }
+            // parse style
+            else if (arg == "--style" || arg == "-s") {
+                if (i + 1 < argc) {
+                    i++;
+                    arg = argv[i];
+                    if (arg == "basic") {
+                        ui->load_style(UI::UIStyle::BASIC);
+                    }
+                    else if (arg == "solarized") {
+                        ui->load_style(UI::UIStyle::SOLARIZED);
+                    }
+                    else if (arg == "dracula") {
+                        ui->load_style(UI::UIStyle::DRACULA);
+                    }
+                    else {
+                        ui->display_error_message("Invalid style. Use --help or -h for usage information.");
+                        return false;
+                    }
+                }
+                else {
+                    ui->display_error_message("Flags --style and -s requires an additional argument. Use --help or -h for usage information.");
                     return false;
                 }
             }

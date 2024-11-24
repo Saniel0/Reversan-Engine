@@ -23,9 +23,14 @@
 
 class UI {
     public:
-        /// @brief Collection of interfaces (only terminal for now).
-        enum Interface {
-            TERMINAL
+        /// @brief Struct containing colors for the UI.
+        struct ColorPallete {
+            std::string text;
+            std::string edge;
+            std::string background;
+            std::string white;
+            std::string black;
+            std::string move;
         };
 
         /// @brief Data structure containing user input
@@ -33,9 +38,18 @@ class UI {
             int x;
             int y;
         };
-        
+
+        /// @brief Collection of pre-defined styles
+        enum class UIStyle {
+            BASIC,
+            SOLARIZED,
+            DRACULA
+        };
+
         /// @return user input
         virtual UserInput get_input() = 0;
+
+        virtual void load_style(UIStyle style) = 0;
 
         /// @brief Displays help message.
         virtual void display_help() = 0;
@@ -64,6 +78,10 @@ class UI {
          * Displays multiple boards for clarity.
          */
         virtual void display_game(Board &last_state, Board &current_state, bool current_color) = 0;
+
+    protected:
+        /// @brief Currently loaded color pallete.
+        ColorPallete pallete;
 };
 
 #endif

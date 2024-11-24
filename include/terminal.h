@@ -22,17 +22,32 @@
 
 class Terminal : public UI {
     private:
-        /// @brief Collection of ANSI escape sequences
+        /// @brief Collection of ANSI escape sequences.
         struct Escapes {
-            static constexpr std::string SWITCH_BUFFER = "\x1B[?1049h";
+            // buffer control
+            static constexpr std::string SWITCH_BUFFER  = "\x1B[?1049h";
             static constexpr std::string RESTORE_BUFFER = "\x1B[?1049l";
-            static constexpr std::string CLEAR_BUFFER = "\x1B[2J\x1B[H";
-            static constexpr std::string COLOR_RESET = "\033[0m";
-            static constexpr std::string RED = "\033[1;31m"; // also bold
-            static constexpr std::string YELLOW = "\033[1;33m"; // also bold
-            static constexpr std::string GREEN = "\033[1;32m"; // also bold
-            static constexpr std::string GRAY = "\033[1;90m"; // also bold
-            static constexpr std::string BOLD = "\033[1m";
+            static constexpr std::string CLEAR_BUFFER   = "\x1B[2J\x1B[H";
+            // special graphics
+            static constexpr std::string BLINK          = "\e[5m";
+            static constexpr std::string BLINK_RESET    = "\e[25m";
+            static constexpr std::string BOLD           = "\e[1m";
+            // basic color control
+            static constexpr std::string RED            = "\e[1;31m";
+            static constexpr std::string YELLOW         = "\e[1;33m";
+            static constexpr std::string GREEN          = "\e[1;32m";
+            static constexpr std::string GRAY           = "\e[1;90m";
+            static constexpr std::string WHITE          = "\e[1;37m";
+            // basic background control
+            static constexpr std::string BACK_NONE      = "";
+            static constexpr std::string BACK_BLACK     = "\e[40m";
+            static constexpr std::string BACK_RED       = "\e[41m";
+            static constexpr std::string BACK_GREEN     = "\e[42m";
+            static constexpr std::string BACK_YELLOW    = "\e[43m";
+            static constexpr std::string BACK_BLUE      = "\e[44m";
+            static constexpr std::string BACK_PURPLE    = "\e[45m";
+            static constexpr std::string BACK_CYAN      = "\e[46m";
+            static constexpr std::string BACK_WHITE     = "\e[47m";
         };
         
         /**
@@ -44,7 +59,7 @@ class Terminal : public UI {
          * @param style Style of the pattern.
          * @param parity Parity of the pattern on the middle block.
          */
-        std::string row_block(int left_size, int block_size, int right_side, std::string style, bool parity) const;
+        std::string row_block(int left_size, int block_size, int right_side, bool parity) const;
 
         /// @brief Clears whole terminal
         void clear_terminal() const;
@@ -54,13 +69,19 @@ class Terminal : public UI {
 
     public:
         /// @brief Switches to separate terminal buffer.
-        Terminal();
+        explicit Terminal(UIStyle style = UIStyle::BASIC);
+
+        /// @brief Alternate constructor for loading custom color palletes. 
+        explicit Terminal(ColorPallete pallete);
         
         /// @brief Restores original terminal buffer.
         ~Terminal();
 
-        /// @return user input from terminal
+        /// @return User input from terminal.
         UserInput get_input() override;
+
+        /// @brief Loads wanted style. 
+        void load_style(UIStyle style) override;
 
         /// @brief Prints help message to the terminal.
         void display_help() override;

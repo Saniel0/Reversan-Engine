@@ -20,7 +20,7 @@
 #include <signal.h>
 
 // needs to be file-global to be accessible in sig function
-static Terminal ui;
+static Terminal ui(UI::UIStyle::BASIC);
 
 // restores terminal state even after ctrl-c or other failure
 void handle_sig(int sig) {
