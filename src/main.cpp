@@ -15,30 +15,46 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#include "terminal.h"
 #include "app.h"
+#include "terminal.h"
+#include "negascout.h"
+#include "alphabeta.h"
+#include "parser.h"
 #include <signal.h>
 
 // needs to be file-global to be accessible in sig function
-static Terminal ui(UI::UIStyle::BASIC);
+static UI *ui = nullptr;
+static Engine *engine = nullptr;
 
 // restores terminal state even after ctrl-c or other failure
 void handle_sig(int sig) {
-    // since ui is static, it gets automatically deconstructed
+    // safely dealocate resources
+    if (ui) delete ui;
+    if (engine) delete engine;
     exit(sig);
 }
 
 int main(int argc, char **argv) {
     // prepare signal handler
     signal(SIGINT, handle_sig);
-    
-    // initialize the app
-    App app(&ui);
-    
-    // try to parse settings and run the app
-    if (app.parse_settings(argc, argv)) {
-        app.run();
-    }
-    
+
+    // parse arguments
+    Parser parser;
+    if (!parser.parse(argc, argv)) return 1;
+
+    // initialize engine
+    if (parser.get_alg() == Engine::Alg::ALPHABETA) engine = new Alphabeta(parser.get_settings());
+    else engine = new Negascout(parser.get_settings());
+
+    // initialize terminal
+    ui = new Terminal(parser.get_style());
+
+    // initialize app
+    App app(parser.get_mode(), ui, engine);
+    app.run();
+
+    // dealocate resources and exit
+    delete ui;
+    delete engine;
     return 0;
 }

@@ -18,10 +18,12 @@ set(SOURCES
     src/main.cpp
     src/app.cpp
     src/board_state.cpp
-    src/search.cpp
     src/terminal.cpp
     src/transposition_table.cpp
     src/move_order.cpp
+    src/negascout.cpp
+    src/alphabeta.cpp
+    src/parser.cpp
 )
 
 # Source files for the no SIMD variant

@@ -16,22 +16,18 @@
 */
 
 #include "app.h"
-#include "search.h"
 
-App::App(UI *ui) : settings{Modes::PLAY, 10, Engine::NEGASCOUT}, ui(ui) {}
-
-App::App(UI *ui, int mode, int search_depth, int search_method) : settings{mode, search_depth, search_method}, ui(ui) {}
+App::App(Mode mode, UI *ui, Engine *engine) : mode(mode), ui(ui), engine(engine) {}
 
 void App::run() {
-    if (settings.mode == Modes::PLAY) {run_play();}
-    else if (settings.mode == Modes::BOT_VS_BOT) run_bot_vs_bot();
-    else if (settings.mode == Modes::BENCHMARK) run_benchmark();
+    if (mode == Mode::PLAY) {run_play();}
+    else if (mode == Mode::BOT_VS_BOT) run_bot_vs_bot();
+    else if (mode == Mode::BENCHMARK) run_benchmark();
 }
 
 void App::run_play() {
     Board last_board;
     Board current_board = Board::States::INITIAL;
-    Search engine;
     
     int white_score = 0;
     int black_score = 0;
@@ -70,12 +66,7 @@ void App::run_play() {
         }
         else {
             uint64_t move = 0;
-            if (settings.search_method == Engine::MINIMAX) {
-                move = engine.start_minimax(current_board, at_turn, settings.search_depth);
-            }
-            else if (settings.search_method == Engine::NEGASCOUT) {
-                move = engine.start_negascout(current_board, at_turn, settings.search_depth);
-            }
+            move = engine->search(current_board, at_turn);
             last_board = current_board;
             current_board.play_move(at_turn, move);
         }
@@ -86,17 +77,11 @@ void App::run_play() {
 
 void App::run_bot_vs_bot() {
     Board init_board = Board::States::INITIAL;
-    Search engine;
     uint64_t move = 0;
 
     bool color = false;
     while (true) {
-        if (settings.search_method == Engine::MINIMAX) {
-            move = engine.start_minimax(init_board, color, settings.search_depth);
-        }
-        else if (settings.search_method == Engine::NEGASCOUT) {
-            move = engine.start_negascout(init_board, color, settings.search_depth);
-        }
+        move = engine->search(init_board, color);
 
         if (move == 0) {
             break;
@@ -110,117 +95,7 @@ void App::run_bot_vs_bot() {
 
 void App::run_benchmark() {
     Board init_board = Board::States::BENCHMARK;
-    Search engine;
     uint64_t move = 0;
-    
-    if (settings.search_method == Engine::MINIMAX) {
-        move = engine.start_minimax(init_board, false, settings.search_depth);
-    }
-    else if (settings.search_method == Engine::NEGASCOUT) {
-        move = engine.start_negascout(init_board, false, settings.search_depth);
-    }
+    move = engine->search(init_board, false);
     ui->display_board(init_board, move);
-}
-
-bool App::parse_settings(int argc, char **argv) {
-    // check if any arguments were provided (first is just executable name)
-    if (argc == 1) {
-        ui->display_error_message("No arguments provided. Use --help or -h for usage information.");
-        return false;
-    }
-
-    // parse app mode
-    int mode;
-    std::string mode_str = argv[1];
-    if (mode_str == "--play") mode = Modes::PLAY;
-    else if (mode_str == "--bot-vs-bot") mode = Modes::BOT_VS_BOT;
-    else if (mode_str == "--benchmark") mode = Modes::BENCHMARK;
-    else if (mode_str == "--help" || mode_str == "-h") {
-        ui->display_help();
-        return false;
-    }
-    else {
-        ui->display_error_message("Invalid mode. Use --help or -h for usage information.");
-        return false;
-    }
-
-    // set default options
-    int depth = 10;
-    int search = Engine::NEGASCOUT;
-
-    // parse options
-    if (argc > 2) {
-        for (int i = 2; i < argc; ++i) {
-            std::string arg = argv[i];
-            // parse depth flag
-            if (arg == "--depth" || arg == "-d") {
-                if (i + 1 < argc) {
-                    i++;
-                    depth = std::atoi(argv[i]);
-                    if (depth < 1 || depth > 50) {
-                        ui->display_error_message("Invalid depth. Use --help or -h for usage information.");
-                        return false;
-                    }
-                }
-                else {
-                    ui->display_error_message("Flags --depth and -d requires an integer argument. Use --help or -h for usage information.");
-                    return false;
-                }
-            }
-            // parse search flag
-            else if (arg == "--engine" || arg == "-e") {
-                if (i + 1 < argc) {
-                    i++;
-                    arg = argv[i];
-                    if (arg == "minimax") {
-                        search = Engine::MINIMAX;
-                    }
-                    else if (arg == "negascout") {
-                        search = Engine::NEGASCOUT;
-                    }
-                    else {
-                        ui->display_error_message("Invalid search engine. Use --help or -h for usage information.");
-                        return false;
-                    }
-                }
-                else {
-                    ui->display_error_message("Flags --engine and -e requires an additional argument. Use --help or -h for usage information.");
-                    return false;
-                }
-            }
-            // parse style
-            else if (arg == "--style" || arg == "-s") {
-                if (i + 1 < argc) {
-                    i++;
-                    arg = argv[i];
-                    if (arg == "basic") {
-                        ui->load_style(UI::UIStyle::BASIC);
-                    }
-                    else if (arg == "solarized") {
-                        ui->load_style(UI::UIStyle::SOLARIZED);
-                    }
-                    else if (arg == "dracula") {
-                        ui->load_style(UI::UIStyle::DRACULA);
-                    }
-                    else {
-                        ui->display_error_message("Invalid style. Use --help or -h for usage information.");
-                        return false;
-                    }
-                }
-                else {
-                    ui->display_error_message("Flags --style and -s requires an additional argument. Use --help or -h for usage information.");
-                    return false;
-                }
-            }
-            // invalid option
-            else {
-                ui->display_error_message("Invalid option. Use --help or -h for usage information.");
-                return false;
-            }
-        }
-    }
-
-    // save the parsed settings
-    settings = {mode, depth, search};
-    return true;
 }

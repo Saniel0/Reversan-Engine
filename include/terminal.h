@@ -75,16 +75,13 @@ class Terminal : public UI {
         explicit Terminal(ColorPallete pallete);
         
         /// @brief Restores original terminal buffer.
-        ~Terminal();
+        ~Terminal() override;
 
         /// @return User input from terminal.
         UserInput get_input() override;
 
         /// @brief Loads wanted style. 
         void load_style(UIStyle style) override;
-
-        /// @brief Prints help message to the terminal.
-        void display_help() override;
 
         /// @brief Prints custom message.
         void display_message(std::string str) override;

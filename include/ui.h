@@ -46,13 +46,14 @@ class UI {
             DRACULA
         };
 
+        /// @brief Destroctor of UI. Exits UI.
+        virtual ~UI() {};
+
         /// @return user input
         virtual UserInput get_input() = 0;
 
+        /// @brief Loads specified UI style 
         virtual void load_style(UIStyle style) = 0;
-
-        /// @brief Displays help message.
-        virtual void display_help() = 0;
 
         /// @brief Displays custom message.
         virtual void display_message(std::string str) = 0;

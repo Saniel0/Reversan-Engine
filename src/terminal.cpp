@@ -20,7 +20,7 @@
 
 Terminal::Terminal(UIStyle style) {
     load_style(style);
-    std::cout << Escapes::SWITCH_BUFFER;
+    //std::cout << Escapes::SWITCH_BUFFER;
     std::cout << Escapes::BOLD << pallete.background;
 }
 
@@ -120,24 +120,6 @@ void Terminal::print_title() const {
         << row_block(0, 5, 2, true)  << pallete.text << "|_| \\_\\___| \\_/ \\___|_|  |___/\\__,_|_| |_|" << row_block(3, 5, 0, true)  << '\n'
         << row_block(0, 5, 24, true) << row_block(23, 5, 0, true) << '\n'
         << row_block(0, 57, 0, false) << '\n';
-}
-
-void Terminal::display_help() {
-    std::cout 
-        << Escapes::RESTORE_BUFFER // print to original buffer
-        << "Usage: reversan [MODE] [OPTIONS]\n"
-        << "\n"
-        << "Modes:\n"
-        << "--help, -h                                Display this help message.\n"
-        << "--play                                    Play against the engine in terminal interface.\n"
-        << "--bot-vs-bot                              Start game where the engine plays against itself.\n"
-        << "--benchmark                               Run search on pre-defined state.\n"
-        << "\n"
-        << "Additional Options:\n"
-        << "--depth, -d <1 - 49>                      Set the engine's search depth (default: 10).\n"
-        << "--engine, -e <negascout | minimax>        Choose the tree search algorithm (default: negascout).\n"
-        << "--style, -s <basic | solarized | dracula> Specify UI style (default : basic).\n"
-        << Escapes::SWITCH_BUFFER; // switch back to temporary buffer
 }
 
 void Terminal::display_board(Board &board, uint64_t moves) {

@@ -19,71 +19,46 @@
 #define APP_H
 
 #include "ui.h"
+#include "engine.h"
 
 class App {
-    private:
-        /// @brief Struct containing app settings.
-        struct Settings {
-            int mode;
-            int search_depth;
-            int search_method;
-        };
-
-        /// @brief Currently loaded settings.
-        Settings settings;
-
-        /// @brief User interface
-        UI *ui;
-
-        void run_play();
-        
-        void run_bot_vs_bot();
-
-        void run_benchmark();
-
+    // public for forward declares
     public:
         /// @brief Collection of app modes.
-        enum Modes {
+        enum class Mode {
             PLAY,
             BOT_VS_BOT,
             BENCHMARK
         };
 
-        /// @brief Collection of engine search algorithms.
-        enum Engine {
-            MINIMAX,
-            NEGASCOUT
-        };
+    private:
+        /// @brief Currently loaded settings.
+        Mode mode;
 
+        /// @brief User interface.
+        UI *ui;
+
+        /// @brief Reversi engine.
+        Engine *engine;
+
+        /// @brief Runs 'PLAY' mode.
+        void run_play();
+        
+        /// @brief Runs 'BOT_VS_BOT' mode.
+        void run_bot_vs_bot();
+
+        /// @brief Runs 'BENCHMARK' mode.
+        void run_benchmark();
+
+    public:
         /**
          * @brief Default Terminal constructor.
          * 
          * Loads default settings
          */
-        App(UI *ui);
+        App(Mode mode, UI *ui, Engine *engine);
 
-        /**
-         * @brief Terminal constructor with custom settings.
-         * 
-         * @param mode App mode
-         * @param search_depth Engine search depth.
-         * @param search_method Engine search method.
-         */
-        App(UI *ui, int mode, int search_depth, int search_method);
-
-        /**
-         * @brief Loads settings based on arguments.
-         * 
-         * @param argc Argument count.
-         * @param argv Argument values.
-         * 
-         * @return true if settings were parsed correctly, false otherwise
-         */
-        bool parse_settings(int argc, char **argv);
-
-        /**
-         * @brief Run the app with loaded settings
-         */
+        /// @brief Run the app with loaded settings
         void run();
 };
 
