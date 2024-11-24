@@ -38,6 +38,7 @@ class Engine {
             NEGASCOUT
         };
 
+        /// @brief Virtual deconstructor to ensure all derived classes can deleted properly.
         virtual ~Engine() {};
 
         /**
