@@ -1,3 +1,18 @@
+#	This file is part of Reversan Engine.
+#
+#	Reversan Engine is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   Reversan Engine is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>.
+
 # Minimum CMake version required
 cmake_minimum_required(VERSION 3.12)
 
@@ -7,7 +22,7 @@ project(ReversanEngine LANGUAGES CXX)
 # Compiler settings
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wno-attributes")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -Wall -Wno-attributes")
 
 # Set the output directory for binaries
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
@@ -43,25 +58,36 @@ include_directories(include)
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-mavx2" AVX2)
 
-# Create AVX2 targets
-if(AVX2)
-    add_executable(reversan_avx2 ${SOURCES} ${SOURCES_AVX2})
-    target_compile_options(reversan_avx2 PRIVATE -mavx2 -flto)
-    target_link_libraries(reversan_avx2 PRIVATE -flto)
+# Objects shared by both targets
+add_library(objects_common OBJECT ${SOURCES})
+target_compile_options(objects_common PRIVATE -flto)
 
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_executable(reversan_avx2_debug ${SOURCES} ${SOURCES_AVX2})
-        target_compile_options(reversan_avx2_debug PRIVATE -mavx2 -pg)
-        target_link_libraries(reversan_avx2_debug PRIVATE -pg)
-    endif()
+# Objects specific to no-simd target
+add_library(objects_nosimd OBJECT ${SOURCES_NOSIMD})
+target_compile_options(objects_nosimd PRIVATE -flto)
+
+# Create AVX2 target
+if(AVX2)
+    # Objects specific to avx2 target (only if supported)
+    add_library(objects_avx2 OBJECT ${SOURCES_AVX2})
+    target_compile_options(objects_avx2 PRIVATE -flto)
+
+    add_executable(reversan_avx2 $<TARGET_OBJECTS:objects_common> $<TARGET_OBJECTS:objects_avx2>)
+    target_link_libraries(reversan_avx2 PRIVATE -flto)
 endif()
 
-# Create the No SIMD build target
-add_executable(reversan_nosimd ${SOURCES} ${SOURCES_NOSIMD})
-target_compile_options(reversan_nosimd PRIVATE -flto)
+# Create no-SIMD build target
+add_executable(reversan_nosimd $<TARGET_OBJECTS:objects_common> $<TARGET_OBJECTS:objects_nosimd>)
 target_link_libraries(reversan_nosimd PRIVATE -flto)
 
-# Debug version for No SIMD
+# Create debug AVX2 target
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND AVX2)
+        add_executable(reversan_avx2_debug ${SOURCES} ${SOURCES_AVX2})
+        target_compile_options(reversan_avx2_debug PRIVATE -pg)
+        target_link_libraries(reversan_avx2_debug PRIVATE -pg)
+endif()
+
+# Create debug no-SIMD target
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_executable(reversan_nosimd_debug ${SOURCES} ${SOURCES_NOSIMD})
     target_compile_options(reversan_nosimd_debug PRIVATE -pg)
