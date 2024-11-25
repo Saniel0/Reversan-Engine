@@ -43,6 +43,7 @@ void Parser::print_help() const {
         << "Additional Options:\n"
         << "--depth, -d <1 - 49>                      Set the engine's search depth (default: 10).\n"
         << "--engine, -e <alphabeta | minimax>        Choose the tree search algorithm (default: negascout).\n"
+        << "--disable-tp                              Disables transposition tables.\n"
         << "--style, -s <basic | solarized | dracula> Specify UI style (default : basic).\n";
 }
 
@@ -135,6 +136,9 @@ bool Parser::parse(int argc, char **argv) {
         else if (arg == "--help" || arg == "-h") {
             print_help();
             return false;
+        }
+        else if (arg == "--disable-tp") {
+            settings.transposition_enable = false;
         }
         else {
             std::cout << "Invalid option. Use --help or -h for usage information.\n";

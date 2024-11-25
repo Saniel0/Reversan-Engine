@@ -95,7 +95,7 @@ int Alphabeta::alphabeta(Board state, int depth, bool cur_color, int alpha, int 
     // overhead of using transposition table becomes
     // too large at lower levels, it is then faster
     // to just calculate the score again
-    if (depth > 2) {
+    if (settings.transposition_enable && depth > 2) {
         hash = state.hash();
         int score = transposition_table.get(hash, alpha, beta);
         if (score != Transposition_table::NOT_FOUND) {
@@ -154,7 +154,7 @@ int Alphabeta::alphabeta(Board state, int depth, bool cur_color, int alpha, int 
     }
     
     // save the score for future
-    if (depth > 2) {
+    if (settings.transposition_enable && depth > 2) {
         transposition_table.insert(hash, best_eval, init_alpha, init_beta);
     }
     
