@@ -25,29 +25,29 @@ class Terminal : public UI {
         /// @brief Collection of ANSI escape sequences.
         struct Escapes {
             // buffer control
-            static constexpr std::string SWITCH_BUFFER  = "\x1B[?1049h";
-            static constexpr std::string RESTORE_BUFFER = "\x1B[?1049l";
-            static constexpr std::string CLEAR_BUFFER   = "\x1B[2J\x1B[H";
+            static constexpr const char* SWITCH_BUFFER  = "\x1B[?1049h";
+            static constexpr const char* RESTORE_BUFFER = "\x1B[?1049l";
+            static constexpr const char* CLEAR_BUFFER   = "\x1B[2J\x1B[H";
             // special graphics
-            static constexpr std::string BLINK          = "\e[5m";
-            static constexpr std::string BLINK_RESET    = "\e[25m";
-            static constexpr std::string BOLD           = "\e[1m";
+            static constexpr const char* BLINK          = "\e[5m";
+            static constexpr const char* BLINK_RESET    = "\e[25m";
+            static constexpr const char* BOLD           = "\e[1m";
             // basic color control
-            static constexpr std::string RED            = "\e[1;31m";
-            static constexpr std::string YELLOW         = "\e[1;33m";
-            static constexpr std::string GREEN          = "\e[1;32m";
-            static constexpr std::string GRAY           = "\e[1;90m";
-            static constexpr std::string WHITE          = "\e[1;37m";
+            static constexpr const char* RED            = "\e[1;31m";
+            static constexpr const char* YELLOW         = "\e[1;33m";
+            static constexpr const char* GREEN          = "\e[1;32m";
+            static constexpr const char* GRAY           = "\e[1;90m";
+            static constexpr const char* WHITE          = "\e[1;37m";
             // basic background control
-            static constexpr std::string BACK_NONE      = "";
-            static constexpr std::string BACK_BLACK     = "\e[40m";
-            static constexpr std::string BACK_RED       = "\e[41m";
-            static constexpr std::string BACK_GREEN     = "\e[42m";
-            static constexpr std::string BACK_YELLOW    = "\e[43m";
-            static constexpr std::string BACK_BLUE      = "\e[44m";
-            static constexpr std::string BACK_PURPLE    = "\e[45m";
-            static constexpr std::string BACK_CYAN      = "\e[46m";
-            static constexpr std::string BACK_WHITE     = "\e[47m";
+            static constexpr const char* BACK_NONE      = "";
+            static constexpr const char* BACK_BLACK     = "\e[40m";
+            static constexpr const char* BACK_RED       = "\e[41m";
+            static constexpr const char* BACK_GREEN     = "\e[42m";
+            static constexpr const char* BACK_YELLOW    = "\e[43m";
+            static constexpr const char* BACK_BLUE      = "\e[44m";
+            static constexpr const char* BACK_PURPLE    = "\e[45m";
+            static constexpr const char* BACK_CYAN      = "\e[46m";
+            static constexpr const char* BACK_WHITE     = "\e[47m";
         };
         
         /**
