@@ -18,9 +18,7 @@
 #include "move_order.h"
 #include <iostream>
 
-Move_order::Move_order() {
-    Move_order(Orders::OPTIMIZED);
-}
+Move_order::Move_order() : Move_order(Orders::OPTIMIZED) {}
 
 Move_order::Move_order(const std::vector<uint8_t>& order) {
     // check order validity, if it is not valid, use default constructor instead
