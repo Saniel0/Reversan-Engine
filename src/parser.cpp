@@ -41,10 +41,11 @@ void Parser::print_help() const {
         << "--benchmark                               Run search on pre-defined state.\n"
         << "\n"
         << "Additional Options:\n"
-        << "--depth, -d <1 - 49>                      Set the engine's search depth (default: 10).\n"
-        << "--engine, -e <alphabeta | minimax>        Choose the tree search algorithm (default: negascout).\n"
-        << "--disable-tp                              Disables transposition tables.\n"
-        << "--style, -s <basic | solarized | dracula> Specify UI style (default : basic).\n";
+        << "--depth, -d <1 - 49> [10]                           Set the engine's search depth.\n"
+        << "--engine, -e <negascout | alphabeta> [negascout]    Choose the tree search algorithm.\n"
+        << "--threads, -t, <1 - 8> [1]                          EXPERIMENTAL, negascout only.\n"
+        << "--disable-tp                                        Disables transposition tables.\n"
+        << "--style, -s <basic | solarized | dracula> [basic]   Specify UI style.\n";
 }
 
 bool Parser::parse_mode(int argc, char **argv) {
@@ -72,7 +73,7 @@ bool Parser::parse_depth(int argc, char **argv, int &i) {
         }
     }
     else {
-        std::cout << "Invalid depth. Use --help or -h for usage information.\n";
+        std::cout << "Invalid use of depth. Use --help or -h for usage information.\n";
         return false;
     }
     return true;
@@ -115,6 +116,22 @@ bool Parser::parse_style(int argc, char **argv, int &i) {
     return true;
 }
 
+bool Parser::parse_threads(int argc, char **argv, int &i) {
+    if (i + 1 < argc) {
+        i++;
+        settings.thread_count = std::atoi(argv[i]);
+        if (settings.thread_count < 1 || settings.thread_count > 8) {
+            std::cout << "Invalid thread count. Use --help or -h for usage information.\n";
+            return false;
+        }
+    }
+    else {
+        std::cout << "Invalid use of thread. Use --help or -h for usage information.\n";
+        return false;
+    }
+    return true;
+}
+
 bool Parser::parse(int argc, char **argv) {
     int idx = 1;
     // parse mode
@@ -132,6 +149,9 @@ bool Parser::parse(int argc, char **argv) {
         }
         else if (arg == "--style" || arg == "-s") {
             if (!parse_style(argc, argv, i)) return false;
+        }
+        else if (arg == "--threads" || arg == "-t") {
+            if (!parse_threads(argc, argv, i)) return false;
         }
         else if (arg == "--help" || arg == "-h") {
             print_help();

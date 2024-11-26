@@ -25,7 +25,7 @@ struct DefaultSettings {
     static constexpr App::Mode MODE = App::Mode::PLAY;
     static constexpr UI::UIStyle STYLE = UI::UIStyle::BASIC;
     static constexpr Engine::Alg ALG = Engine::Alg::NEGASCOUT;
-    static constexpr Engine::Settings SETTINGS = {10, 0, 1};
+    static constexpr Engine::Settings SETTINGS = {10, 0, 1, true};
 };
 
 #endif

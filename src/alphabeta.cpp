@@ -98,7 +98,7 @@ int Alphabeta::alphabeta(Board state, int depth, bool cur_color, int alpha, int 
     if (settings.transposition_enable && depth > 2) {
         hash = state.hash();
         int score = transposition_table.get(hash, alpha, beta);
-        if (score != Transposition_table::NOT_FOUND) {
+        if (score != TranspositionTable::NOT_FOUND) {
             return score;
         }
     }

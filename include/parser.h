@@ -43,6 +43,8 @@ class Parser {
         /// @brief Tries to parse style.
         bool parse_style(int argc, char **argv, int &i);
 
+        /// @brief Tries to parse thread count.
+        bool parse_threads(int argc, char **argv, int &i);
 
     public:
         Parser();
@@ -51,11 +53,8 @@ class Parser {
         bool parse(int argc, char **argv);
 
         App::Mode get_mode() const;
-
         UI::UIStyle get_style() const;
-
         Engine::Alg get_alg() const;
-
         Engine::Settings get_settings() const;
 };
 

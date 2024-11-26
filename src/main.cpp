@@ -43,8 +43,15 @@ int main(int argc, char **argv) {
     if (!parser.parse(argc, argv)) return 1;
 
     // initialize engine
-    if (parser.get_alg() == Engine::Alg::ALPHABETA) engine = new Alphabeta(parser.get_settings());
-    else engine = new Negascout(parser.get_settings());
+    if (parser.get_alg() == Engine::Alg::ALPHABETA) {
+        engine = new Alphabeta(parser.get_settings());
+    }
+    else if (parser.get_alg() == Engine::Alg::NEGASCOUT && parser.get_settings().thread_count > 1) {
+        engine = new NegascoutParallel(parser.get_settings());
+    }
+    else {
+        engine = new Negascout(parser.get_settings());
+    }
 
     // initialize terminal
     ui = new Terminal(parser.get_style());

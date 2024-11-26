@@ -43,7 +43,7 @@ class Alphabeta : public Engine {
         Move_order move_order;
 
         /// @brief The transposition table used to store previously evaluated game states and their results, improving search efficiency.
-        Transposition_table transposition_table;
+        TranspositionTable transposition_table;
 
         /**
          * @brief Negascout search algorithm (a variant of alpha-beta pruning) used to find the best move.

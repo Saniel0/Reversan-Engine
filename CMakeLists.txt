@@ -39,6 +39,7 @@ set(SOURCES
     src/negascout.cpp
     src/alphabeta.cpp
     src/parser.cpp
+    src/thread_manager.cpp
 )
 
 # Source files for the no SIMD variant

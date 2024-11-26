@@ -29,6 +29,7 @@ class Engine {
         struct Settings {
             int search_depth;
             int time_limit;
+            int thread_count;
             bool transposition_enable;
         };
 
