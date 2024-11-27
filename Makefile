@@ -29,16 +29,25 @@ SOURCE_DIR = src
 BUILD_DIR = build
 
 # Sources for every build
-SOURCES = main.cpp app.cpp board_state.cpp search.cpp terminal.cpp transposition_table.cpp move_order.cpp
-OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES:%.cpp=%.o)))
+SOURCES  = main.cpp
+SOURCES += app/app.cpp
+SOURCES += board/board_state.cpp
+SOURCES += engine/alphabeta.cpp
+SOURCES += engine/move_order.cpp
+SOURCES += engine/negascout.cpp
+SOURCES += engine/transposition_table.cpp
+SOURCES += ui/terminal.cpp
+SOURCES += utils/parser.cpp
+SOURCES += utils/thread_manager.cpp
+OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:%.cpp=%.o))
 
 # Sources when building without any explicit SIMD instructions
-SOURCES_NOSIMD = board_nosimd.cpp
-OBJECTS_NOSIMD = $(OBJECTS) $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_NOSIMD:%.cpp=%.o)))
+SOURCES_NOSIMD = board/board_nosimd.cpp
+OBJECTS_NOSIMD = $(OBJECTS) $(addprefix $(BUILD_DIR)/,$(SOURCES_NOSIMD:%.cpp=%.o))
 
 # Sources when building with explicit AVX2 instructions
-SOURCES_AVX2 = board_avx2.cpp
-OBJECTS_AVX2 = $(OBJECTS) $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_AVX2:%.cpp=%.o)))
+SOURCES_AVX2 = board/board_avx2.cpp
+OBJECTS_AVX2 = $(OBJECTS) $(addprefix $(BUILD_DIR)/,$(SOURCES_AVX2:%.cpp=%.o))
 
 # Name of final executable
 TARGET_EXE = reversan
@@ -62,7 +71,8 @@ clean:
 	rm -f -r $(BUILD_DIR)
 	rm -f $(TARGET_EXE)
 
-$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 # Create build directory if it does not exist
