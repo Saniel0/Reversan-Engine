@@ -48,19 +48,23 @@ Pro dřívější ukončení stačí použít `ctrl-c`, program vrátí terminá
 - Následující testy jsou prováděny na testovacím stavu `Board::States::Benchmark`.
 #### Prohledávání stromu
 Engine podporuje 2 algoritmy - minimax s alpha-beta prořezáváním a minimax s negascout prořezáváním. Oba algoritmy se ukazují jako masivní zlepšení oproti klasickému minimax v efektivitě prohledávání. Také se ukazuje, že negascout nemusí být vždy nutně rychlejší než alphabeta.
+
 ![alt text](graphs/pruning.png)
 - Testovací stav je navržen tak, aby byl pro prořezávání komplikovaný. Obecně je ale negascout mnohem lepší volba.
 
 #### Transpoziční tabulky
 Transpoziční tabulky slouží k memorizaci již prohledaných stavů, což dále snižuje počet prohledaných stavů.
+
 ![alt text](graphs/transposition.png)
 
 #### Optimalizované pořadí prohledávání tahů
 Optimální pořadí prohledávání tahů je důležité pro efektivní prořezávání herního stromu, to platí hlavně pro negascout. Základní pořadí jde řádek po řádku z levého horního rohu do pravého dolního, optimalizované pořadí je založené na samotné heuristické evaluační funkci.
+
 ![alt text](graphs/move_order.png)
 
 #### Heuristická funkce
 Jelikož není možné prohledávat herní strom až do konce, musíme estimovat kvalitu stavů pomocí heuristické funkce. Pro evaluaci se používá heuristická mapa, která přiřadí každému poli určitou váhu. Dále se bere v potaz počet možných tahů, což se ukázalo jako dobrý indikátor kvality stavu.
+
 ![alt text](graphs/heur.png)
 
 ## Strategie optimalizace
@@ -78,6 +82,7 @@ Další výhodou je malá paměťová náročnost, každá deska zabere pouze `1
 Všechny funkce pro manipulaci s deskou mají i druhou speciální implementaci, která výrazně program zrychluje na podporovaném hardwaru. Každý nový `x86` procesor *(posledních +-10 let)* tyto instrukce podporuje.
 
 Jedinou nevýhodou je značně komplikovanější kód.
+
 ![alt text](graphs/simd.png)
 - U všech procesorů výrazně `AVX2` instrukce pomáhají.
 - Zajímavé je, že největší nárust je na `xeon e5-2699v3`, který je založený na první architektuře s podporou těchto instrukcí.
@@ -94,6 +99,7 @@ Jsou implementovány následující strategie pro minimalizaci overheadu:
 - Dynamická aktualizace alpha beta hodnot mezi vlákny.
 
 I přes tyto všechny metody není implementace moc efektivní, jelikož se výrazně zvyšuje počet prohledaných stavů. Paralelní implementace se neškáluje přes 2 jádra.
+
 ![alt text](graphs/parallel.png)
 - Znatelné zrychlení je pouze na `i5-1340p`. Z měřených procesorů má nejpokročilejší architekturu, díky čemuž je pravděpodobně vidět **10%** zrychlení.
 - Na procesorech `r7-5700x3d` a `snapdragon 8-gen2` je výsledek téměř identický.
