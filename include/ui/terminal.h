@@ -80,6 +80,9 @@ class Terminal : public UI {
         /// @return User input from terminal.
         UserInput get_input() override;
 
+        /// @brief Blocks until enter is pressed.
+        void wait_for_input() override;
+
         /// @brief Loads wanted style. 
         void load_style(UIStyle style) override;
 

@@ -29,8 +29,6 @@ void App::run_play() {
     Board last_board;
     Board current_board = Board::States::INITIAL;
     
-    int white_score = 0;
-    int black_score = 0;
     bool at_turn = false;
     bool last_moved = true;
 
@@ -39,9 +37,7 @@ void App::run_play() {
         uint64_t possible_moves = current_board.find_moves(at_turn);
         if (possible_moves == 0) {
             if (!last_moved) {
-                ui->display_message("Game ended");
-                white_score = current_board.count_white();
-                black_score = current_board.count_black();
+                at_turn = !at_turn;
                 break;
             }
             last_moved = false;
@@ -72,7 +68,9 @@ void App::run_play() {
         }
         at_turn = !at_turn;
     }
-    ui->display_message("\n" + std::to_string(white_score) + " " + std::to_string(black_score) + "\n");
+    ui->display_game(last_board, current_board, at_turn);
+    ui->display_message("Press enter to quit");
+    ui->wait_for_input();
 }
 
 void App::run_bot_vs_bot() {

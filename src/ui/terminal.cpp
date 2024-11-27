@@ -69,6 +69,11 @@ UI::UserInput Terminal::get_input() {
     return input;
 }
 
+void Terminal::wait_for_input() {
+    std::cin.get(); // load enter from previous input get
+    std::cin.get(); // wait for actual confirm enter
+}
+
 void Terminal::display_message(std::string str) {
     std::cout << str << '\n';
 }

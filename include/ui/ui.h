@@ -52,6 +52,9 @@ class UI {
         /// @return user input
         virtual UserInput get_input() = 0;
 
+        /// @brief Blocks the caller until enter is pressed.
+        virtual void wait_for_input() = 0;
+
         /// @brief Loads specified UI style 
         virtual void load_style(UIStyle style) = 0;
 
