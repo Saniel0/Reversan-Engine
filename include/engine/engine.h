@@ -18,7 +18,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "board.h"
+#include "board/board.h"
 
 /**
  * @brief Class implementing game-tree search algorithms.

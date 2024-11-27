@@ -15,7 +15,7 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#include "terminal.h"
+#include "ui/terminal.h"
 #include <iostream>
 
 Terminal::Terminal(UIStyle style) {

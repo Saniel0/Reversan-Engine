@@ -22,7 +22,7 @@
 #define ALWAYS_INLINE
 #endif
 
-#include "transposition_table.h"
+#include "engine/transposition_table.h"
 
 void TranspositionTable::clear() {
     map.clear();

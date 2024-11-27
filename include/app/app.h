@@ -18,8 +18,8 @@
 #ifndef APP_H
 #define APP_H
 
-#include "ui.h"
-#include "engine.h"
+#include "ui/ui.h"
+#include "engine/engine.h"
 
 class App {
     // public for forward declares

@@ -18,7 +18,7 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 
-#include "ui.h"
+#include "ui/ui.h"
 
 class Terminal : public UI {
     private:

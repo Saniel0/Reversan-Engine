@@ -15,11 +15,11 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#include "app.h"
-#include "terminal.h"
-#include "negascout.h"
-#include "alphabeta.h"
-#include "parser.h"
+#include "app/app.h"
+#include "ui/terminal.h"
+#include "engine/negascout.h"
+#include "engine/alphabeta.h"
+#include "utils/parser.h"
 #include <signal.h>
 
 // needs to be file-global to be accessible in sig function

@@ -15,7 +15,7 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#include "alphabeta.h"
+#include "engine/alphabeta.h"
 #include <iostream>
 
 // initialize stats counters and select move order

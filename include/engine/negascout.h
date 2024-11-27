@@ -18,10 +18,10 @@
 #ifndef NEGASCOUT_H
 #define NEGASCOUT_H
 
-#include "engine.h"
-#include "move_order.h"
-#include "transposition_table.h"
-#include "thread_manager.h"
+#include "engine/engine.h"
+#include "engine/move_order.h"
+#include "engine/transposition_table.h"
+#include "utils/thread_manager.h"
 #include <mutex>
 
 // IMPORTANT

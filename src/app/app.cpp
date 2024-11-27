@@ -15,7 +15,7 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#include "app.h"
+#include "app/app.h"
 
 App::App(Mode mode, UI *ui, Engine *engine) : mode(mode), ui(ui), engine(engine) {}
 

@@ -22,7 +22,7 @@
 #define ALWAYS_INLINE
 #endif
 
-#include "board.h"
+#include "board/board.h"
 #include <bit>
 
 Board::Board() : white_bitmap(0), black_bitmap(0) {}

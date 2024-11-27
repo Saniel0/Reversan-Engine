@@ -18,7 +18,7 @@
 #ifndef DEFAULT_SETTINGS_H
 #define DEFAULT_SETTINGS_H
 
-#include "app.h"
+#include "app/app.h"
 
 /// @brief Default settings for the whole project.
 struct DefaultSettings {

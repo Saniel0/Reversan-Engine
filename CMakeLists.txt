@@ -31,25 +31,25 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 # Source files common to all builds
 set(SOURCES
     src/main.cpp
-    src/app.cpp
-    src/board_state.cpp
-    src/terminal.cpp
-    src/transposition_table.cpp
-    src/move_order.cpp
-    src/negascout.cpp
-    src/alphabeta.cpp
-    src/parser.cpp
-    src/thread_manager.cpp
+    src/app/app.cpp
+    src/board/board_state.cpp
+    src/engine/alphabeta.cpp
+    src/engine/move_order.cpp
+    src/engine/negascout.cpp
+    src/engine/transposition_table.cpp
+    src/ui/terminal.cpp
+    src/utils/parser.cpp
+    src/utils/thread_manager.cpp
 )
 
 # Source files for the no SIMD variant
 set(SOURCES_NOSIMD
-    src/board_nosimd.cpp
+    src/board/board_nosimd.cpp
 )
 
 # Source files for the AVX2 variant
 set(SOURCES_AVX2
-    src/board_avx2.cpp
+    src/board/board_avx2.cpp
 )
 
 # Include directories

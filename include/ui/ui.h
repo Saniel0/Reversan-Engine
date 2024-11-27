@@ -18,7 +18,7 @@
 #ifndef UI_H
 #define UI_H
 
-#include "board.h"
+#include "board/board.h"
 #include <string>
 
 class UI {

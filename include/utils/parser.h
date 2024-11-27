@@ -18,8 +18,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "app.h"
-#include "default_settings.h"
+#include "app/app.h"
+#include "app/default_settings.h"
 
 class Parser {
     private:

@@ -22,7 +22,7 @@
 #define ALWAYS_INLINE
 #endif
 
-#include "board.h"
+#include "board/board.h"
 #include <bit>
 
 ALWAYS_INLINE int Board::rate_board() const {

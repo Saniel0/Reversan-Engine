@@ -15,14 +15,11 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#include "negascout.h"
+#include "engine/negascout.h"
 #include <iostream>
 #include <bit>
 #include <vector>
 #include <thread>
-
-#include "negascout.h"
-#include <iostream>
 
 // initialize stats counters and select move order
 Negascout::Negascout(Engine::Settings settings) : total_heuristic_count(0), total_state_count(0), move_order(Move_order::Orders::OPTIMIZED) {

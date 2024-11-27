@@ -15,7 +15,7 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-#include "thread_manager.h"
+#include "utils/thread_manager.h"
 
 ThreadManager::ThreadManager(size_t thread_count) : stop(false) {
     for (size_t i = 0; i < thread_count; ++i) {

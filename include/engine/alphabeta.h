@@ -18,9 +18,9 @@
 #ifndef ALPHABETA_H
 #define ALPHABETA_H
 
-#include "engine.h"
-#include "move_order.h"
-#include "transposition_table.h"
+#include "engine/engine.h"
+#include "engine/move_order.h"
+#include "engine/transposition_table.h"
 
 /**
  * @brief Class implementing negascout game-tree search.
