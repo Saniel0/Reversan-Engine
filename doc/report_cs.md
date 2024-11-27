@@ -59,6 +59,10 @@ Transpoziční tabulky slouží k memorizaci již prohledaných stavů, což dá
 Optimální pořadí prohledávání tahů je důležité pro efektivní prořezávání herního stromu, to platí hlavně pro negascout. Základní pořadí jde řádek po řádku z levého horního rohu do pravého dolního, optimalizované pořadí je založené na samotné heuristické evaluační funkci.
 ![alt text](graphs/move_order.png)
 
+#### Heuristická funkce
+Jelikož není možné prohledávat herní strom až do konce, musíme estimovat kvalitu stavů pomocí heuristické funkce. Pro evaluaci se používá heuristická mapa, která přiřadí každému poli určitou váhu. Dále se bere v potaz počet možných tahů, což se ukázalo jako dobrý indikátor kvality stavu.
+![alt text](graphs/heur.png)
+
 ## Strategie optimalizace
 Většina výpočetního času je ztrávena nad funkcemi manipulujícími s herní deskou - hledání validních tahů, zahrání daného tahu a výpočet kvality desky na základe heuristické funkce - efektivní implementace těchto algoritmů je podstatná.
 - Všechna měření na platformě `Debian 12`, kompilováno s `gcc 12.2.0`.
