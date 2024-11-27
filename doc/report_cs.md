@@ -46,6 +46,7 @@ Pro dřívější ukončení stačí použít `ctrl-c`, program vrátí terminá
 
 ## Implementace
 - Následující testy jsou prováděny na testovacím stavu `Board::States::Benchmark`.
+- Přesné číselné hodnoty můžete najít v souboru graph/grapher.py. Pro přehlednost grafů byly vypuštěny (porovnání je zde podstatnější než přesné hodnoty).
 #### Prohledávání stromu
 Engine podporuje 2 algoritmy - minimax s alpha-beta prořezáváním a minimax s negascout prořezáváním. Oba algoritmy se ukazují jako masivní zlepšení oproti klasickému minimax v efektivitě prohledávání. Také se ukazuje, že negascout nemusí být vždy nutně rychlejší než alphabeta.
 
@@ -69,7 +70,8 @@ Jelikož není možné prohledávat herní strom až do konce, musíme estimovat
 
 ## Strategie optimalizace
 Většina výpočetního času je ztrávena nad funkcemi manipulujícími s herní deskou - hledání validních tahů, zahrání daného tahu a výpočet kvality desky na základe heuristické funkce - efektivní implementace těchto algoritmů je podstatná.
-- Všechna měření na platformě `Debian 12`, kompilováno s `gcc 12.2.0`.
+- Všechna měření na platformě `Debian 12`, kompilováno s `gcc 12.2.0`. *(Pokud neuvedeno jinak)*
+- Přesné číselné hodnoty můžete najít v souboru graph/grapher.py. Pro přehlednost grafů byly vypuštěny (porovnání je zde podstatnější než přesné hodnoty).
 
 #### Bitboards
 Hra reversi se hraje na 8x8 desce, což je možné dobře využít. Celý stav můžeme reprezentovat pouze pomocí 2 promněných `uint64_t` - jedna pro bílou a druhá pro černou.
