@@ -15,11 +15,13 @@
     along with Reversan Engine. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-// __atribute__ is not standard, enable only with supported compillers
+// Compiller suggestion for LTO inlining
 #if defined(__GNUC__) || defined(__clang__)
-#define ALWAYS_INLINE __attribute__((always_inline))
+    #define ALWAYS_INLINE __attribute__((always_inline))
+#elif defined(_MSC_VER)
+    #define ALWAYS_INLINE __forceinline
 #else
-#define ALWAYS_INLINE
+    #define ALWAYS_INLINE
 #endif
 
 #include "board/board.h"
