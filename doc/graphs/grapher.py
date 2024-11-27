@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap, Normalize
+import numpy as np
 
 # In the future I would like to add dynamic value loading
 
@@ -37,6 +39,37 @@ plt.ylabel("Searched states")
 plt.title("Efficiency of move order (with transposition tables)")
 plt.savefig("move_order.png")
 plt.clf()
+
+data = np.array([
+    [100,-15, 10,  5,  5, 10,-15,100],
+    [-15,-30, -2, -2, -2, -2,-30,-15],
+    [ 10, -2,  1, -1, -1,  1, -2, 10],
+    [  5, -2, -1, -1, -1, -1, -2,  5],
+    [  5, -2, -1, -1, -1, -1, -2,  5],
+    [ 10, -2,  1, -1, -1,  1, -2, 10],
+    [-15,-30, -2, -2, -2, -2,-30,-15],
+    [100,-15, 10,  5,  5, 10,-15,100]
+])
+reds = plt.cm.Reds(np.linspace(0.4, 1, 128))  # Darker reds for negative values
+greens = plt.cm.Greens(np.linspace(0.4, 1, 128))  # Darker greens for positive values
+custom_colors = np.vstack((reds[::-1], greens))  # Red for negatives, green for positives
+custom_cmap = ListedColormap(custom_colors)
+norm = Normalize(vmin=-100, vmax=100)
+
+plt.figure(figsize=(8, 8))
+plt.imshow(data, cmap=custom_cmap, norm=norm)
+plt.colorbar(label="Value")
+plt.title("Heuristics map")
+plt.xticks(range(8))
+plt.yticks(range(8))
+
+# Add value annotations to each cell
+for i in range(data.shape[0]):
+    for j in range(data.shape[1]):
+        plt.text(j, i, data[i, j], ha="center", va="center", color="black")
+
+plt.savefig("heur.png")
+plt.close()
 
 # SIMD performance graph
 x = ["-AVX2-", "-NOSIMD-", "_AVX2_", "_NOSIMD_", "__AVX2__", "__NOSIMD__", "NOSIMD"]
