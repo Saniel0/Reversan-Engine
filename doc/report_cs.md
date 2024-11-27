@@ -1,5 +1,5 @@
 # Reversan Engine
-Jako téma semestrální práce jsem si zvolil engine na stolní hru reversi. Reversan implementuje velmi efektivní implementace algoritmů na prohledávání herního stromu, díky čemuž je pro normálního člověka neporazitelný.
+Reversan engine je silný engine na stolní hru reversi. Reversan implementuje velmi efektivní implementace algoritmů na prohledávání herního stromu, díky čemuž je pro normálního člověka neporazitelný.
 
 ##### Krátké shrnutí použitých metod:
 - Vlastní verze algoritmu negascout
