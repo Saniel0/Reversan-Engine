@@ -1,5 +1,6 @@
 # Unwanted folders
 .vscode
+.venv
 build
 docs
 
