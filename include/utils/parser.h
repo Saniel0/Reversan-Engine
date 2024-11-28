@@ -46,6 +46,9 @@ class Parser {
         /// @brief Tries to parse thread count.
         bool parse_threads(int argc, char **argv, int &i);
 
+        /// @brief Tries to parse engine search order.
+        bool parse_order(int argc, char **argv, int &i);
+
     public:
         Parser();
 

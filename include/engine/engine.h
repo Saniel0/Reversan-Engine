@@ -19,6 +19,7 @@
 #define ENGINE_H
 
 #include "board/board.h"
+#include "move_order.h"
 
 /**
  * @brief Class implementing game-tree search algorithms.
@@ -31,6 +32,7 @@ class Engine {
             int time_limit;
             int thread_count;
             bool transposition_enable;
+            const uint8_t *order;
         };
 
         /// @brief List of avaible algorithms.

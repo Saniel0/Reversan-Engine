@@ -19,7 +19,7 @@
 #include <iostream>
 
 // initialize stats counters and select move order
-Alphabeta::Alphabeta(Engine::Settings settings) : total_heuristic_count(0), total_state_count(0), move_order(Move_order::Orders::OPTIMIZED) {
+Alphabeta::Alphabeta(Engine::Settings settings) : total_heuristic_count(0), total_state_count(0), move_order(settings.order) {
     this->settings = settings;
 }
 

@@ -22,7 +22,7 @@
 #include <thread>
 
 // initialize stats counters and select move order
-Negascout::Negascout(Engine::Settings settings) : total_heuristic_count(0), total_state_count(0), move_order(Move_order::Orders::OPTIMIZED) {
+Negascout::Negascout(Engine::Settings settings) : total_heuristic_count(0), total_state_count(0), move_order(settings.order) {
     this->settings = settings;
 }
 
@@ -211,7 +211,7 @@ int Negascout::negascout(Board state, int depth, bool cur_color, int alpha, int 
 }
 
 // initialize stats counters and select move order
-NegascoutParallel::NegascoutParallel(Engine::Settings settings) : move_order(Move_order::Orders::OPTIMIZED), manager(settings.thread_count) {
+NegascoutParallel::NegascoutParallel(Engine::Settings settings) : move_order(settings.order), manager(settings.thread_count) {
     this->settings = settings;
 }
 

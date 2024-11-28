@@ -45,6 +45,7 @@ void Parser::print_help() const {
         << "--engine, -e <negascout | alphabeta> [negascout]    Choose the tree search algorithm.\n"
         << "--threads, -t, <1 - 8> [1]                          EXPERIMENTAL, negascout only.\n"
         << "--disable-tp                                        Disables transposition tables.\n"
+        << "--order, -o <line_by_line | opt1 | opt2> [opt1]     Sets search order of the engine.\n"
         << "--style, -s <basic | solarized | dracula> [basic]   Specify UI style.\n";
 }
 
@@ -91,7 +92,7 @@ bool Parser::parse_engine(int argc, char **argv, int &i) {
         }
     }
     else {
-        std::cout << "Flags --engine and -e requires an additional argument. Use --help or -h for usage information.\n";
+        std::cout << "Flags --engine and -e require an additional argument. Use --help or -h for usage information.\n";
         return false;
     }
     return true;
@@ -110,7 +111,7 @@ bool Parser::parse_style(int argc, char **argv, int &i) {
         }
     }
     else {
-        std::cout << "Flags --style and -s requires an additional argument. Use --help or -h for usage information.\n";
+        std::cout << "Flags --style and -s require an additional argument. Use --help or -h for usage information.\n";
         return false;
     }
     return true;
@@ -127,6 +128,25 @@ bool Parser::parse_threads(int argc, char **argv, int &i) {
     }
     else {
         std::cout << "Invalid use of thread. Use --help or -h for usage information.\n";
+        return false;
+    }
+    return true;
+}
+
+bool Parser::parse_order(int argc, char **argv, int &i) {
+    if (i + 1 < argc) {
+        i++;
+        std::string arg = argv[i];
+        if (arg == "line_by_line") settings.order = Move_order::Orders::LINE_BY_LINE;
+        else if (arg == "opt1") settings.order = Move_order::Orders::OPTIMIZED;
+        else if (arg == "opt2") settings.order = Move_order::Orders::OPTIMIZED2;
+        else {
+            std::cout << "Invalid order. Use --help or -h for usage information.\n";
+            return false;
+        }
+    }
+    else {
+        std::cout << "Flags --order and -o require an additional argument. Use --help or -h for usage information.\n";
         return false;
     }
     return true;
@@ -159,6 +179,9 @@ bool Parser::parse(int argc, char **argv) {
         }
         else if (arg == "--disable-tp") {
             settings.transposition_enable = false;
+        }
+        else if (arg == "--order" || arg == "-o") {
+            if (!parse_order(argc, argv, i)) return false;
         }
         else {
             std::cout << "Invalid option. Use --help or -h for usage information.\n";
