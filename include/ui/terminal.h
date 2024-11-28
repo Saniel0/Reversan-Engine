@@ -29,25 +29,25 @@ class Terminal : public UI {
             static constexpr const char* RESTORE_BUFFER = "\x1B[?1049l";
             static constexpr const char* CLEAR_BUFFER   = "\x1B[2J\x1B[H";
             // special graphics
-            static constexpr const char* BLINK          = "\e[5m";
-            static constexpr const char* BLINK_RESET    = "\e[25m";
-            static constexpr const char* BOLD           = "\e[1m";
+            static constexpr const char* BLINK          = "\033[5m";
+            static constexpr const char* BLINK_RESET    = "\033[25m";
+            static constexpr const char* BOLD           = "\033[1m";
             // basic color control
-            static constexpr const char* RED            = "\e[1;31m";
-            static constexpr const char* YELLOW         = "\e[1;33m";
-            static constexpr const char* GREEN          = "\e[1;32m";
-            static constexpr const char* GRAY           = "\e[1;90m";
-            static constexpr const char* WHITE          = "\e[1;37m";
+            static constexpr const char* RED            = "\033[1;31m";
+            static constexpr const char* YELLOW         = "\033[1;33m";
+            static constexpr const char* GREEN          = "\033[1;32m";
+            static constexpr const char* GRAY           = "\033[1;90m";
+            static constexpr const char* WHITE          = "\033[1;37m";
             // basic background control
             static constexpr const char* BACK_NONE      = "";
-            static constexpr const char* BACK_BLACK     = "\e[40m";
-            static constexpr const char* BACK_RED       = "\e[41m";
-            static constexpr const char* BACK_GREEN     = "\e[42m";
-            static constexpr const char* BACK_YELLOW    = "\e[43m";
-            static constexpr const char* BACK_BLUE      = "\e[44m";
-            static constexpr const char* BACK_PURPLE    = "\e[45m";
-            static constexpr const char* BACK_CYAN      = "\e[46m";
-            static constexpr const char* BACK_WHITE     = "\e[47m";
+            static constexpr const char* BACK_BLACK     = "\033[40m";
+            static constexpr const char* BACK_RED       = "\033[41m";
+            static constexpr const char* BACK_GREEN     = "\033[42m";
+            static constexpr const char* BACK_YELLOW    = "\033[43m";
+            static constexpr const char* BACK_BLUE      = "\033[44m";
+            static constexpr const char* BACK_PURPLE    = "\033[45m";
+            static constexpr const char* BACK_CYAN      = "\033[46m";
+            static constexpr const char* BACK_WHITE     = "\033[47m";
         };
         
         /**
