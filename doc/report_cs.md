@@ -19,7 +19,8 @@ Program se kompiluje standardně přes `cmake`:
 cmake -B build
 cmake --build build
 ```
-Měly by se vytvořit 2 soubory - `reversan_avx2` a `reversan_nosimd`. Jediný rozdíl je v (ne)použití AVX2 implementace kódu.
+Měly by se vytvořit 2 soubory - `reversan_avx2` a `reversan_nosimd`. Funkčností jsou identické, jediný rozdíl je v (ne)použití AVX2 implementace kódu.
+- CMake automaticky detekuje podporu AVX2 instrukcí. Pokud procesor tyto instrukce nepodporuje, vytvoří se pouze NOSIMD verze.
 
 ## Použití
 Základní hru proti enginu můžete pustit program bez argumentů.
@@ -32,7 +33,7 @@ Hloubku prohledávání herního stromu můžete určit s argumentem `-d`. V zá
 ```bash
 ./reversan_avx2 -d 12
 ```
-- Proheldávanou hloubkou můžete ovládat obtížnost bota.
+- Prohledávanou hloubkou můžete ovládat obtížnost bota.
 
 Pokud chcete zkusit jiný styl terminálového prostředí, stačí použít argument `-s`.
 ```bash
@@ -70,6 +71,7 @@ Jelikož není možné prohledávat herní strom až do konce, musíme estimovat
 
 ## Strategie optimalizace
 Většina výpočetního času je ztrávena nad funkcemi manipulujícími s herní deskou - hledání validních tahů, zahrání daného tahu a výpočet kvality desky na základe heuristické funkce - efektivní implementace těchto algoritmů je podstatná.
+- Ve všech následujících měření se používá negascout s transpozičními tabulkami a optimálním pořadím prohledávaných tahů.
 - Všechna měření na platformě `Debian 12`, kompilováno s `gcc 12.2.0`. *(Pokud neuvedeno jinak)*
 - Přesné číselné hodnoty můžete najít v souboru graph/grapher.py. Pro přehlednost grafů byly vypuštěny (porovnání je zde podstatnější než přesné hodnoty).
 
@@ -80,7 +82,7 @@ Hlavní výhodou je, že tato datová struktura nám umožní chytře používat
 
 Další výhodou je malá paměťová náročnost, každá deska zabere pouze `128bitů`. Pomocí `Mamur3` hashingu jde snadno vytvořit `64bit` hash, který se následně používá v transpozičních tabulkách.
 
-#### AVX2 SIMD instrukce
+#### AVX2 SIMD instrukce *('Paralelizace' na úrovni jádra)*
 Všechny funkce pro manipulaci s deskou mají i druhou speciální implementaci, která výrazně program zrychluje na podporovaném hardwaru. Každý nový `x86` procesor *(posledních +-10 let)* tyto instrukce podporuje.
 
 Jedinou nevýhodou je značně komplikovanější kód.
