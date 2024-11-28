@@ -62,6 +62,7 @@ void App::run_play() {
         }
         else {
             uint64_t move = 0;
+            ui->display_message("Thinking...");
             move = engine->search(current_board, at_turn);
             last_board = current_board;
             current_board.play_move(at_turn, move);
